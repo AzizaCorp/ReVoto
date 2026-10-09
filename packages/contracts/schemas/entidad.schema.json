@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "entidad.schema.json",
+  "type": "object",
+  "required": ["territorio", "fuente", "elecciones", "municipios"],
+  "properties": {
+    "territorio": { "$ref": "comun.schema.json#/$defs/territorio" },
+    "fuente": { "type": "string", "minLength": 1 },
+    "elecciones": {
+      "type": "array",
+      "items": { "$ref": "comun.schema.json#/$defs/cifrasEleccion" }
+    },
+    "municipios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["cve", "nombre"],
+        "properties": {
+          "cve": { "type": "integer", "minimum": 1 },
+          "nombre": { "type": "string" },
+          "suprimido": { "type": "boolean" },
+          "participacion": {
+            "type": "object",
+            "propertyNames": { "enum": ["2009", "2012", "2015", "2018", "2021", "2024"] },
+            "additionalProperties": { "$ref": "comun.schema.json#/$defs/proporcion" }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

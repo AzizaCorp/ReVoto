@@ -1,0 +1,30 @@
+/* Estilos globales mínimos. Todo valor visual sale de los tokens de @revoto/ui. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--rv-color-fondo);
+  color: var(--rv-color-tinta);
+  font-family: var(--rv-fuente);
+  font-size: var(--rv-texto-cuerpo);
+  line-height: var(--rv-interlineado);
+  -webkit-text-size-adjust: 100%;
+}
+
+#raiz {
+  min-height: 100%;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--rv-foco-anillo);
+}

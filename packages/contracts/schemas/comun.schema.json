@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "comun.schema.json",
+  "title": "Definiciones comunes del contrato L4",
+  "$defs": {
+    "proporcion": { "type": "number", "minimum": 0, "maximum": 1 },
+    "anio": { "enum": [2009, 2012, 2015, 2018, 2021, 2024] },
+    "territorio": {
+      "type": "object",
+      "required": ["nivel", "nombre"],
+      "properties": {
+        "nivel": { "enum": ["nacional", "entidad", "municipio"] },
+        "cve": { "type": "integer", "minimum": 1 },
+        "cveEntidad": { "type": "integer", "minimum": 1, "maximum": 32 },
+        "nombre": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "cifrasEleccion": {
+      "type": "object",
+      "required": ["anio", "tipo", "participacion", "lista_nominal", "por_edad", "por_sexo"],
+      "properties": {
+        "anio": { "$ref": "#/$defs/anio" },
+        "tipo": { "enum": ["presidencial", "intermedia"] },
+        "participacion": { "$ref": "#/$defs/proporcion" },
+        "lista_nominal": { "type": "integer", "minimum": 0 },
+        "por_edad": {
+          "type": "object",
+          "propertyNames": { "enum": ["18-24", "25-34", "35-44", "45-59", "60+"] },
+          "additionalProperties": { "$ref": "#/$defs/proporcion" }
+        },
+        "por_sexo": {
+          "type": "object",
+          "propertyNames": { "enum": ["H", "M"] },
+          "additionalProperties": { "$ref": "#/$defs/proporcion" }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

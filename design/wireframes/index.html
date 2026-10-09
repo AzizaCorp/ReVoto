@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReVoto · Wireframes lo-fi (US-04)</title>
+<link rel="stylesheet" href="lofi.css">
+</head>
+<body>
+
+<div class="doc-head">
+  <h1>ReVoto · Arquitectura de información y wireframes lo-fi</h1>
+  <p>US-04 · Mobile-first 360 × 760 px · Escala de grises · v1.0 · 05/10/2026 · Manual: <code>docs/diseno/manual-de-diseno-wireframes.md</code></p>
+</div>
+<nav class="doc-nav" aria-label="Secciones"><div>
+  <a href="#mapa">Mapa de flujo</a>
+  <a href="#secuencia">Secuencia W-01…W-10</a>
+  <a href="#auxiliares">Hojas, modos y estados W-11…W-17</a>
+  <a href="#trazabilidad">Trazabilidad Must</a>
+</div></nav>
+
+<!-- ======================= MAPA ======================= -->
+<section class="doc" id="mapa">
+  <h2>Mapa de navegación · portada → cierre</h2>
+  <p class="lead">Secuencia lineal de 10 pantallas (RF-01) con salidas laterales que regresan a su origen.</p>
+  <div class="legend">
+    <span><i style="background:#1a1a1a"></i>Must</span>
+    <span><i></i>Should</span>
+    <span><i style="border-style:dashed"></i>Could</span>
+    <span><i style="background:#efefef;border-color:#777"></i>Auxiliar (hoja / modo / estado)</span>
+    <span>── avance · - - - salida lateral</span>
+  </div>
+  <div class="map-box">
+<pre class="mermaid">
+flowchart TD
+    classDef must fill:#1a1a1a,color:#fff,stroke:#1a1a1a
+    classDef should fill:#fff,color:#1a1a1a,stroke:#1a1a1a
+    classDef could fill:#fff,color:#1a1a1a,stroke:#1a1a1a,stroke-dasharray:5 4
+    classDef aux fill:#efefef,color:#1a1a1a,stroke:#777
+    START((Entrada)) --> W01
+    subgraph SEQ["Secuencia narrativa · 10 pantallas"]
+      direction TB
+      W01["1 · W-01 Portada"]:::must --> W02["2 · W-02 Elige tu territorio"]:::must
+      W02 -->|entidad + municipio| W03["3 · W-03 México votó"]:::must
+      W02 -->|continuar nacional| W03
+      W03 --> W04["4 · W-04 Tu territorio"]:::must
+      W04 --> W05["5 · W-05 Quince años"]:::must
+      W05 --> W06["6 · W-06 Tu generación"]:::must
+      W06 --> W07["7 · W-07 Mujeres y hombres"]:::should
+      W07 --> W08["8 · W-08 Urbano / rural"]:::could
+      W08 --> W09["9 · W-09 Arquetipo"]:::should
+      W09 --> W10["10 · W-10 Tu resumen · CIERRE"]:::must
+    end
+    W10 --> FIN((Fin))
+    W10 -->|volver a empezar| W01
+    W03 & W04 & W05 & W06 & W07 & W08 & W09 -.->|Fuente| W11["W-11 Ficha de fuente"]:::aux
+    W03 & W04 & W05 & W06 & W09 & W10 -.->|Compartir| W12["W-12 Crear tarjeta"]:::aux
+    W01 -.->|Lectura fácil / Aa| W13["W-13 Ajustes de lectura"]:::aux
+    W04 -.->|chip territorio| W02
+    W10 -.-> W16["W-16 Datos abiertos"]:::aux
+    W01 -.->|versión ligera| W15["W-15 Versión ligera"]:::aux
+    W11 -.->|liga externa| INE[(Datos abiertos INE)]
+    W02 -.->|umbral / sin periodo / error| W17["W-17 Estados"]:::aux
+</pre>
+    <noscript>Sin JavaScript: ver el mismo diagrama en docs/diseno/arquitectura-informacion.md §3.</noscript>
+  </div>
+</section>
+
+<!-- ======================= SECUENCIA ======================= -->
+<section class="doc" id="secuencia">
+  <h2>Secuencia narrativa · W-01 a W-10</h2>
+  <p class="lead">Las cifras son datos de ejemplo tomados del SRS §3.3 y §8.2; el texto corrido se representa con barras grises.</p>
+  <div class="wf-grid">
+
+  <!-- W-01 -->
+  <article class="wf-card" id="W-01">
+    <header><b>W-01 · Portada</b> · RIU-01, RIU-10 · HU-31, HU-11, HU-10 <span class="prio must">Must</span> · Pantalla 1/10</header>
+    <div class="wf-frame">
+      <div class="wf-top">
+        <div class="wf-progress"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="wf-row between"><span class="wf-small">ReVoto <i>(nombre provisional · AP-01)</i></span><span class="wf-icon" style="width:44px;height:44px">Aa</span></div>
+      </div>
+      <div class="wf-body">
+        <span class="wf-pin" style="top:120px;right:12px">1</span>
+        <div class="wf-ph" style="min-height:150px"><span>Ilustración / marca<br>(se define en hi-fi)</span></div>
+        <p class="wf-kicker">Participación electoral · 2009–2024</p>
+        <h1 class="wf-h1">¿Cuánto vota tu territorio? Descúbrelo en 10 pantallas.</h1>
+        <div class="wf-lines"><i></i><i></i></div>
+        <span class="wf-pin" style="top:430px;left:6px">2</span>
+        <div class="wf-box fill wf-small">
+          <b>Datos:</b> Conteos censales del INE, elecciones federales 2009–2024.<br>
+          <b>Hecho por:</b> Angel y Kira · Hackathon INE 2026.<br>
+          <b>No pedimos ningún dato personal.</b>
+        </div>
+        <span class="wf-pin" style="top:560px;right:12px">3</span>
+        <div class="wf-toggle"><span><b>Lectura fácil</b><br><span class="wf-small">Letra grande y sin animaciones</span></span><span class="sw"></span></div>
+      </div>
+      <div class="wf-bottom" style="flex-direction:column;flex-basis:auto;gap:6px">
+        <span class="wf-btn primary block wf-focus">Comenzar →</span>
+        <a class="wf-link wf-small">Usar versión ligera (menos datos)</a>
+      </div>
+      <span class="wf-pin" style="bottom:52px;left:6px">4</span>
+    </div>
+    <ol class="wf-notes">
+      <li>«Aa» abre W-13 (Ajustes de lectura) desde cualquier pantalla.</li>
+      <li>Bloque de confianza: autoría, origen de datos y aviso «no pedimos datos personales» (HU-11 CA-01, RF-19).</li>
+      <li class="a11y">Lectura fácil visible <b>antes</b> de iniciar (HU-10 CA-01). Al activarse aplica W-13 al instante.</li>
+      <li class="a11y">Foco inicial en «Comenzar» (RIU-01). Enlace a W-15 versión ligera (HU-15).</li>
+    </ol>
+  </article>
+
+  <!-- W-02 -->
+  <article class="wf-card" id="W-02">
+    <header><b>W-02 · Elige tu territorio</b> · RIU-02 · HU-28 <span class="prio must">Must</span> · Pantalla 2/10</header>
+    <div class="wf-frame">
+      <div class="wf-top">
+        <div class="wf-progress"><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="wf-row between"><span class="wf-link">‹ Atrás</span><span class="wf-icon">Aa</span></div>
+      </div>
+      <div class="wf-body">
+        <h1 class="wf-h1">¿De dónde eres?</h1>
+        <p class="wf-small" style="margin:0">Elige tu entidad y tu municipio para ver sus cifras junto a las nacionales. No guardamos tu elección.</p>
+        <span class="wf-pin" style="top:150px;right:12px">1</span>
+        <div class="wf-field"><label>Entidad federativa</label><div class="wf-select">Jalisco <span>▾</span></div></div>
+        <span class="wf-pin" style="top:240px;right:12px">2</span>
+        <div class="wf-field"><label>Municipio</label><div class="wf-select">Buscar municipio… <span>▾</span></div></div>
+        <div class="wf-list">
+          <div>Guadalajara</div><div class="sel">Zapopan ✓</div><div class="wf-small">… 125 municipios</div>
+        </div>
+        <span class="wf-pin" style="top:560px;left:6px">3</span>
+        <div class="wf-alert">ⓘ Si un municipio tiene muy pocos registros, verás las cifras de su entidad (te diremos por qué).</div>
+      </div>
+      <div class="wf-bottom" style="flex-direction:column;flex-basis:auto;gap:6px">
+        <span class="wf-btn primary block">Ver mis cifras →</span>
+        <span class="wf-btn block">Continuar con cifras nacionales</span>
+      </div>
+      <span class="wf-pin" style="bottom:20px;right:6px">4</span>
+    </div>
+    <ol class="wf-notes">
+      <li>32 entidades; lista nativa <code>&lt;select&gt;</code> o combobox accesible (RF-05).</li>
+      <li>Municipio deshabilitado hasta elegir entidad; luego se filtra a los de esa entidad, con búsqueda (RF-06, CA-01).</li>
+      <li>Umbral RN-05 y periodos faltantes → W-17 estados B y C (CA-04, ALT-01).</li>
+      <li>«Continuar con cifras nacionales» nunca bloquea (CA-03). Sin campos de datos personales (HU-11 CA-02).</li>
+      <li class="a11y">Etiquetas <code>&lt;label&gt;</code> asociadas; todo operable por teclado.</li>
+    </ol>
+  </article>
+
+  <!-- W-03 -->
+  <article class="wf-card" id="W-03">
+    <header><b>W-03 · México votó</b> · RIU-03 · HU-31 <span class="prio must">Must</span> · Pantalla 3/10</header>
+    <div class="wf-frame">
+      <div class="wf-top">
+        <div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="wf-row between"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div>
+      </div>
+      <div class="wf-body">
+        <span class="wf-pin" style="top:10px;right:12px">1</span>
+        <h1 class="wf-h1">Seis de cada diez personas votaron en 2024.</h1>
+        <div class="wf-figure">59.7<small> %</small></div>
+        <div class="wf-meta">Nacional · Elección federal 2024</div>
+        <span class="wf-pin" style="top:240px;right:12px">2</span>
+        <div class="wf-ph" style="min-height:180px"><span>Pictograma 10 personas:<br>6 rellenas · 4 vacías</span></div>
+        <div class="wf-lines"><i></i><i></i></div>
+        <div class="wf-small">«Participación» = personas que votaron entre las personas de la lista nominal con dato registrado.</div>
+      </div>
+      <div class="wf-bottom">
+        <span class="wf-btn sm">ⓘ Fuente</span><span class="wf-btn sm">↗ Compartir</span><span class="wf-spacer"></span><span class="wf-icon">‹</span><span class="wf-icon" style="background:#1a1a1a;color:#fff">›</span>
+      </div>
+      <span class="wf-pin" style="bottom:46px;right:6px">3</span>
+    </div>
+    <ol class="wf-notes">
+      <li>Plantilla narrativa base (manual §7.1): una idea, una cifra, territorio · periodo (RN-10, HU-31 CA-01).</li>
+      <li class="a11y">Alt: «Participación nacional en la elección federal 2024: 59.7 %, aproximadamente 6 de cada 10 personas».</li>
+      <li>Avanzar/retroceder: ‹ ›, deslizar, tocar mitades, ← → (RF-02). Progreso 3/10 (RF-03). Sin avance automático.</li>
+      <li class="a11y">Al cambiar de pantalla, región <code>aria-live="polite"</code> anuncia «Pantalla 3 de 10: …» (HU-14 CA-03).</li>
+    </ol>
+  </article>
+
+  <!-- W-04 -->
+  <article class="wf-card" id="W-04">
+    <header><b>W-04 · Tu territorio</b> · RIU-03, RIU-05 · HU-28 <span class="prio must">Must</span> · Pantalla 4/10</header>
+    <div class="wf-frame">
+      <div class="wf-top">
+        <div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="wf-row between"><span class="wf-chip wf-focus">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div>
+      </div>
+      <span class="wf-pin" style="top:40px;left:250px">1</span>
+      <div class="wf-body">
+        <h1 class="wf-h1">Zapopan votó por encima del promedio nacional.</h1>
+        <div class="wf-figure">6x.x<small> %</small></div>
+        <div class="wf-meta">Zapopan, Jalisco · Elección federal 2024</div>
+        <span class="wf-pin" style="top:250px;right:12px">2</span>
+        <div class="wf-bars">
+          <div class="wf-bar"><span>Zapopan</span><span class="track"><b style="--v:63"></b></span><strong>6x.x %</strong></div>
+          <div class="wf-bar"><span>Jalisco</span><span class="track"><b class="alt" style="--v:61"></b></span><strong>6x.x %</strong></div>
+          <div class="wf-bar"><span>Nacional</span><span class="track"><b class="alt" style="--v:59.7;background:#fff"></b></span><strong>59.7 %</strong></div>
+        </div>
+        <div class="wf-small">Diferencia: <b>+x.x puntos</b> respecto al promedio nacional.</div>
+        <div class="wf-lines"><i></i><i></i><i></i></div>
+        <span class="wf-pin" style="top:520px;left:6px">3</span>
+        <div class="wf-alert wf-small">Variante: «Mostramos cifras de Jalisco porque Zapopan tiene muy pocos registros para publicarlos con seguridad.»</div>
+      </div>
+      <div class="wf-bottom">
+        <span class="wf-btn sm">ⓘ Fuente</span><span class="wf-btn sm">↗ Compartir</span><span class="wf-spacer"></span><span class="wf-icon">‹</span><span class="wf-icon" style="background:#1a1a1a;color:#fff">›</span>
+      </div>
+    </div>
+    <ol class="wf-notes">
+      <li>El chip reabre W-02 y regresa aquí recalculando todo (HU-28 CA-02).</li>
+      <li>Siempre territorio + nacional (CA-02). Barras distintas por relleno, no por color; valor visible.</li>
+      <li>Si no eligió territorio: la pantalla muestra «Elige tu territorio para compararlo» + botón a W-02 (CA-03). Umbral RN-05 → nota (CA-04).</li>
+      <li class="a11y">Alt: «Participación 2024: Zapopan x %, Jalisco x %, nacional 59.7 %».</li>
+    </ol>
+  </article>
+
+  <!-- W-05 -->
+  <article class="wf-card" id="W-05">
+    <header><b>W-05 · Quince años de elecciones</b> · RIU-04 · HU-07 <span class="prio must">Must</span> · Pantalla 5/10</header>
+    <div class="wf-frame">
+      <div class="wf-top">
+        <div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="wf-row between"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div>
+      </div>
+      <div class="wf-body">
+        <h1 class="wf-h1">En años presidenciales se vota más.</h1>
+        <div class="wf-meta">Nacional · Elecciones federales 2009–2024</div>
+        <span class="wf-pin" style="top:110px;right:12px">1</span>
+        <div class="wf-series">
+          <div class="mid" style="--v:44" data-v="44.1"></div>
+          <div style="--v:62" data-v="62.1"></div>
+          <div class="mid" style="--v:47" data-v="47.1"></div>
+          <div style="--v:62.4" data-v="62.4"></div>
+          <div class="mid" style="--v:51.8" data-v="51.8"></div>
+          <div style="--v:59.7" data-v="59.7"></div>
+        </div>
+        <div class="wf-series-x"><span>2009</span><span>2012</span><span>2015</span><span>2018</span><span>2021</span><span>2024</span></div>
+        <div class="wf-row wf-small" style="gap:14px"><span>■ Presidencial</span><span>▨ Intermedia</span></div>
+        <span class="wf-pin" style="top:400px;right:12px">2</span>
+        <div class="wf-box wf-small"><b>2018 · 1 jul 2018 · Presidencial</b><br>Zapopan 6x.x % · Nacional 62.4 %</div>
+        <a class="wf-link wf-small">Ver como tabla</a>
+        <span class="wf-pin" style="top:520px;left:6px">3</span>
+      </div>
+      <div class="wf-bottom">
+        <span class="wf-btn sm">ⓘ Fuente</span><span class="wf-btn sm">↗ Compartir</span><span class="wf-spacer"></span><span class="wf-icon">‹</span><span class="wf-icon" style="background:#1a1a1a;color:#fff">›</span>
+      </div>
+    </div>
+    <ol class="wf-notes">
+      <li>Seis elecciones en una sola escala (CA-01). Sólido = presidencial, rayado = intermedia + leyenda textual (RN-03, CA-03). Con territorio elegido, las columnas son del territorio y una marca indica el valor nacional.</li>
+      <li>Tocar/enfocar una columna muestra año, fecha de la elección y valor (CA-02). Valores siempre visibles arriba.</li>
+      <li class="a11y">«Ver como tabla» despliega tabla Año · Tipo · Territorio · Nacional (RIU-04). Columnas enfocables con teclado.</li>
+      <li>Si falta un periodo por cambio de geografía: columna vacía con «sin dato» y nota (HU-28 ALT-01 → W-17 C).</li>
+    </ol>
+  </article>
+
+  <!-- W-06 -->
+  <article class="wf-card" id="W-06">
+    <header><b>W-06 · Tu generación</b> · RIU-05 · HU-01 <span class="prio must">Must</span> · Pantalla 6/10</header>
+    <div class="wf-frame">
+      <div class="wf-top">
+        <div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span></div>
+        <div class="wf-row between"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div>
+      </div>
+      <div class="wf-body">
+        <h1 class="wf-h1">Entre más edad, más participación.</h1>
+        <div class="wf-figure" style="font-size:44px">50.4 % <small>vs</small> 71.4 %</div>
+        <div class="wf-meta">18–24 vs 60+ · Nacional · Elección federal 2024</div>
+        <span class="wf-pin" style="top:200px;right:12px">1</span>
+        <div class="wf-bars">
+          <div class="wf-bar"><span>18–24</span><span class="track"><b style="--v:50.4"></b><i class="mark" style="--n:50.4"></i></span><strong>xx %</strong></div>
+          <div class="wf-bar"><span>25–34</span><span class="track"><b style="--v:52"></b><i class="mark" style="--n:52"></i></span><strong>xx %</strong></div>
+          <div class="wf-bar"><span>35–44</span><span class="track"><b style="--v:58"></b><i class="mark" style="--n:57"></i></span><strong>xx %</strong></div>
+          <div class="wf-bar"><span>45–59</span><span class="track"><b style="--v:66"></b><i class="mark" style="--n:65"></i></span><strong>xx %</strong></div>
+          <div class="wf-bar"><span>60 +</span><span class="track"><b style="--v:71.4"></b><i class="mark" style="--n:71.4"></i></span><strong>xx %</strong></div>
+        </div>
+        <div class="wf-small">Barra = Zapopan · línea vertical = nacional</div>
+        <span class="wf-pin" style="top:470px;left:6px">2</span>
+        <div class="wf-lines"><i></i><i></i><i></i></div>
+        <span class="wf-pin" style="top:560px;right:12px">3</span>
+      </div>
+      <div class="wf-bottom">
+        <span class="wf-btn sm">ⓘ Fuente</span><span class="wf-btn sm">↗ Compartir</span><span class="wf-spacer"></span><span class="wf-icon">‹</span><span class="wf-icon" style="background:#1a1a1a;color:#fff">›</span>
+      </div>
+    </div>
+    <ol class="wf-notes">
+      <li>Solo los 5 grupos de RN-04; elección más reciente (CA-01). Territorio (barra) + nacional (marca) (CA-02).</li>
+      <li>Texto de apoyo descriptivo, sin juicio sobre ningún grupo (CA-03). Ej.: «La diferencia entre el grupo más joven y el mayor es de 21 puntos».</li>
+      <li class="a11y">Alt con los 10 valores explícitos; tabla alternativa disponible.</li>
+    </ol>
+  </article>
+
+  <!-- W-07 -->
+  <article class="wf-card" id="W-07">
+    <header><b>W-07 · Mujeres y hombres</b> · RIU-05 · HU-29 <span class="prio">Should</span> · Pantalla 7/10</header>
+    <div class="wf-frame">
+      <div class="wf-top">
+        <div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span></div>
+        <div class="wf-row between"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div>
+      </div>
+      <div class="wf-body">
+        <h1 class="wf-h1">Las mujeres votaron más que los hombres.</h1>
+        <div class="wf-meta">Nacional · Elección federal 2024</div>
+        <span class="wf-pin" style="top:120px;right:12px">1</span>
+        <div class="wf-row" style="gap:12px;align-items:stretch">
+          <div class="wf-box" style="flex:1;text-align:center"><div class="wf-ph" style="min-height:90px"><span>icono</span></div><div class="wf-figure" style="font-size:40px">64.2%</div><div class="wf-small">Mujeres</div></div>
+          <div class="wf-box" style="flex:1;text-align:center"><div class="wf-ph" style="min-height:90px"><span>icono</span></div><div class="wf-figure" style="font-size:40px">54.8%</div><div class="wf-small">Hombres</div></div>
+        </div>
+        <div class="wf-small">Diferencia: <b>9.4 puntos</b>.</div>
+        <div class="wf-lines"><i></i><i></i></div>
+        <span class="wf-pin" style="top:500px;left:6px">2</span>
+        <div class="wf-small">Nota: se excluyen registros con sexo fuera de catálogo (ver Fuente).</div>
+      </div>
+      <div class="wf-bottom">
+        <span class="wf-btn sm">ⓘ Fuente</span><span class="wf-btn sm">↗ Compartir</span><span class="wf-spacer"></span><span class="wf-icon">‹</span><span class="wf-icon" style="background:#1a1a1a;color:#fff">›</span>
+      </div>
+    </div>
+    <ol class="wf-notes">
+      <li>Para territorio y elección seleccionados (CA-01). Etiqueta textual, no solo icono ni color.</li>
+      <li>Exclusión RN-06 explicada en W-11 (CA-02). Si sale del MVP, la secuencia se acorta sin romperse.</li>
+    </ol>
+  </article>
+
+  <!-- W-08 -->
+  <article class="wf-card" id="W-08">
+    <header><b>W-08 · Urbano, rural, mixto</b> · RIU-05 · HU-30 <span class="prio could">Could</span> · Pantalla 8/10</header>
+    <div class="wf-frame">
+      <div class="wf-top">
+        <div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span></div>
+        <div class="wf-row between"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div>
+      </div>
+      <div class="wf-body">
+        <h1 class="wf-h1">El tipo de zona también cuenta.</h1>
+        <div class="wf-meta">Jalisco · Elección federal 2024</div>
+        <div class="wf-bars">
+          <div class="wf-bar"><span>Urbana</span><span class="track"><b style="--v:58"></b></span><strong>xx %</strong></div>
+          <div class="wf-bar"><span>Mixta</span><span class="track"><b style="--v:61"></b></span><strong>xx %</strong></div>
+          <div class="wf-bar"><span>Rural</span><span class="track"><b style="--v:63"></b></span><strong>xx %</strong></div>
+        </div>
+        <span class="wf-pin" style="top:290px;right:12px">1</span>
+        <div class="wf-box fill wf-small">
+          <b>¿Qué es una sección urbana, rural o mixta?</b><br>
+          Es la clasificación que el INE da a cada sección electoral según el tipo de localidad que contiene.
+        </div>
+        <div class="wf-lines"><i></i><i></i></div>
+      </div>
+      <div class="wf-bottom">
+        <span class="wf-btn sm">ⓘ Fuente</span><span class="wf-spacer"></span><span class="wf-icon">‹</span><span class="wf-icon" style="background:#1a1a1a;color:#fff">›</span>
+      </div>
+    </div>
+    <ol class="wf-notes">
+      <li>Definición en lenguaje claro (CA-01, RNF-18). Primera pantalla en salir si el plan se tensa.</li>
+      <li>Nivel mínimo publicado: entidad/municipio; la sección nunca es nivel de consulta (RN-02).</li>
+    </ol>
+  </article>
+
+  <!-- W-09 -->
+  <article class="wf-card" id="W-09">
+    <header><b>W-09 · El arquetipo de tu zona</b> · RIU-03 · HU-03 <span class="prio">Should</span> · Pantalla 9/10</header>
+    <div class="wf-frame">
+      <div class="wf-top">
+        <div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
+        <div class="wf-row between"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div>
+      </div>
+      <div class="wf-body">
+        <p class="wf-kicker">Tu zona es…</p>
+        <div class="wf-ph" style="min-height:200px"><span>Ilustración del arquetipo</span></div>
+        <h1 class="wf-h1">«Constante»<br><span class="wf-small">(nombre de ejemplo · AP-05)</span></h1>
+        <span class="wf-pin" style="top:330px;right:12px">1</span>
+        <div class="wf-box wf-small"><b>¿Por qué?</b> Su participación varió menos de 3 puntos entre elecciones del mismo tipo de 2009 a 2024.</div>
+        <div class="wf-meta">Zapopan, Jalisco · 2009–2024</div>
+        <span class="wf-pin" style="top:460px;left:6px">2</span>
+      </div>
+      <div class="wf-bottom">
+        <span class="wf-btn sm">ⓘ Fuente</span><span class="wf-btn sm primary">↗ Compartir</span><span class="wf-spacer"></span><span class="wf-icon">‹</span><span class="wf-icon" style="background:#1a1a1a;color:#fff">›</span>
+      </div>
+    </div>
+    <ol class="wf-notes">
+      <li>El texto explica la cifra que lo origina (CA-02). Solo métricas permitidas por RN-07.</li>
+      <li>Revisión de neutralidad obligatoria: sin partidos, candidaturas ni juicios (CA-03, RNF-15). Compartir es la acción destacada.</li>
+      <li>Sin territorio elegido: se oculta o se asigna arquetipo nacional.</li>
+    </ol>
+  </article>
+
+  <!-- W-10 -->
+  <article class="wf-card" id="W-10">
+    <header><b>W-10 · Tu resumen (cierre)</b> · RIU-08 · HU-06, HU-02, HU-17, HU-11 <span class="prio must">Must</span> · Pantalla 10/10</header>
+    <div class="wf-frame">
+      <div class="wf-top">
+        <div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div>
+        <div class="wf-row between"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div>
+      </div>
+      <div class="wf-body" style="gap:8px">
+        <h1 class="wf-h1">Lo esencial, en cinco cifras</h1>
+        <span class="wf-pin" style="top:52px;right:12px">1</span>
+        <div class="wf-list">
+          <div><b style="width:72px">59.7 %</b><span class="wf-small">Nacional · 2024 ›</span></div>
+          <div><b style="width:72px">6x.x %</b><span class="wf-small">Zapopan · 2024 ›</span></div>
+          <div><b style="width:72px">+15.6</b><span class="wf-small">pts nacional 2009→2024 ›</span></div>
+          <div><b style="width:72px">21 pts</b><span class="wf-small">18–24 vs 60+ · 2024 ›</span></div>
+          <div><b style="width:72px">9.4 pts</b><span class="wf-small">Mujeres vs hombres · 2024 ›</span></div>
+        </div>
+        <span class="wf-btn primary block">↗ Compartir mi resumen</span>
+        <span class="wf-pin" style="top:400px;left:6px">2</span>
+        <div class="wf-row"><span class="wf-btn sm" style="flex:1">⇩ Datos abiertos</span><span class="wf-btn sm" style="flex:1">↺ Volver a empezar</span></div>
+        <div class="wf-box fill wf-small">Fuente: Conteos censales INE 2009–2024 · Hecho por Angel y Kira · Sin datos personales · Sin afiliación partidista.</div>
+        <span class="wf-pin" style="top:560px;right:12px">3</span>
+      </div>
+      <div class="wf-bottom">
+        <span class="wf-btn sm">ⓘ Metodología</span><span class="wf-spacer"></span><span class="wf-icon">‹</span><span class="wf-btn sm">Fin</span>
+      </div>
+    </div>
+    <ol class="wf-notes">
+      <li>Cinco cifras (propuesta AP-06), cada una con territorio y periodo; al tocarla regresa a su pantalla (HU-06 CA-02). Accesible también desde «Aa → Ver resumen» (CA-01).</li>
+      <li>Datos abiertos → W-16 (HU-17). Volver a empezar → W-01.</li>
+      <li>Cierre con créditos y legitimidad (HU-11). <span class="a11y">Encabezados jerárquicos h1/h2 correctos (RIU-08).</span></li>
+    </ol>
+  </article>
+
+  </div>
+</section>
+
+<!-- ======================= AUXILIARES ======================= -->
+<section class="doc" id="auxiliares">
+  <h2>Hojas, modos y estados · W-11 a W-17</h2>
+  <p class="lead">No cuentan como pantallas de la secuencia: al cerrarse regresan a la pantalla de origen.</p>
+  <div class="wf-grid">
+
+  <!-- W-11 -->
+  <article class="wf-card" id="W-11">
+    <header><b>W-11 · Ficha de fuente</b> · RIU-06 · HU-18 <span class="prio must">Must</span> · Hoja inferior</header>
+    <div class="wf-frame">
+      <div class="wf-top"><div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span></div><div class="wf-row between"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div></div>
+      <div class="wf-body"><div class="wf-h1">En años presidenciales se vota más.</div><div class="wf-ph" style="min-height:200px"><span>W-05 de fondo</span></div></div>
+      <div class="wf-scrim"></div>
+      <div class="wf-sheet" style="top:150px">
+        <div class="grip"></div>
+        <div class="wf-row between"><h2 class="wf-h2">¿De dónde sale esta cifra?</h2><span class="wf-btn sm wf-focus">Cerrar ✕</span></div>
+        <span class="wf-pin" style="top:70px;right:12px">1</span>
+        <dl class="wf-kv">
+          <dt>Fuente</dt><dd>INE · DECEYEC · Conteos censales de participación</dd>
+          <dt>Elección</dt><dd>Federal 2018 (1 jul 2018)</dd>
+          <dt>Territorio</dt><dd>Zapopan, Jalisco</dd>
+          <dt>Fecha de corte</dt><dd>dd/mm/aaaa</dd>
+          <dt>Fórmula</dt><dd>Votaron ÷ (lista nominal − sin dato)</dd>
+        </dl>
+        <span class="wf-pin" style="top:280px;left:6px">2</span>
+        <div class="wf-alert wf-small">Se excluyeron <b>6.8 %</b> de registros sin dato de participación. No son abstención: el registro no trae información.</div>
+        <span class="wf-pin" style="top:395px;right:4px">3</span>
+        <span class="wf-btn block">Ir al portal de datos abiertos del INE ↗</span>
+        <a class="wf-link wf-small">Copiar cita</a>
+      </div>
+    </div>
+    <ol class="wf-notes">
+      <li>Fuente, año, fecha de corte y fórmula en lenguaje claro (HU-18 CA-01, RF-12).</li>
+      <li>Nota metodológica con volumen excluido (CA-03, RN-01, RN-06).</li>
+      <li>Liga al portal oficial en pestaña nueva (CA-02, RF-13). Si la liga falla, se conserva la cita textual (RIE-04).</li>
+      <li class="a11y">Diálogo modal: foco entra en «Cerrar», queda atrapado, Escape cierra y el foco vuelve a «Fuente» (RIU-06).</li>
+    </ol>
+  </article>
+
+  <!-- W-12 -->
+  <article class="wf-card" id="W-12">
+    <header><b>W-12 · Crear tarjeta</b> · RIU-07 · HU-02 <span class="prio must">Must</span> · Hoja inferior</header>
+    <div class="wf-frame">
+      <div class="wf-top"><div class="wf-row between"><h2 class="wf-h2">Comparte este dato</h2><span class="wf-btn sm">Cerrar ✕</span></div></div>
+      <div class="wf-body" style="align-items:center">
+        <span class="wf-pin" style="top:2px;right:4px">1</span>
+        <div class="wf-row" role="tablist" style="width:100%"><span class="wf-btn sm primary" style="flex:1">Historia 9:16</span><span class="wf-btn sm" style="flex:1">Publicación 1:1</span></div>
+        <span class="wf-pin" style="top:90px;right:60px">2</span>
+        <div class="wf-box" style="width:216px;height:384px;display:flex;flex-direction:column;gap:8px;justify-content:space-between;border:2px solid var(--ink)">
+          <span class="wf-small">ReVoto</span>
+          <div><div class="wf-h2">En años presidenciales se vota más.</div><div class="wf-figure" style="font-size:44px">62.4 %</div><div class="wf-small">Zapopan, Jalisco · Federal 2018</div></div>
+          <div class="wf-ph" style="min-height:90px"><span>mini serie</span></div>
+          <div class="wf-small" style="font-size:11px">Fuente: INE, conteos censales · revoto.mx</div>
+        </div>
+      </div>
+      <div class="wf-bottom" style="flex-direction:column;flex-basis:auto;gap:6px">
+        <span class="wf-btn primary block">Compartir…</span>
+        <span class="wf-btn block">⇩ Descargar imagen</span>
+      </div>
+      <span class="wf-pin" style="bottom:70px;right:6px">3</span>
+    </div>
+    <ol class="wf-notes">
+      <li>Selector de formato 9:16 / 1:1 (CA-01). La vista previa cambia de proporción.</li>
+      <li>La tarjeta incluye cifra, territorio, periodo, fuente y liga del sitio (CA-02). Ningún dato personal (CA-03, RN-08).</li>
+      <li>«Compartir…» abre el menú nativo si existe (Web Share API); si no, se oculta y queda «Descargar» (CA-04).</li>
+      <li class="a11y">Al terminar la descarga: <code>aria-live</code> «Imagen descargada» (RIU-07).</li>
+    </ol>
+  </article>
+
+  <!-- W-13 -->
+  <article class="wf-card" id="W-13" style="width:1020px">
+    <header><b>W-13 · Ajustes de lectura + vista en lectura fácil</b> · RIU-10 · HU-10 <span class="prio must">Must</span></header>
+    <div class="wf-frame">
+      <div class="wf-top"><div class="wf-row between"><h2 class="wf-h2">Ajustes de lectura</h2><span class="wf-btn sm">Cerrar ✕</span></div></div>
+      <div class="wf-body">
+        <span class="wf-pin" style="top:20px;right:12px">1</span>
+        <div class="wf-toggle"><span><b>Lectura fácil</b><br><span class="wf-small">Letra más grande, frases cortas</span></span><span class="sw on"></span></div>
+        <div class="wf-toggle"><span><b>Reducir movimiento</b><br><span class="wf-small">Activado por tu sistema</span></span><span class="sw on"></span></div>
+        <span class="wf-pin" style="top:130px;right:12px">2</span>
+        <div class="wf-toggle"><span><b>Versión ligera</b><br><span class="wf-small">Sin imágenes ni gráficas, menos datos</span></span><span class="sw"></span></div>
+        <div class="wf-field"><label>Tamaño de texto</label><div class="wf-row"><span class="wf-btn sm">A−</span><span class="wf-btn sm primary">A</span><span class="wf-btn sm">A+</span></div></div>
+        <div class="wf-box fill wf-small">Aquí nunca avanzamos solos: tú decides cuándo pasar a la siguiente pantalla.</div>
+        <span class="wf-btn block">☰ Ver resumen</span>
+        <span class="wf-pin" style="top:470px;left:6px">3</span>
+      </div>
+    </div>
+    <div class="wf-frame easy">
+      <div class="wf-top"><div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="wf-row between"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div></div>
+      <div class="wf-body">
+        <h1 class="wf-h1">En 2024 votaron 6 de cada 10 personas.</h1>
+        <div class="wf-figure">59.7<small> %</small></div>
+        <div class="wf-meta">Todo México<br>Elección federal 2024</div>
+        <div class="wf-ph" style="min-height:120px"><span>Pictograma (sin animación)</span></div>
+        <div class="wf-lines"><i></i><i></i></div>
+      </div>
+      <div class="wf-bottom"><span class="wf-btn">ⓘ Fuente</span><span class="wf-spacer"></span><span class="wf-btn primary">Siguiente ›</span></div>
+      <span class="wf-pin" style="top:300px;right:12px">4</span>
+    </div>
+    <ol class="wf-notes">
+      <li>Lectura fácil y movimiento reducido; este último se activa solo si el sistema declara <code>prefers-reduced-motion</code> (CA-03).</li>
+      <li>Versión ligera → W-15. «Ver resumen» → W-10 (HU-06 CA-01).</li>
+      <li>Sin avance automático en ningún modo (CA-02).</li>
+      <li>Vista de narrativa en lectura fácil: cuerpo ≥ 20 px, cifra 64 px, botones con texto («Siguiente ›»), se permite scroll vertical (CA-02, SRS 9.3).</li>
+    </ol>
+  </article>
+
+  <!-- W-14 -->
+  <article class="wf-card" id="W-14">
+    <header><b>W-14 · Vista para lector de pantalla y teclado</b> · RIU-03, RIU-04 · HU-14 <span class="prio must">Must</span> · Capa de anotación sobre W-05</header>
+    <div class="wf-frame">
+      <div class="wf-top" style="position:relative">
+        <span class="wf-fo" style="left:4px;top:4px">F1</span>
+        <div class="wf-box wf-small" style="padding:4px 8px;margin-bottom:6px">Saltar al contenido</div>
+        <div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="wf-row between" style="position:relative"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-fo" style="left:150px;top:4px">F2</span><span class="wf-icon">Aa</span><span class="wf-fo" style="right:48px;top:4px">F3</span></div>
+      </div>
+      <div class="wf-body" style="position:relative">
+        <div class="wf-alert wf-small" style="border-style:dashed"><b>aria-live:</b> «Pantalla 5 de 10. En años presidenciales se vota más.»</div>
+        <span class="wf-pin" style="top:10px;right:12px">1</span>
+        <div class="wf-h1">En años presidenciales se vota más.</div>
+        <div class="wf-box wf-small" style="border-style:dashed"><b>role="img" · aria-label:</b> «Participación en Zapopan, Jalisco, 2009 a 2024. Presidenciales: 2012 xx %, 2018 xx %, 2024 xx %. Intermedias: 2009 xx %, 2015 xx %, 2021 xx %.»</div>
+        <span class="wf-pin" style="top:230px;right:12px">2</span>
+        <span class="wf-fo" style="left:4px;top:330px">F4</span>
+        <table class="trace" style="font-size:12px">
+          <caption class="wf-small" style="text-align:left">Tabla alternativa (visible con «Ver como tabla»)</caption>
+          <tr><th>Año</th><th>Tipo</th><th>Zapopan</th><th>Nacional</th></tr>
+          <tr><td>2009</td><td>Intermedia</td><td>xx %</td><td>44.1 %</td></tr>
+          <tr><td>2012</td><td>Presidencial</td><td>xx %</td><td>62.1 %</td></tr>
+          <tr><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+        </table>
+        <span class="wf-pin" style="top:380px;right:4px">3</span>
+      </div>
+      <div class="wf-bottom" style="position:relative">
+        <span class="wf-btn sm wf-focus">ⓘ Fuente</span><span class="wf-fo" style="left:4px;top:2px">F5</span>
+        <span class="wf-btn sm">↗ Compartir</span><span class="wf-fo" style="left:96px;top:2px">F6</span>
+        <span class="wf-spacer"></span>
+        <span class="wf-icon" aria-label="Anterior">‹</span><span class="wf-fo" style="right:58px;top:2px">F7</span>
+        <span class="wf-icon">›</span><span class="wf-fo" style="right:6px;top:2px">F8</span>
+      </div>
+      <span class="wf-pin" style="bottom:46px;left:150px">4</span>
+    </div>
+    <ol class="wf-notes">
+      <li class="a11y">Cada cambio de pantalla se anuncia en región viva y el foco va al h1 (CA-03).</li>
+      <li class="a11y">Toda visualización tiene descripción con cifras explícitas, territorio y periodo (CA-01, RF-17).</li>
+      <li class="a11y">Tabla alternativa con encabezados <code>&lt;th&gt;</code> para series y barras (RIU-04).</li>
+      <li class="a11y">Orden de foco F1–F8, foco siempre visible (contorno 3 px), todos los controles operables con Tab/Enter/← → (CA-02). Botones de icono con <code>aria-label</code> («Anterior», «Siguiente»).</li>
+    </ol>
+  </article>
+
+  <!-- W-15 -->
+  <article class="wf-card" id="W-15">
+    <header><b>W-15 · Versión ligera</b> · RF-18 · HU-15 <span class="prio must">Must</span></header>
+    <div class="wf-frame">
+      <div class="wf-top"><div class="wf-row between"><b>ReVoto · versión ligera</b><span class="wf-link wf-small">Versión completa</span></div></div>
+      <div class="wf-body" style="gap:10px">
+        <span class="wf-pin" style="top:6px;right:12px">1</span>
+        <div class="wf-small">Pantalla 5 de 10 · Zapopan, Jalisco <a class="wf-link">cambiar</a></div>
+        <h1 class="wf-h1" style="font-size:20px">En años presidenciales se vota más.</h1>
+        <table class="trace" style="font-size:13px">
+          <tr><th>Año</th><th>Tipo</th><th>Zapopan</th><th>Nacional</th></tr>
+          <tr><td>2009</td><td>Interm.</td><td>xx %</td><td>44.1 %</td></tr>
+          <tr><td>2012</td><td>Presid.</td><td>xx %</td><td>62.1 %</td></tr>
+          <tr><td>2015</td><td>Interm.</td><td>xx %</td><td>47.1 %</td></tr>
+          <tr><td>2018</td><td>Presid.</td><td>xx %</td><td>62.4 %</td></tr>
+          <tr><td>2021</td><td>Interm.</td><td>xx %</td><td>51.8 %</td></tr>
+          <tr><td>2024</td><td>Presid.</td><td>xx %</td><td>59.7 %</td></tr>
+        </table>
+        <span class="wf-pin" style="top:360px;right:12px">2</span>
+        <div class="wf-small">Fuente: INE, conteos censales 2009–2024. <a class="wf-link">Ver fuente</a></div>
+        <div class="wf-box fill wf-small">Peso de esta versión: ≤ 500 KB en la primera carga. Funciona en el navegador, sin instalar nada.</div>
+        <span class="wf-pin" style="top:520px;left:6px">3</span>
+      </div>
+      <div class="wf-bottom"><a class="wf-link">‹ Anterior</a><span class="wf-spacer"></span><a class="wf-link"><b>Siguiente ›</b></a></div>
+    </div>
+    <ol class="wf-notes">
+      <li>Misma secuencia y contenido; sin imágenes, fuentes web ni librería de gráficas: solo texto y tablas.</li>
+      <li>Se ofrece si el usuario la pide (W-01, W-13) o si la red es lenta (<code>navigator.connection</code> / Save-Data) (RF-18).</li>
+      <li>Carga inicial ≤ 500 KB y primera pantalla ≤ 3 s en 3G rápido (CA-01, RNF-01, RNF-02). Sin app (CA-02).</li>
+    </ol>
+  </article>
+
+  <!-- W-16 -->
+  <article class="wf-card" id="W-16">
+    <header><b>W-16 · Datos abiertos</b> · RIU-09 · HU-17 <span class="prio">Should</span></header>
+    <div class="wf-frame tall">
+      <div class="wf-top"><div class="wf-row between"><span class="wf-link">‹ Volver</span><span class="wf-icon">Aa</span></div></div>
+      <div class="wf-body">
+        <h1 class="wf-h1">Datos abiertos</h1>
+        <p class="wf-small" style="margin:0">Los mismos agregados que usa este sitio. Úsalos, verifícalos y cítalos.</p>
+        <span class="wf-pin" style="top:100px;right:12px">1</span>
+        <div class="wf-box"><b>Participación por entidad y municipio</b><div class="wf-small">2009–2024 · corte dd/mm/aaaa · 1.2 MB</div><div class="wf-row" style="margin-top:8px"><span class="wf-btn sm">⇩ CSV</span><span class="wf-btn sm">⇩ JSON</span></div></div>
+        <div class="wf-box"><b>Participación por grupo de edad y sexo</b><div class="wf-small">2009–2024 · corte dd/mm/aaaa · 0.8 MB</div><div class="wf-row" style="margin-top:8px"><span class="wf-btn sm">⇩ CSV</span><span class="wf-btn sm">⇩ JSON</span></div></div>
+        <div class="wf-box"><b>Participación por tipo de sección</b><div class="wf-small">2009–2024 · corte dd/mm/aaaa · 0.3 MB</div><div class="wf-row" style="margin-top:8px"><span class="wf-btn sm">⇩ CSV</span><span class="wf-btn sm">⇩ JSON</span></div></div>
+        <span class="wf-pin" style="top:520px;right:12px">2</span>
+        <div class="wf-row"><span class="wf-btn sm" style="flex:1">Diccionario de datos</span><span class="wf-btn sm" style="flex:1">Metodología</span></div>
+        <span class="wf-btn sm">Reporte de calidad y validación</span>
+      </div>
+    </div>
+    <ol class="wf-notes">
+      <li>Cada conjunto en CSV y JSON (CA-01, RF-14). Pensado para investigador/periodista; en escritorio se vuelve tabla (RIU-09).</li>
+      <li>Diccionario, metodología y fecha de corte referenciados (CA-02). Reporte de calidad RF-24.</li>
+    </ol>
+  </article>
+
+  <!-- W-17 -->
+  <article class="wf-card" id="W-17">
+    <header><b>W-17 · Estados: carga, error, umbral, periodo faltante</b> · HU-31 ALT-01 · HU-28 CA-04, ALT-01 <span class="prio must">Must</span></header>
+    <div class="wf-frame tall">
+      <div class="wf-top"><div class="wf-progress"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="wf-row between"><span class="wf-chip">Jalisco · Zapopan ▾</span><span class="wf-icon">Aa</span></div></div>
+      <div class="wf-body" style="gap:10px">
+        <p class="wf-kicker">A · Cargando</p>
+        <div class="wf-skel" style="width:85%;height:22px"></div><div class="wf-skel" style="width:40%;height:44px"></div><div class="wf-skel" style="height:70px"></div>
+        <p class="wf-kicker" style="margin-top:6px">B · Error</p>
+        <span class="wf-pin" style="top:345px;right:4px">1</span>
+        <div class="wf-alert"><b>No pudimos cargar las cifras de Zapopan.</b><br><span class="wf-small">Revisa tu conexión. Tus cifras no se perdieron.</span><div class="wf-row" style="margin-top:8px"><span class="wf-btn sm primary">Reintentar</span><span class="wf-btn sm">Usar versión ligera</span></div></div>
+        <p class="wf-kicker" style="margin-top:6px">C · Umbral de publicación</p>
+        <span class="wf-pin" style="top:515px;right:4px">2</span>
+        <div class="wf-alert wf-small">Mostramos cifras de <b>Jalisco</b>: el municipio elegido tiene muy pocos registros para publicarlos sin riesgo de identificar a grupos pequeños.</div>
+        <p class="wf-kicker" style="margin-top:6px">D · Periodo faltante</p>
+        <span class="wf-pin" style="top:640px;right:4px">3</span>
+        <div class="wf-alert wf-small">Este municipio tiene datos de <b>2015 a 2024</b>. Antes no existía con sus límites actuales.</div>
+      </div>
+    </div>
+    <ol class="wf-notes">
+      <li>Nunca pantalla en blanco: causa + reintentar (HU-31 ALT-01, CU-02 E1).</li>
+      <li>Elevación al nivel superior por RN-05 con explicación (HU-28 CA-04, RF-22).</li>
+      <li>Geografía cambiante: se indica el periodo con datos (HU-28 ALT-01, CAL-07).</li>
+      <li class="a11y">Errores con <code>role="alert"</code>; esqueletos con <code>aria-busy="true"</code>.</li>
+    </ol>
+  </article>
+
+  </div>
+</section>
+
+<!-- ======================= TRAZABILIDAD ======================= -->
+<section class="doc" id="trazabilidad">
+  <h2>Trazabilidad · historias Must → pantallas</h2>
+  <p class="lead">US-04 CA-2: cada historia Must tiene al menos una pantalla representada.</p>
+  <table class="trace">
+    <thead><tr><th>Historia Must</th><th>Pantallas</th><th>Criterios representados</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>HU-31 Recorrer la secuencia</td><td><a href="#W-01">W-01</a>, <a href="#W-03">W-03</a>…<a href="#W-10">W-10</a>, <a href="#W-17">W-17</a></td><td>CA-01…CA-04, ALT-01</td><td>✅</td></tr>
+      <tr><td>HU-28 Elegir mi territorio</td><td><a href="#W-02">W-02</a>, <a href="#W-04">W-04</a>, <a href="#W-17">W-17</a></td><td>CA-01…CA-04, ALT-01</td><td>✅</td></tr>
+      <tr><td>HU-07 Comparar con elecciones anteriores</td><td><a href="#W-05">W-05</a></td><td>CA-01…CA-03</td><td>✅</td></tr>
+      <tr><td>HU-01 Ver las cifras de mi generación</td><td><a href="#W-06">W-06</a></td><td>CA-01…CA-03</td><td>✅</td></tr>
+      <tr><td>HU-18 Conocer la fuente</td><td><a href="#W-11">W-11</a></td><td>CA-01…CA-03</td><td>✅</td></tr>
+      <tr><td>HU-02 Compartir una tarjeta</td><td><a href="#W-12">W-12</a></td><td>CA-01…CA-04</td><td>✅</td></tr>
+      <tr><td>HU-10 Leer con comodidad</td><td><a href="#W-01">W-01</a>, <a href="#W-13">W-13</a></td><td>CA-01…CA-03</td><td>✅</td></tr>
+      <tr><td>HU-14 Navegar con lector de pantalla</td><td><a href="#W-14">W-14</a></td><td>CA-01…CA-03</td><td>✅</td></tr>
+      <tr><td>HU-15 Consultar con conexión limitada</td><td><a href="#W-15">W-15</a></td><td>CA-01, CA-02</td><td>✅</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<script type="module">
+  try {
+    const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs');
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', flowchart: { useMaxWidth: true } });
+  } catch (e) { console.warn('Mermaid no disponible (sin conexión)', e); }
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "@revoto/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Contrato de datos L4 entre apps/pipeline (productor) y apps/web (consumidor): tipos TypeScript y JSON Schema.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schemas/*": "./schemas/*"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

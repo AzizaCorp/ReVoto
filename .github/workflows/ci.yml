@@ -1,0 +1,82 @@
+# Checks obligatorios de STD-ESTRATEGIA-RAMAS (Tabla 3). Vercel despliega por su integración con Git;
+# este flujo solo verifica. Configurar los jobs como "required" en la protección de develop, staging y main.
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, staging, main]
+  push:
+    branches: [develop, staging, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    name: web · lint, tipos, pruebas, build y peso
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npm run check:budget # RNF-01 y RNF-04
+      - run: npm run check:data # contrato L4
+
+  pipeline:
+    name: pipeline · reglas de negocio
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: apps/pipeline/requirements.txt
+      - run: pip install -r requirements.txt
+        working-directory: apps/pipeline
+      - run: python -m pytest -q
+        working-directory: apps/pipeline
+
+  commits:
+    name: commits · STD-MENSAJES-COMMIT
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Título del PR
+        env:
+          TITULO: ${{ github.event.pull_request.title }}
+        run: echo "$TITULO" | npx commitlint
+      - name: Commits del PR
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
+
+  secretos:
+    name: secretos · gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Escaneo con gitleaks
+        run: |
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.24.2 \
+            detect --source=/repo --no-banner --redact --exit-code 1

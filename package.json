@@ -1,0 +1,43 @@
+{
+  "name": "revoto",
+  "private": true,
+  "description": "Micrositio de storytelling con datos de participación electoral federal en México (2009–2024). Hackathon INE 2026.",
+  "type": "module",
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "npm run dev -w @revoto/web",
+    "build": "npm run build -w @revoto/web",
+    "preview": "npm run preview -w @revoto/web",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "check:budget": "node scripts/check-budget.mjs",
+    "check:data": "node scripts/validate-data.mjs",
+    "check": "npm run lint && npm run typecheck && npm run test && npm run build && npm run check:budget && npm run check:data",
+    "ui:nuevo": "node scripts/new-component.mjs",
+    "prepare": "husky || true",
+    "pipeline:test": "cd apps/pipeline && python -m pytest -q"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "^9.28.0",
+    "ajv": "^8.17.1",
+    "eslint": "^9.28.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.2.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.0"
+  }
+}

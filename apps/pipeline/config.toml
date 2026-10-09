@@ -1,0 +1,15 @@
+# Configuración del pipeline · se ejecuta desde apps/pipeline: python -m revoto_pipeline
+# Las rutas son relativas a la raíz del repositorio.
+[rutas]
+staging = "data/staging/conteos_censales_master.parquet"   # L1, se descarga del bucket (no se versiona)
+base = "data/revoto.duckdb"                                  # L2 y L3 locales (no se versiona)
+salida = "apps/web/public/data"                              # L4, sí se versiona
+reportes = "apps/pipeline/reportes"
+oficiales = "apps/pipeline/revoto_pipeline/validacion/cifras_oficiales.csv"
+
+[reglas]
+# RN-05: lista nominal mínima para publicar un agregado. Valor definido por el equipo en el SRS.
+# Mientras diga "POR_DEFINIR", el pipeline se detiene a propósito.
+umbral_rn05 = "POR_DEFINIR"
+# RF-23: diferencia máxima permitida contra la cifra oficial, en puntos porcentuales.
+max_diferencia_pp = 1.0

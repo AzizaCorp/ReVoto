@@ -1,0 +1,86 @@
+/* ReVoto · Tokens de diseño
+   Fuente: docs/diseno/manual-de-diseno-wireframes.md (§3 retícula, §4 escala, §5 paleta).
+   La paleta es provisional y neutra hasta que US-13 (sistema visual) defina la de alta fidelidad.
+   Regla: ningún componente usa valores literales; todo sale de estas variables. */
+
+:root {
+  /* ── Color (provisional, contraste verificado ≥ 4.5:1 texto · ≥ 3:1 gráficos · RNF-08) ── */
+  --rv-color-tinta: #1a1a1a;
+  --rv-color-tinta-2: #4d4d4d;
+  --rv-color-linea: #8a8a8a;
+  --rv-color-relleno: #d9d9d9;
+  --rv-color-relleno-2: #efefef;
+  --rv-color-papel: #ffffff;
+  --rv-color-fondo: #f4f4f2;
+  --rv-color-foco: #1a1a1a;
+  --rv-color-aviso-fondo: #efefef;
+
+  /* Series temporales (RN-03): la distinción NO depende del color, sino del relleno */
+  --rv-serie-presidencial: var(--rv-color-tinta);
+  --rv-serie-intermedia: repeating-linear-gradient(
+    45deg,
+    var(--rv-color-papel) 0 4px,
+    var(--rv-color-tinta-2) 4px 6px
+  );
+
+  /* ── Tipografía (§4) ── */
+  --rv-fuente: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --rv-texto-cifra: 56px;
+  --rv-texto-h1: 24px;
+  --rv-texto-h2: 18px;
+  --rv-texto-cuerpo: 16px;
+  --rv-texto-meta: 14px;
+  --rv-texto-etiqueta: 13px;
+  --rv-peso-normal: 400;
+  --rv-peso-medio: 500;
+  --rv-peso-semi: 600;
+  --rv-peso-fuerte: 700;
+  --rv-interlineado: 1.45;
+
+  /* ── Espaciado: módulo base de 8 px (§3) ── */
+  --rv-espacio-1: 8px;
+  --rv-espacio-2: 16px;
+  --rv-espacio-3: 24px;
+  --rv-espacio-4: 32px;
+  --rv-espacio-6: 48px;
+  --rv-margen-lateral: 16px;
+
+  /* ── Retícula de pantalla narrativa (§3, plantilla 7.1) ── */
+  --rv-marco-ancho: 360px;
+  --rv-marco-alto: 760px;
+  --rv-marco-max: 480px; /* a partir de 768 px el marco se centra */
+  --rv-zona-superior: 56px;
+  --rv-zona-inferior: 72px;
+
+  /* ── Interacción ── */
+  --rv-objetivo-tactil: 44px; /* WCAG 2.5.8 */
+  --rv-boton-alto: 48px;
+  --rv-radio: 8px;
+  --rv-radio-pildora: 999px;
+  --rv-borde: 1.5px;
+  --rv-foco-anillo: 0 0 0 3px var(--rv-color-papel), 0 0 0 5px var(--rv-color-foco);
+  --rv-duracion: 200ms;
+  --rv-curva: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ── Lectura fácil (HU-10 · W-13): texto mayor y sin animaciones ── */
+:root[data-lectura='facil'] {
+  --rv-texto-cifra: 64px;
+  --rv-texto-h1: 28px;
+  --rv-texto-h2: 22px;
+  --rv-texto-cuerpo: 20px;
+  --rv-texto-meta: 18px;
+  --rv-texto-etiqueta: 16px;
+  --rv-interlineado: 1.6;
+  --rv-duracion: 0ms;
+}
+
+/* ── Movimiento reducido: preferencia del sistema o ajuste de W-13 ── */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --rv-duracion: 0ms;
+  }
+}
+:root[data-movimiento='reducido'] {
+  --rv-duracion: 0ms;
+}

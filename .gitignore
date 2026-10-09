@@ -1,0 +1,42 @@
+# Dependencias y builds
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+
+# Datos que NUNCA se versionan (POL CM · RNF-13 · límite de 100 MB de GitHub)
+data/
+*.parquet
+*.duckdb
+*.duckdb.wal
+*.xlsx
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.ipynb_checkpoints/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Secretos y entorno
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editor / SO
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Vercel
+.vercel/
