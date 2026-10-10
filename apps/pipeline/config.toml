@@ -1,11 +1,41 @@
 # Configuración del pipeline · se ejecuta desde apps/pipeline: python -m revoto_pipeline
 # Las rutas son relativas a la raíz del repositorio.
 [rutas]
-staging = "data/staging/conteos_censales_master.parquet"   # L1, se descarga del bucket (no se versiona)
+ine_raw = "data/raw/conteos_censales"
+ine_staging = "data/staging/ine"   # L1, se descarga del bucket (no se versiona)
+inegi_raw = "data/raw/inegi"
+inegi_staging = "data/staging/inegi"
+conapo_raw = "data/raw/conapo/pobproy_ggrupos.csv"
+conapo_staging = "data/staging/conapo"
+geo_raw = "data/raw/geografia"
+geo_staging = "data/staging/geo"
+processed = "data/processed"
 base = "data/revoto.duckdb"                                  # L2 y L3 locales (no se versiona)
 salida = "apps/web/public/data"                              # L4, sí se versiona
 reportes = "apps/pipeline/reportes"
+mapping_conapo_ine = "data/mappings/conapo_ine.csv"
 oficiales = "apps/pipeline/revoto_pipeline/validacion/cifras_oficiales.csv"
+
+
+[ingestion]
+years_ine = [2009, 2012, 2015, 2018, 2021, 2024]
+csv_encoding = "utf-8-sig"
+threads = 4
+memory_limit = "4GB"
+
+[referencia_censal]
+"2009" = 2010
+"2012" = 2010
+"2015" = 2010
+"2018" = 2020
+"2021" = 2020
+"2024" = 2020
+
+[geografía]
+# SEGUN INE, 2009-2021 se emplea 2021, mientras que 2024 es 2023.
+secciones_pattern = "secciones/{anio}/SECCION.shp"
+seccion_column = "SECCION"
+entidad_column = "ENTIDAD"
 
 [reglas]
 # RN-05: lista nominal mínima para publicar un agregado. Valor definido por el equipo en el SRS.

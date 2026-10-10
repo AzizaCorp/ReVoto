@@ -18,6 +18,9 @@ data/
 *.cpg
 *.ipynb_checkpoints/
 
+# Reportes generados
+/apps/pipeline/reportes/
+
 # Python
 .venv/
 __pycache__/
