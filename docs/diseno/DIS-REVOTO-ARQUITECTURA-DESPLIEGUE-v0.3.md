@@ -456,18 +456,18 @@ revoto/
 │  │  ├─ src/infrastructure/ # adaptadores (JSON estáticos)
 │  │  ├─ src/presentation/   # React: components (Atomic Design), pages, hooks, styles
 │  │  ├─ src/main.tsx        # punto de composición
-│  │  ├─ public/data/        # L4, generado por el pipeline
-│  │  └─ vercel.json
+│  │  └─ public/data/        # L4, generado por el pipeline
 │  └─ pipeline/              # Python + DuckDB (revoto_pipeline/)
 ├─ packages/contracts/       # @revoto/contracts · DTO + JSON Schema del L4
 ├─ docs/ · design/wireframes/
 ├─ scripts/                  # generador de componentes y checks de CI
 ├─ .github/workflows/ci.yml
+├─ vercel.json               # Vercel Services: servicio «web» + encabezados
 ├─ budget.json               # presupuestos de peso compartidos por CI y pipeline
 └─ AGENTS.md · CLAUDE.md
 ```
 
-En Vercel, **Root Directory** = `apps/web`. En este documento, `public/data/` se refiere a `apps/web/public/data/` y `pipeline/` a `apps/pipeline/revoto_pipeline/`. El pipeline se ejecuta con `python -m revoto_pipeline` desde `apps/pipeline`.
+En Vercel, **Root Directory** = raíz del repositorio y el proyecto usa **Services**: `vercel.json` declara un único servicio público, `web` (`apps/web`, Vite). `apps/pipeline` no es un servicio: es un proceso por lotes fuera de línea (RNF-17, ADR-0001), así que no hay bindings. En este documento, `public/data/` se refiere a `apps/web/public/data/` y `pipeline/` a `apps/pipeline/revoto_pipeline/`. El pipeline se ejecuta con `python -m revoto_pipeline` desde `apps/pipeline`.
 
 `.gitignore` mínimo para que nunca se suban fuentes ni bases locales:
 
@@ -536,10 +536,25 @@ sequenceDiagram
 
 El pipeline **no** corre en CI: necesitaría credenciales del bucket y descargar 193 MB en cada PR. En cambio, el PR `data/*` incluye el reporte de validación como evidencia y CI verifica la forma y el peso del resultado.
 
-### 8.4 `vercel.json`
+### 8.4 `vercel.json` (raíz del repositorio)
 
 ```json
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "web": {
+      "root": "apps/web",
+      "framework": "vite",
+      "buildCommand": "npm run build",
+      "outputDirectory": "dist"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": { "service": "web" }
+    }
+  ],
   "headers": [
     {
       "source": "/data/manifest.json",
@@ -553,9 +568,13 @@ El pipeline **no** corre en CI: necesitaría credenciales del bucket y descargar
       "source": "/(.*)",
       "headers": [
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; img-src 'self' data:; upgrade-insecure-requests" },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests"
+        },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
       ]
     }
   ]
