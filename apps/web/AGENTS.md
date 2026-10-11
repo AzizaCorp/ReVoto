@@ -53,4 +53,4 @@ Alias de importación: `@/` = `src/` (`@/domain`, `@/application`, `@/presentati
 
 ## Vercel
 
-**Root Directory** = `apps/web`, **Production Branch** = `main`, dominio de Staging asignado a la rama `staging`. `vercel.json` define caché de datos y encabezados de seguridad (RNF-11).
+Este paquete es el servicio `web` del `vercel.json` de la raíz (Vercel Services; Root Directory = raíz del repo). **Production Branch** = `main`, dominio de Staging asignado a la rama `staging`. El `vercel.json` de la raíz define caché de datos y encabezados de seguridad (RNF-11); no crees otro aquí. Prueba local con `vercel dev` desde la raíz.
