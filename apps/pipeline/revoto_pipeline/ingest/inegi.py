@@ -1,7 +1,7 @@
 """Stage selected ITER variables with explicit data-availability reporting."""
 from __future__ import annotations
 import os
-from config import Settings, connection, sql_path
+from revoto_pipeline.config import Settings, connection, sql_path
 from revoto_pipeline.sql_utils import atomic_write
 from revoto_pipeline.transform.inegi import (INDICATORS, IDENTITY, find_sex_pairs,
                                selected_indicators, inegi_select, sex_long_select)

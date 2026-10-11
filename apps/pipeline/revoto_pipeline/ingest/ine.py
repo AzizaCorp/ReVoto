@@ -2,8 +2,8 @@
 from __future__ import annotations
 from pathlib import Path
 import os
-from config import Settings, connection
-from sql_utils import atomic_write, read_csv
+from revoto_pipeline.config import Settings, connection
+from revoto_pipeline.sql_utils import atomic_write, read_csv
 from revoto_pipeline.transform.ine import ine_select, municipality_select
 from revoto_pipeline.validation.schemas import INE_COLUMNS, check_header, first_record, SchemaError
 from revoto_pipeline.validation.quality import ine_quality, assert_ine_quality, save_report
