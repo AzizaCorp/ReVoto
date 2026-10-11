@@ -1,41 +1,77 @@
 /* ReVoto · Tokens de diseño
-   Fuente: docs/diseno/manual-de-diseno-wireframes.md (§3 retícula, §4 escala, §5 paleta).
-   La paleta es provisional y neutra hasta que US-13 (sistema visual) defina la de alta fidelidad.
+   Fuente: Design System «ReVoto» en Claude (manual de marca) y docs/diseno/manual-de-diseno-wireframes.md
+   (§3 retícula, §4 escala). Si cambias un valor aquí, cámbialo también en el manual de marca.
    Regla: ningún componente usa valores literales; todo sale de estas variables. */
 
 :root {
-  /* ── Color (provisional, contraste verificado ≥ 4.5:1 texto · ≥ 3:1 gráficos · RNF-08) ── */
-  --rv-color-tinta: #1a1a1a;
-  --rv-color-tinta-2: #4d4d4d;
-  --rv-color-linea: #8a8a8a;
-  --rv-color-relleno: #d9d9d9;
-  --rv-color-relleno-2: #efefef;
+  /* ── Color · manual de marca ReVoto (Design System «ReVoto», concepto del 10/10/2026) ──
+     Contraste sobre --rv-color-papel: tinta 17.6:1 · tinta-2 7.2:1 · magenta-texto 5.6:1 ·
+     magenta 3.5:1 (solo texto ≥ 24px, iconos y bordes) · lila/azul/lavanda < 3:1 (solo con etiqueta). */
+  --rv-color-tinta: #171824;
+  --rv-color-tinta-2: #55566a;
+  --rv-color-sobre-tinta: #ffffff;
+  --rv-color-linea: #e6e1e6;
+  --rv-color-linea-control: #8c8796;
+  --rv-color-relleno: #d7d1d3;
+  --rv-color-relleno-2: #f3f2f5;
   --rv-color-papel: #ffffff;
-  --rv-color-fondo: #f4f4f2;
-  --rv-color-foco: #1a1a1a;
-  --rv-color-aviso-fondo: #efefef;
+  --rv-color-fondo: #fbf7f8;
+  --rv-color-rosa-claro: #ffe3f1;
+  --rv-color-magenta: #ff2d94;
+  --rv-color-magenta-texto: #c8106e;
+  --rv-color-ciruela: #933d82;
+  --rv-color-uva: #5d1b6d;
+  --rv-color-lila: #b481ff;
+  --rv-color-azul: #8495ff;
+  --rv-color-lavanda: #a998ff;
+  --rv-color-gris-razon: #d7d1d3;
+  --rv-color-foco: var(--rv-color-tinta);
+  --rv-color-aviso-fondo: var(--rv-color-rosa-claro);
+
+  /* Escala secuencial de mapas (menor → mayor) */
+  --rv-mapa-1: #fae4f0;
+  --rv-mapa-2: #fbd1e8;
+  --rv-mapa-3: #f7a2d4;
+  --rv-mapa-4: #ef67b8;
+  --rv-mapa-5: #e648a7;
+  --rv-mapa-6: #b4318a;
+  --rv-mapa-7: #802277;
+  --rv-mapa-8: #5d1b6d;
+
+  /* Razones (siempre con etiqueta o icono: lila, azul y lavanda tienen luminosidad parecida) */
+  --rv-razon-cambio: var(--rv-color-magenta);
+  --rv-razon-deber: var(--rv-color-lila);
+  --rv-razon-propuestas: var(--rv-color-azul);
+  --rv-razon-voz: var(--rv-color-lavanda);
+  --rv-razon-otra: var(--rv-color-gris-razon);
 
   /* Series temporales (RN-03): la distinción NO depende del color, sino del relleno */
-  --rv-serie-presidencial: var(--rv-color-tinta);
+  --rv-serie-presidencial: var(--rv-color-uva);
   --rv-serie-intermedia: repeating-linear-gradient(
     45deg,
     var(--rv-color-papel) 0 4px,
-    var(--rv-color-tinta-2) 4px 6px
+    var(--rv-color-magenta) 4px 6px
   );
 
   /* ── Tipografía (§4) ── */
-  --rv-fuente: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Sora (titulares) y Plus Jakarta Sans (texto) deben autoalojarse en public/fonts:
+     la CSP de vercel.json bloquea Google Fonts y cuentan contra RNF-01. */
+  --rv-fuente-display: 'Sora', 'Segoe UI', system-ui, sans-serif;
+  --rv-fuente: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
   --rv-texto-cifra: 56px;
-  --rv-texto-h1: 24px;
+  --rv-texto-portada: 44px;
+  --rv-texto-h1: 26px;
   --rv-texto-h2: 18px;
   --rv-texto-cuerpo: 16px;
+  --rv-texto-opcion: 15px;
   --rv-texto-meta: 14px;
   --rv-texto-etiqueta: 13px;
   --rv-peso-normal: 400;
   --rv-peso-medio: 500;
   --rv-peso-semi: 600;
   --rv-peso-fuerte: 700;
-  --rv-interlineado: 1.45;
+  --rv-peso-portada: 800;
+  --rv-interlineado: 1.5;
 
   /* ── Espaciado: módulo base de 8 px (§3) ── */
   --rv-espacio-1: 8px;
@@ -54,11 +90,14 @@
 
   /* ── Interacción ── */
   --rv-objetivo-tactil: 44px; /* WCAG 2.5.8 */
-  --rv-boton-alto: 48px;
+  --rv-boton-alto: 52px;
   --rv-radio: 8px;
+  --rv-radio-tarjeta: 12px;
+  --rv-radio-marco: 28px;
   --rv-radio-pildora: 999px;
   --rv-borde: 1.5px;
-  --rv-foco-anillo: 0 0 0 3px var(--rv-color-papel), 0 0 0 5px var(--rv-color-foco);
+  --rv-foco-anillo: 0 0 0 2px var(--rv-color-papel), 0 0 0 4px var(--rv-color-foco);
+  --rv-sombra-flotante: 0 8px 24px rgba(23, 24, 36, 0.12);
   --rv-duracion: 200ms;
   --rv-curva: cubic-bezier(0.2, 0, 0, 1);
 }
@@ -66,6 +105,7 @@
 /* ── Lectura fácil (HU-10 · W-13): texto mayor y sin animaciones ── */
 :root[data-lectura='facil'] {
   --rv-texto-cifra: 64px;
+  --rv-texto-portada: 48px;
   --rv-texto-h1: 28px;
   --rv-texto-h2: 22px;
   --rv-texto-cuerpo: 20px;
