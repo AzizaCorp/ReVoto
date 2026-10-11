@@ -14,6 +14,7 @@ base = "data/revoto.duckdb"                                  # L2 y L3 locales (
 salida = "apps/web/public/data"                              # L4, sí se versiona
 reportes = "apps/pipeline/reportes"
 mapping_conapo_ine = "data/mappings/conapo_ine.csv"
+mapping_inegi_ine = "data/mappings/inegi_ine.csv"
 oficiales = "apps/pipeline/revoto_pipeline/validacion/cifras_oficiales.csv"
 
 
@@ -31,11 +32,26 @@ memory_limit = "4GB"
 "2021" = 2020
 "2024" = 2020
 
-[geografía]
+[referencia_distritacion_local]
+"2009" = 2021
+"2012" = 2021
+"2015" = 2021
+"2018" = 2021
+"2021" = 2021
+"2024" = 2023
+
+[geografia]
 # SEGUN INE, 2009-2021 se emplea 2021, mientras que 2024 es 2023.
-secciones_pattern = "secciones/{anio}/SECCION.shp"
-seccion_column = "SECCION"
-entidad_column = "ENTIDAD"
+inegi_marco_anio = 2024
+inegi_entidades = "inegi/00ent.shp"
+inegi_municipios = "inegi/00mun.shp"
+inegi_localidades = "inegi/00l.shp"
+secciones_dir = "secciones/{anio}"
+distritos_locales_dir = "distritos-locales/{anio}"
+secciones_archivo = "SECCION.shp"
+distritos_locales_archivo = "DISTRITO_LOCAL.shp"
+# Tolerancia EN GRADOS 
+geojson_simplify_degrees = 0.002
 
 [reglas]
 # RN-05: lista nominal mínima para publicar un agregado. Valor definido por el equipo en el SRS.
