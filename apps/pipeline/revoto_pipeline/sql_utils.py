@@ -21,7 +21,7 @@ def num(name: str, dtype: str = 'INTEGER') -> str:
 
 def read_csv(path: Path) -> str:
     """Column types are forced to VARCHAR; unexpected dialects should fail."""
-    return f"read_csv('{sql_path(path)}', header=true, all_varchar=true, delim=',', ignore_errors=false)"
+    return f"read_csv('{sql_path(path)}', header=true, all_varchar=true, delim=',', quote='\"', escape='\"', ignore_errors=false)"
 
 
 def copy_parquet(con, select_sql: str, destination: Path) -> None:
