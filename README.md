@@ -42,8 +42,7 @@ revoto/
 │  │  │  │  ├─ pages/            # pantallas W-NN
 │  │  │  │  └─ styles/           # tokens
 │  │  │  └─ main.tsx             # punto de composición
-│  │  ├─ public/data/            # JSON generados por el pipeline
-│  │  └─ vercel.json
+│  │  └─ public/data/            # JSON generados por el pipeline
 │  └─ pipeline/                  # Python + DuckDB · L1 → L4
 ├─ packages/
 │  └─ contracts/                 # @revoto/contracts · contrato L4 (tipos + JSON Schema)
@@ -52,6 +51,7 @@ revoto/
 ├─ scripts/                      # generador de componentes y checks de CI
 ├─ .claude/                      # subagentes y skills para Claude Code
 ├─ .github/                      # CI y plantilla de PR
+├─ vercel.json                  # Vercel Services: servicio «web» + encabezados
 └─ AGENTS.md · CLAUDE.md         # contexto para agentes (léelo primero)
 ```
 
@@ -80,4 +80,4 @@ La razón de esta estructura y la regla de dependencias entre capas están en `d
 
 ## Despliegue
 
-Vercel con **Root Directory** `apps/web`. `develop` → Development, `staging` → Staging, `main` → Production. Detalle en `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.3.md`.
+Vercel con **Services** (`vercel.json` en la raíz, Root Directory = raíz del repo): un solo servicio público, `web` (`apps/web`). El pipeline no se despliega: corre fuera de línea. `develop` → Development, `staging` → Staging, `main` → Production. Detalle en `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.3.md`.
