@@ -2,31 +2,42 @@
 from __future__ import annotations
 import csv
 import os
+import polars as pl
 from pathlib import Path
-from ..config import Settings, connection, sql_path
-from ..sql_utils import atomic_write
+from revoto_pipeline.config import Settings, connection, sql_path
+from revoto_pipeline.sql_utils import atomic_write
 
-EXPECTED = ('clave_conapo','clave_ent_conapo','cve_ent_ine','cve_mpio_ine','anio','status_match')
+CONAPO_REQUIRED_COLUMNS = {"clave_conapo", "clave_ent_conapo", "cve_ent_ine",
+                           "cve_mpio_ine", "anio", "status_match"}
+
+INEGI_REQUIRED_COLUMNS = {"censo_ref", "cvegeo_municipal_inegi", "anio_eleccion",
+                          "cve_ent_ine", "cve_mpio_ine", "status_match"}
 
 
-def checked_mapping(path: Path) -> list[dict[str,str]]:
-    with path.open(encoding='utf-8-sig',newline='') as handle:
-        rows = list(csv.DictReader(handle))
+def checked_mapping(path: Path, required_columns: set[str]) -> list[dict[str, str]]:
+    """Read a mapping CSV and return only validated correspondences.
+
+    Additional metadata columns such as ``metodo_match`` are allowed.
+    Only the columns required by the consuming transformation are mandatory.
+    """
+    if not path.exists():
+        raise FileNotFoundError(f"No existe el mapping: {path}\n Ejecuta primero:\n"
+            "python -m revoto_pipeline generate-mappings")
+
+    with path.open( "r", encoding = "utf-8-sig", newline = "") as source:
+        reader = csv.DictReader(source)
+        actual_columns = set(reader.fieldnames or [])
+        missing = required_columns - actual_columns
+
+        if missing:
+            raise ValueError(f"El mapping {path.name} no contiene las columnas requeridas: {sorted(missing)}. "
+                f"Columnas encontradas: {sorted(actual_columns)}")
+        rows = [row for row in reader if row.get("status_match", "").strip().lower() == "validado"]
+
     if not rows:
-        raise ValueError(f'Mapping vacío: {path}; completar solo con correspondencias verificadas.')
-    if set(rows[0]) != set(EXPECTED):
-        raise ValueError(f'Encabezados de crosswalk requeridos: {EXPECTED}')
-    valid = [r for r in rows if r['status_match'].strip().lower() == 'validado']
-    if not valid:
-        raise ValueError('No hay correspondencias con status_match=validado')
-    keys, targets = set(), set()
-    for row in valid:
-        identity = (row['clave_conapo'].strip(), int(row['anio']))
-        target = (int(row['cve_ent_ine']), int(row['cve_mpio_ine']), int(row['anio']))
-        if identity in keys or target in targets:
-            raise ValueError(f'Crosswalk no uno-a-uno: {row}')
-        keys.add(identity); targets.add(target)
-    return valid
+        raise ValueError(f"{path.name} no contiene correspondencias con status_match='validado'.")
+
+    return rows
 
 
 def build_context(cfg: Settings, estado: int) -> dict:

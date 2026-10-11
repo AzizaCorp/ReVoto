@@ -14,7 +14,7 @@ INDICATORS = ('POBTOT', 'POBFEM', 'POBMAS', 'P_18YMAS', 'P_18YMAS_F', 'P_18YMAS_
               'P18YM_PB', 'P18YM_PB_F', 'P18YM_PB_M', 'PEA', 'PEA_F', 'PEA_M', 
               'POCUPADA', 'POCUPADA_F', 'POCUPADA_M', 'PDESOCUP', 'PDESOCUP_F', 'PDESOCUP_M',
               'VPH_INTER', 'VPH_CEL', 'PSINDER', 'PDER_SS',
-              'PRESOE15', 'PRESOE15_F', 'PRESOE15_M', 'P3HLINHE', 'P3HLINHE_F', 'P3HLINHE_M'
+              'PRESOE15', 'PRESOE15_F', 'PRESOE15_M', 'P3HLINHE', 'P3HLINHE_F', 'P3HLINHE_M',
               'VPH_S_ELEC', 'VPH_AGUADV', 'VPH_DRENAJ')
 # These three count variables are officially published sex-specific measures.
 EXPLICIT_SEX_PAIRS = {
@@ -26,7 +26,7 @@ EXPLICIT_SEX_PAIRS = {
 def find_sex_pairs(columns: list[str]) -> dict[str, tuple[str,str]]:
     """Accept official paired source columns; never estimate from overall ratios."""
     selected = set(INDICATORS)
-    available = set(columns)
+    available = {c.upper() for c in columns}
     pairs = {total: (female, male)
              for total,(female,male) in EXPLICIT_SEX_PAIRS.items()
              if {total,female,male} <= available}
@@ -56,7 +56,7 @@ def record_level_sql() -> str:
 
 
 def inegi_select(path: Path, census: int, columns: list[str]) -> str:
-    present = set(columns)
+    present = {c.upper() for c in columns}
     projected: list[str] = []
     for name in IDENTITY:
         projected.append(f'{norm(name)} AS {ident(name)}' if name in present

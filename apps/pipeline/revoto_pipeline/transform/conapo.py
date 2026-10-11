@@ -1,6 +1,6 @@
 """CONAPO sex mapping and source-compatible projected measures."""
 from pathlib import Path
-from ..sql_utils import read_csv, norm, num, ident
+from revoto_pipeline.sql_utils import read_csv, norm, num, ident
 
 CONAPO_SEX_MAP = {'HOMBRES': 0, 'MUJERES': 1}
 AGE_FIELDS = ('POB_00_011','POB_012_29','POB_30_59','POB_60_mm')
