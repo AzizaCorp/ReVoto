@@ -26,10 +26,12 @@ def csv_header(path: Path, encoding: str = 'utf-8-sig') -> list[str]:
 def check_header(path: Path, required: tuple[str, ...], *, exact: bool = False,
                  encoding: str = 'utf-8-sig') -> list[str]:
     columns = csv_header(path, encoding)
-    if len(columns) != len(set(columns)):
+    canon = {c.upper(): c for c in columns}
+    if len(canon) != len(set(columns)):
         raise SchemaError(f'Encabezados duplicados en {path}')
-    missing = sorted(set(required) - set(columns))
-    extras = sorted(set(columns) - set(required)) if exact else []
+    need = {c.upper() for c in required}
+    missing = sorted(need - canon.keys())
+    extras = sorted(set(canon) - need) if exact else []
     if missing or extras:
         raise SchemaError(f'{path}: columnas faltantes={missing}; inesperadas={extras}')
     return columns
