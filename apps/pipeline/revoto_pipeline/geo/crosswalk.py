@@ -16,22 +16,52 @@ from revoto_pipeline.geo.temporal import resolve_reference
 DMS_RE = re.compile(r'''^\s*(\d{1,3})\s*°\s*(\d{1,2})\s*'\s*([\d.]+)\s*"?\s*([NSEW])\s*$''', re.I)
 
 
-def dms_to_decimal(value: object) -> float | None:
+def dms_to_decimal(value: object, axis: str | None = None) -> float | None:
     """Parse INEGI DMS, e.g. 95°42'19.854\" W; reject invalid tokens."""
-    if not isinstance(value, str) or not value.strip():
+    if value is None:
+        return None
+    
+    token = str(value).strip()
+    if not token or token == '*':
+        return None
+    
+    if token.isascii() and token.isdigit() and axis in ('lat', 'lon'):
+        width = 6 if axis == 'lat' else 7
+
+        if len(token) == width:
+            degree_digits = 2 if axis == 'lat' else 3
+            degrees = int(token[:degree_digits])
+            minutes = int(token[degree_digits:degree_digits + 2])
+            seconds = int(token[degree_digits + 2:])
+
+            maximum = 90 if axis == 'lat' else 180
+
+            if degrees > maximum or minutes >= 60 or seconds >= 60:
+                return None
+
+            decimal = degrees + minutes / 60 + seconds / 3600
+            return -decimal if axis == 'lon' else decimal
+
         return None
     try:
         decimal = float(value)
-        return decimal if -180 <= decimal <= 180 else None
+        maximum = 90 if axis == "lat" else 180
+        return decimal if -maximum <= decimal <= maximum else None
     except ValueError:
         pass
-    match = DMS_RE.fullmatch(value.strip())
+    match = DMS_RE.fullmatch(token)
     if not match or match is None:
         return None
     degrees, minutes, seconds = map(float, match.group(1,2,3))
     direction = match.group(4).upper()
-    if minutes >= 60 or seconds >= 60 or degrees > (90 if direction in ('N','S') else 180):
+    if axis == 'lat' and direction not in ('N', 'S'):
         return None
+    if axis == 'lon' and direction not in ('E', 'W'):
+        return None
+    maximum = 90 if direction in ('N', 'S') else 180
+    if degrees > maximum or minutes >= 60 or seconds >= 60:
+        return None
+
     number = degrees + minutes/60 + seconds/3600
     return -number if direction in ('S','W') else number
 
@@ -231,8 +261,8 @@ def build_crosswalk(cfg: Settings, estado: int, anio_eleccion: int, *,
         local["origen_punto"] = "iter"
         if local.cvegeo.duplicated().any():
             raise ValueError('ITER contiene clave localidad duplicada')
-        local['lat'] = local['lat_raw'].map(dms_to_decimal)
-        local['lon'] = local['lon_raw'].map(dms_to_decimal)
+        local['lat'] = local['lat_raw'].map(lambda v: dms_to_decimal(v, axis='lat'))
+        local['lon'] = local['lon_raw'].map(lambda v: dms_to_decimal(v, axis='lon'))
         good = local['lat'].between(-90,90) & local['lon'].between(-180,180)
         if rural_points is not None and not rural_points.empty:
             rural_lookup = {row.cvegeo:row.geometry for row in rural_points.itertuples(index=False)
