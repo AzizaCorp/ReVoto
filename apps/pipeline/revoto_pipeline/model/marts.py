@@ -27,8 +27,8 @@ def aggregation_sql(table: str, dims: tuple[str,...], *, rn05: int | None = None
     if rn05 is None:
         return (f'SELECT *, NULL::DOUBLE AS participacion_pct, '
                 f"'umbral_no_definido'::VARCHAR AS publication_status FROM ({raw}) a")
-    return (f'SELECT *, CASE WHEN LN>={rn05} AND LN>0 THEN '
-            f'100.0*SV/LN ELSE NULL END AS participacion_pct, '
+    return (f'SELECT *, CASE WHEN LN>={rn05} AND LN>NS THEN '
+            f'100.0*SV/NULLIF(LN-NS, 0) ELSE NULL END AS participacion_pct, '
             f"CASE WHEN LN IS NULL THEN 'unavailable' WHEN LN<{rn05} THEN 'suppressed' "
             f"ELSE 'available' END AS publication_status FROM ({raw}) a")
 

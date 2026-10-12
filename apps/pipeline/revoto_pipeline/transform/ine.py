@@ -29,6 +29,6 @@ def municipality_select(parquet: Path, by_sex: bool = False) -> str:
     dims = 'AELEC, EDOCVE, MPIOCVE' + (', SEXO' if by_sex else '')
     return f'''SELECT {dims}, SUM(LN)::BIGINT AS LN, SUM(SV)::BIGINT AS SV,
           SUM(NV)::BIGINT AS NV, SUM(NS)::BIGINT AS NS,
-          CASE WHEN SUM(LN)>0 THEN ROUND(100.0*SUM(SV)/SUM(LN),4)::DOUBLE
+          CASE WHEN SUM(LN)>0 THEN ROUND(100.0*SUM(SV)/NULLIF(SUM(LN)-SUM(NS),0),4)::DOUBLE
                ELSE NULL END AS participacion_pct
     FROM read_parquet('{sql_path(parquet)}') GROUP BY {dims}'''

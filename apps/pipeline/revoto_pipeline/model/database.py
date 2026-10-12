@@ -34,7 +34,7 @@ def build_database(cfg: Settings) -> dict[str,int]:
         # Historical source DEL is never silently treated as a verified geometry.
         threshold=cfg.umbral_rn05
         pct=('NULL::DOUBLE' if threshold is None else
-             f'CASE WHEN COUNT(DISTINCT EDOCVE)=32 AND SUM(LN)>={int(threshold)} AND SUM(LN)>0 THEN 100.0*SUM(SV)/SUM(LN) ELSE NULL END')
+             f'CASE WHEN COUNT(DISTINCT EDOCVE)=32 AND SUM(LN)>={int(threshold)} AND SUM(LN)>SUM(NS) THEN 100.0*SUM(SV)/NULLIF(SUM(LN)-SUM(NS),0) ELSE NULL END')
         con.execute(f'''CREATE OR REPLACE VIEW analytics.mart_participacion_nacional AS
            SELECT AELEC, SUM(LN)::BIGINT AS LN, SUM(SV)::BIGINT AS SV,
              SUM(NV)::BIGINT AS NV,SUM(NS)::BIGINT AS NS,

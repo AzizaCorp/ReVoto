@@ -14,7 +14,8 @@ def test_original_ine_dimensions_are_kept():
 
 
 def test_ratio_of_counts_not_average_of_rates():
-    assert participacion(91, 100)==91
+    assert participacion(91, 100, 0) == 91
+    assert participacion(60, 100, 10) == pytest.approx(66.6666666667)
     assert ratio([(9,10),(1,100)])==pytest.approx(10/110)
     assert ratio([(0,0)]) is None
     assert ratio([(1,None)]) is None
@@ -53,7 +54,8 @@ def test_summed_denominator_sql_and_no_avg():
     sql=aggregation_sql('test',('AELEC','SECCION'),rn05=5)
     assert 'SUM(LN)' in sql and 'SUM(SV)' in sql
     assert 'AVG(' not in sql
-    assert 'SV/LN' in sql
+    assert 'SV/NULLIF(LN-NS, 0)' in sql
+    assert 'SUM(NS)' in sql
     assert aggregation_sql('test',('AELEC',),rn05=None).find('umbral_no_definido')>=0
 
 

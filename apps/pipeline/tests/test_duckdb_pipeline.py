@@ -49,3 +49,10 @@ def test_non_numeric_bad_counts_fail(tmp_path):
     copy_parquet(con,ine_select(file,2009),stage)
     with pytest.raises(ValueError,match='bad_counts'):
         assert_ine_quality(ine_quality(con,stage,2009,1))
+
+def test_participacion_excluye_ns():
+    from revoto_pipeline.model.reglas import participacion
+
+    assert participacion(60, 100, 10) == pytest.approx(66.6666666667)
+    assert participacion(60, 100, 100) is None
+    assert participacion(60, 100, None) is None

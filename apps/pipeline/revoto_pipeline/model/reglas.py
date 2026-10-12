@@ -4,9 +4,11 @@ from collections import Counter
 from collections.abc import Iterable
 
 
-def participacion(sv: int | None, ln: int | None) -> float | None:
-    return 100 * sv / ln if ln is not None and ln > 0 and sv is not None else None
-
+def participacion(sv: int | None, ln: int | None, ns: int | None,) -> float | None:
+    if sv is None or ln is None or ns is None:
+        return None
+    denominador = ln - ns
+    return 100 * sv / denominador if denominador > 0 else None
 
 def weighted_mean(pairs: Iterable[tuple[float | None, int | None]]) -> float | None:
     rows = list(pairs)

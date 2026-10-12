@@ -119,14 +119,14 @@ def test_calidad_diferencia_errores_y_alertas(con):
     assert_ine_quality(report)  # anomalías no bloqueantes permanecen reportadas
 
 
-def test_participacion_actual_usa_sv_sobre_ln_no_ln_menos_ns(con):
+def test_participacion_usa_sv_sobre_ln_menos_ns(con):
     c, parquet = con
     from revoto_pipeline.transform.ine import municipality_select
 
     results = c.execute(municipality_select(parquet)).fetchall()
     by_mun = {row[2]: row for row in results}
     assert by_mun[39][3:7] == (400, 279, 101, 20)  # LN, SV, NV, NS
-    assert by_mun[39][-1] == pytest.approx(69.75)
+    assert by_mun[39][-1] == pytest.approx(73.4211, abs=1e-4)
     assert by_mun[117][-1] == pytest.approx(50.0)
     # Contrato actual: se conserva edad 140 y sexo=2 en el total municipal.
 
@@ -136,12 +136,11 @@ def test_desglose_sexo_actual_conserva_codigo_inesperado(con):
     from revoto_pipeline.transform.ine import municipality_select
 
     rows = c.execute(municipality_select(parquet, by_sex=True)).fetchall()
-    # Se documenta el comportamiento ACTUAL, no la regla RN-06 antigua.
     groups = {(row[2], row[3]): row[-1] for row in rows}
-    assert groups[(39, 0)] == pytest.approx(149 / 200 * 100)
-    assert groups[(39, 1)] == pytest.approx(70.0)
-    assert groups[(39, 2)] == pytest.approx(60.0)
 
+    assert groups[(39, 0)] == pytest.approx(round(100 * 149 / (200 - 10), 4))
+    assert groups[(39, 1)] == pytest.approx(round(100 * 70 / (100 - 10), 4))
+    assert groups[(39, 2)] == pytest.approx(60.0)
 
 def test_conteos_no_numericos_detienen_quality_gate(tmp_path: Path):
     duckdb = pytest.importorskip('duckdb')
