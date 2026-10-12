@@ -7,7 +7,7 @@ geopandas = pytest.importorskip('geopandas')
 from revoto_pipeline.config import load_config, CONFIG_FILE
 from revoto_pipeline.geo.temporal import resolve_reference
 from revoto_pipeline.geo.inegi_shapes import (geo_code, read_inegi_layer, read_inegi_state)
-from revoto_pipeline.geo.crosswalk import (find_territory_shp, read_electoral_polygons,
+from revoto_pipeline.geo.crosswalk import (dms_to_decimal, find_territory_shp, read_electoral_polygons,
     section_to_district, assign_points_to_sections, assign_locality_polygons_to_sections)
 
 
@@ -86,3 +86,10 @@ def test_user_shapefile_paths_and_state_filter(tmp_path):
               shape_frame(['2'],[poly],'SECCION').assign(CVE_ENT='01'))
     with pytest.raises(ValueError,match='hay 2 SHP'):
         find_territory_shp(cfg,'secciones',2021)
+
+def test_compact_dms_inegi_2010():
+    assert dms_to_decimal("215251", axis="lat") == pytest.approx(21.8808333333)
+    assert dms_to_decimal("1021746", axis="lon") == pytest.approx(-102.2961111111)
+    assert dms_to_decimal("215260", axis="lat") is None
+    assert dms_to_decimal("1026060", axis="lon") is None
+    assert dms_to_decimal("*", axis="lat") is None
