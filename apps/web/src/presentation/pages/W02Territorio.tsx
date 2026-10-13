@@ -29,10 +29,10 @@ export function W02Territorio() {
             ancho
             onClick={nav.confirmarTerritorio}
           >
-            Ver mis cifras
+            Continuar
           </Boton>
           <Boton variante="texto" onClick={nav.confirmarTerritorio}>
-            Continuar con cifras nacionales
+            Usar cifras nacionales
           </Boton>
         </>
       }

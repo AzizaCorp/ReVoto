@@ -27,6 +27,9 @@ export function W02bSobreTi() {
           >
             Ver mis cifras
           </Boton>
+          <Boton tamano="chico" icono="←" onClick={nav.anterior ?? undefined}>
+            Anterior
+          </Boton>
           <Boton variante="texto" onClick={nav.siguiente ?? undefined}>
             Saltar
           </Boton>

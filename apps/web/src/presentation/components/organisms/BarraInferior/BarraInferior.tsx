@@ -14,6 +14,8 @@ export interface BarraInferiorProps {
   textoSiguiente?: string;
   /** Fondo oscuro (portada). */
   oscura?: boolean;
+  /** Sin ‹ › ni «Fin»: la pantalla ya tiene su propia acción para avanzar (portada). */
+  sinAvance?: boolean;
 }
 
 /**
@@ -29,6 +31,7 @@ export function BarraInferior({
   onSiguiente,
   textoSiguiente = 'Siguiente',
   oscura,
+  sinAvance,
 }: BarraInferiorProps) {
   return (
     <nav
@@ -62,26 +65,28 @@ export function BarraInferior({
       <span className={estilos.nota}>
         <Texto rol="meta">Fuente: conteos censales INE 2009–2024 · Sin datos personales</Texto>
       </span>
-      <div className={estilos.derecha}>
-        {onAnterior && (
-          <Boton colapsable icono="←" onClick={onAnterior} etiqueta="Pantalla anterior">
-            Anterior
-          </Boton>
-        )}
-        {onSiguiente ? (
-          <Boton
-            colapsable
-            variante={oscura ? 'marca' : 'primario'}
-            iconoFinal="→"
-            onClick={onSiguiente}
-            etiqueta="Pantalla siguiente"
-          >
-            {textoSiguiente}
-          </Boton>
-        ) : (
-          <span className={estilos.fin}>Fin</span>
-        )}
-      </div>
+      {!sinAvance && (
+        <div className={estilos.derecha}>
+          {onAnterior && (
+            <Boton colapsable icono="←" onClick={onAnterior} etiqueta="Pantalla anterior">
+              Anterior
+            </Boton>
+          )}
+          {onSiguiente ? (
+            <Boton
+              colapsable
+              variante={oscura ? 'marca' : 'primario'}
+              iconoFinal="→"
+              onClick={onSiguiente}
+              etiqueta="Pantalla siguiente"
+            >
+              {textoSiguiente}
+            </Boton>
+          ) : (
+            <span className={estilos.fin}>Fin</span>
+          )}
+        </div>
+      )}
     </nav>
   );
 }

@@ -19,7 +19,7 @@ export interface MarcoHistoriaProps {
   conFuente?: boolean;
   /** La pantalla es compartible: lleva «Compartir» (RF-15). */
   compartible?: boolean;
-  /** Portada: fondo oscuro, sin número de paso y botón «Empezar». */
+  /** Portada: fondo oscuro, sin número de paso y sin ‹ › (avanza con su botón principal). */
   portada?: boolean;
 }
 
@@ -66,7 +66,7 @@ export function MarcoHistoria({
           onCompartir={compartir}
           onAnterior={nav.anterior}
           onSiguiente={nav.siguiente}
-          textoSiguiente={portada ? 'Empezar' : 'Siguiente'}
+          sinAvance={portada}
         />
       }
     >

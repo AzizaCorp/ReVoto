@@ -17,4 +17,12 @@ describe('BarraInferior', () => {
     expect(screen.queryByRole('button', { name: 'Pantalla anterior' })).not.toBeInTheDocument();
     expect(screen.getByText('Fin')).toBeInTheDocument();
   });
+
+  it('sin avance no dibuja ‹ › ni «Fin» (portada)', () => {
+    render(
+      <BarraInferior onFuente={() => {}} onAnterior={null} onSiguiente={() => {}} sinAvance />,
+    );
+    expect(screen.queryByRole('button', { name: 'Pantalla siguiente' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Fin')).not.toBeInTheDocument();
+  });
 });

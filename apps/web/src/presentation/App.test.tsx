@@ -16,11 +16,13 @@ describe('App · motor de secuencia', () => {
 
   it('avanza con el botón y con la flecha → y anuncia el progreso (CA-02, CA-04)', () => {
     const { container } = render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'Pantalla siguiente' }));
+    expect(screen.queryByRole('button', { name: 'Pantalla siguiente' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Descubrir mi territorio' }));
     expect(titulo()).toHaveTextContent('¿Dónde votas?');
     expect(window.location.hash).toBe('#/W-02');
     fireEvent.keyDown(window, { key: 'ArrowRight' });
     expect(titulo()).toHaveTextContent('Cuéntanos de ti');
+    expect(screen.getByRole('button', { name: 'Anterior' })).toBeInTheDocument();
     expect(container.querySelector('[aria-live="polite"]')).toHaveTextContent('Pantalla 2 de 10');
     fireEvent.keyDown(window, { key: 'ArrowLeft' });
     expect(titulo()).toHaveTextContent('¿Dónde votas?');
@@ -40,7 +42,7 @@ describe('App · motor de secuencia', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: /Cambiar territorio/ }));
     expect(titulo()).toHaveTextContent('¿Dónde votas?');
-    fireEvent.click(screen.getByRole('button', { name: 'Ver mis cifras' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
     expect(titulo()).toHaveTextContent('[Municipio], [Entidad]');
   });
 });

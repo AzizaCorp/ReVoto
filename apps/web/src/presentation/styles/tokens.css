@@ -90,8 +90,7 @@
   /* ── Esqueleto y capas ── */
   --rv-progreso-alto: 3px;
   --rv-pastilla-alto: 24px;
-  --rv-logo-ancho: 120px;
-  --rv-logo-alto: 20px;
+  --rv-logo-alto: 26px;
   --rv-hoja-alto: 70dvh;
   --rv-hoja-ancho-max: 640px;
   --rv-velo: rgb(23 24 36 / 0.45);
@@ -112,8 +111,7 @@
     --rv-texto-h1: 40px;
     --rv-texto-entrada: 15px;
     --rv-margen-lateral: 40px;
-    --rv-logo-ancho: 131px;
-    --rv-logo-alto: 22px;
+    --rv-logo-alto: 28px;
   }
 }
 @media (min-width: 1200px) {
@@ -122,8 +120,7 @@
     --rv-texto-entrada: 17px;
     --rv-margen-lateral: 64px;
     --rv-zona-superior: 80px;
-    --rv-logo-ancho: 143px;
-    --rv-logo-alto: 24px;
+    --rv-logo-alto: 30px;
   }
 }
 
