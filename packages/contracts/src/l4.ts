@@ -27,7 +27,12 @@ export interface TerritorioDto {
   cve?: number;
   cveEntidad?: number;
   nombre: string;
+  /** Solo en municipios: nombre de su entidad. */
+  nombreEntidad?: string;
 }
+
+/** Clave geoestadística INEGI del municipio (5 dígitos). No coincide siempre con la clave INE. */
+export type Cvegeo = string;
 
 /** Cifras de una elección para un territorio. */
 export interface CifrasEleccionDto {
@@ -50,7 +55,8 @@ export interface ManifiestoDto {
   version_datos: string;
   generado: string;
   fuente: string;
-  validacion: { max_diferencia_pp: number; reporte: string };
+  /** `max_diferencia_pp` es null mientras no haya cifras oficiales para comparar (RF-23). */
+  validacion: { max_diferencia_pp: number | null; reporte: string };
 }
 
 export interface SerieNacionalDto extends ArchivoBaseDto {
@@ -65,6 +71,7 @@ export interface EntidadDto {
 export interface ResumenMunicipioDto {
   cve: number;
   nombre: string;
+  cvegeo?: Cvegeo;
   /** RN-05: true si la lista nominal no alcanza el umbral; entonces no trae cifras. */
   suprimido?: boolean;
   participacion?: Partial<Record<AnioEleccion, Proporcion>>;
@@ -72,11 +79,44 @@ export interface ResumenMunicipioDto {
 
 export interface DatosEntidadDto extends ArchivoBaseDto {
   elecciones: CifrasEleccionDto[];
+  /** W-09b: elecciones con voto esperadas (de 3: 2018, 2021 y 2024) por grupo de edad. */
+  votos_esperados_por_edad?: Partial<Record<GrupoEdad, number>>;
   municipios: ResumenMunicipioDto[];
+}
+
+/** W-09: arquetipo municipal (k-medias, k = 5). Ausente con menos de 5 elecciones. */
+export interface ArquetipoDto {
+  id: 'A1' | 'A2' | 'A3' | 'A4' | 'A5';
+  nombre: string;
+  /** Puntos contra el nacional. */
+  nivel: number;
+  efecto_presidencial: number;
+  /** Puntos por década. */
+  tendencia: number;
+  volatilidad: number;
+  /** 1 = centro del grupo. */
+  tipicidad: number;
+  rasgo: 'nivel' | 'efp' | 'tend' | 'vol';
 }
 
 export interface DatosMunicipioDto extends ArchivoBaseDto {
   /** RN-05: si es true, la UI muestra la entidad con la nota de CU-02 A2. */
   suprimido: boolean;
   elecciones: CifrasEleccionDto[];
+  cvegeo?: Cvegeo;
+  /** W-04: claves INE de los municipios colindantes de la misma entidad. */
+  vecinos?: number[];
+  arquetipo?: ArquetipoDto;
+}
+
+/** W-20: reporte de calidad de la versión de datos (`<version>/calidad.json`). */
+export interface CalidadDto {
+  fuente: string;
+  origen: string;
+  reglas: {
+    id: string;
+    descripcion: string;
+    resultado: 'aprobada' | 'fallida' | 'pendiente';
+    detalle: string;
+  }[];
 }

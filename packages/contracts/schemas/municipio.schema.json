@@ -2,17 +2,111 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "municipio.schema.json",
   "type": "object",
-  "required": ["territorio", "fuente", "suprimido", "elecciones"],
+  "required": [
+    "territorio",
+    "fuente",
+    "suprimido",
+    "elecciones"
+  ],
   "properties": {
-    "territorio": { "$ref": "comun.schema.json#/$defs/territorio" },
-    "fuente": { "type": "string", "minLength": 1 },
-    "suprimido": { "type": "boolean" },
+    "territorio": {
+      "$ref": "comun.schema.json#/$defs/territorio"
+    },
+    "fuente": {
+      "type": "string",
+      "minLength": 1
+    },
+    "suprimido": {
+      "type": "boolean"
+    },
     "elecciones": {
       "type": "array",
-      "items": { "$ref": "comun.schema.json#/$defs/cifrasEleccion" }
+      "items": {
+        "$ref": "comun.schema.json#/$defs/cifrasEleccion"
+      }
+    },
+    "cvegeo": {
+      "$ref": "comun.schema.json#/$defs/cvegeo"
+    },
+    "vecinos": {
+      "type": "array",
+      "description": "Claves INE de los municipios colindantes de la misma entidad (W-04).",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "uniqueItems": true
+    },
+    "arquetipo": {
+      "type": "object",
+      "description": "W-09: arquetipo del municipio (k-medias, k = 5). Ausente con menos de 5 elecciones.",
+      "required": [
+        "id",
+        "nombre",
+        "nivel",
+        "efecto_presidencial",
+        "tendencia",
+        "volatilidad",
+        "tipicidad",
+        "rasgo"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "A1",
+            "A2",
+            "A3",
+            "A4",
+            "A5"
+          ]
+        },
+        "nombre": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nivel": {
+          "type": "number"
+        },
+        "efecto_presidencial": {
+          "type": "number"
+        },
+        "tendencia": {
+          "type": "number"
+        },
+        "volatilidad": {
+          "type": "number",
+          "minimum": 0
+        },
+        "tipicidad": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "rasgo": {
+          "enum": [
+            "nivel",
+            "efp",
+            "tend",
+            "vol"
+          ]
+        }
+      },
+      "additionalProperties": false
     }
   },
-  "if": { "properties": { "suprimido": { "const": true } } },
-  "then": { "properties": { "elecciones": { "maxItems": 0 } } },
+  "if": {
+    "properties": {
+      "suprimido": {
+        "const": true
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "elecciones": {
+        "maxItems": 0
+      }
+    }
+  },
   "additionalProperties": false
 }

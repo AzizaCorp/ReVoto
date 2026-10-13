@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "calidad.schema.json",
+  "title": "Reporte de calidad de la versión de datos (W-20)",
+  "type": "object",
+  "required": [
+    "fuente",
+    "origen",
+    "reglas"
+  ],
+  "properties": {
+    "fuente": {
+      "type": "string",
+      "minLength": 1
+    },
+    "origen": {
+      "type": "string"
+    },
+    "reglas": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "descripcion",
+          "resultado",
+          "detalle"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "descripcion": {
+            "type": "string"
+          },
+          "resultado": {
+            "enum": [
+              "aprobada",
+              "fallida",
+              "pendiente"
+            ]
+          },
+          "detalle": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

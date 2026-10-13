@@ -2,30 +2,78 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "entidad.schema.json",
   "type": "object",
-  "required": ["territorio", "fuente", "elecciones", "municipios"],
+  "required": [
+    "territorio",
+    "fuente",
+    "elecciones",
+    "municipios"
+  ],
   "properties": {
-    "territorio": { "$ref": "comun.schema.json#/$defs/territorio" },
-    "fuente": { "type": "string", "minLength": 1 },
+    "territorio": {
+      "$ref": "comun.schema.json#/$defs/territorio"
+    },
+    "fuente": {
+      "type": "string",
+      "minLength": 1
+    },
     "elecciones": {
       "type": "array",
-      "items": { "$ref": "comun.schema.json#/$defs/cifrasEleccion" }
+      "items": {
+        "$ref": "comun.schema.json#/$defs/cifrasEleccion"
+      }
     },
     "municipios": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["cve", "nombre"],
+        "required": [
+          "cve",
+          "nombre"
+        ],
         "properties": {
-          "cve": { "type": "integer", "minimum": 1 },
-          "nombre": { "type": "string" },
-          "suprimido": { "type": "boolean" },
+          "cve": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "suprimido": {
+            "type": "boolean"
+          },
           "participacion": {
             "type": "object",
-            "propertyNames": { "enum": ["2009", "2012", "2015", "2018", "2021", "2024"] },
-            "additionalProperties": { "$ref": "comun.schema.json#/$defs/proporcion" }
+            "propertyNames": {
+              "enum": [
+                "2009",
+                "2012",
+                "2015",
+                "2018",
+                "2021",
+                "2024"
+              ]
+            },
+            "additionalProperties": {
+              "$ref": "comun.schema.json#/$defs/proporcion"
+            }
+          },
+          "cvegeo": {
+            "$ref": "comun.schema.json#/$defs/cvegeo"
           }
         },
         "additionalProperties": false
+      }
+    },
+    "votos_esperados_por_edad": {
+      "type": "object",
+      "description": "W-09b: elecciones con voto esperadas (de 3: 2018, 2021, 2024) por grupo de edad.",
+      "propertyNames": {
+        "$ref": "comun.schema.json#/$defs/grupoEdad"
+      },
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 3
       }
     }
   },

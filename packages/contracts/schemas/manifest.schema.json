@@ -2,17 +2,43 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "manifest.schema.json",
   "type": "object",
-  "required": ["version_datos", "generado", "fuente", "validacion"],
+  "required": [
+    "version_datos",
+    "generado",
+    "fuente",
+    "validacion"
+  ],
   "properties": {
-    "version_datos": { "type": "string", "pattern": "^[0-9]{8}-[0-9a-f]{7}$" },
-    "generado": { "type": "string" },
-    "fuente": { "type": "string", "minLength": 1 },
+    "version_datos": {
+      "type": "string",
+      "pattern": "^[0-9]{8}-[0-9a-f]{7}$"
+    },
+    "generado": {
+      "type": "string"
+    },
+    "fuente": {
+      "type": "string",
+      "minLength": 1
+    },
     "validacion": {
       "type": "object",
-      "required": ["max_diferencia_pp", "reporte"],
+      "required": [
+        "max_diferencia_pp",
+        "reporte"
+      ],
       "properties": {
-        "max_diferencia_pp": { "type": "number", "minimum": 0, "maximum": 1 },
-        "reporte": { "type": "string" }
+        "max_diferencia_pp": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "null mientras no haya cifras oficiales para comparar (RF-23)."
+        },
+        "reporte": {
+          "type": "string"
+        }
       }
     }
   },

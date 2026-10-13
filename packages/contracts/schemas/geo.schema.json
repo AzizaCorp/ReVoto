@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "geo.schema.json",
+  "title": "Geometría TopoJSON (geo/entidades.topo.json y geo/<cve>.topo.json)",
+  "type": "object",
+  "required": [
+    "type",
+    "arcs",
+    "objects"
+  ],
+  "properties": {
+    "type": {
+      "const": "Topology"
+    },
+    "arcs": {
+      "type": "array"
+    },
+    "transform": {
+      "type": "object"
+    },
+    "bbox": {
+      "type": "array"
+    },
+    "objects": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "type",
+          "geometries"
+        ],
+        "properties": {
+          "geometries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "properties"
+              ],
+              "properties": {
+                "properties": {
+                  "type": "object",
+                  "required": [
+                    "nombre"
+                  ],
+                  "properties": {
+                    "cve": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "cvegeo": {
+                      "$ref": "comun.schema.json#/$defs/cvegeo"
+                    },
+                    "nombre": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

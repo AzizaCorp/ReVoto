@@ -37,7 +37,7 @@ const datos = join(raiz, 'apps', 'web', 'public', 'data');
 for (const archivo of listar(datos).filter((f) => f.endsWith('.json'))) {
   const rel = relative(datos, archivo).split(sep).join('/');
   const tam = statSync(archivo).size;
-  const limite = rel.includes('/entidad/')
+  const limite = rel.includes('/entidad/') || rel.includes('/geo/')
     ? presupuesto.entidad_kb
     : rel.includes('/municipio/')
       ? presupuesto.municipio_kb
