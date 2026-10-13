@@ -11,8 +11,10 @@ public/data/
    ├─ entidad/<cve>.json          # serie, votos esperados por edad (W-09b) y sus municipios (≤ 300 KB)
    ├─ municipio/<ent>-<mun>.json  # serie, cvegeo, vecinos (W-04) y arquetipo (W-09) (≤ 20 KB)
    ├─ calidad.json                # reglas verificadas (W-20)
-   ├─ geo/entidades.topo.json     # contorno de las 32 entidades
-   ├─ geo/<cve>.topo.json         # municipios de la entidad, TopoJSON simplificado (≤ 300 KB)
+   ├─ geo/entidades.topo.json     # 32 entidades (W-02)
+   ├─ geo/<cve>.topo.json         # municipios de la entidad (W-04, ≤ 300 KB)
+   ├─ geo/municipios.topo.json    # todos los municipios del país (W-03, ≤ 650 KB, solo se pide ahí)
+   ├─ mapa/participacion.json     # cvegeo → [nombre, entidad, participación por año] (W-03)
    └─ csv/participacion.csv       # datos abiertos con conteos (US-22)
 ```
 
@@ -25,6 +27,8 @@ PYTHONPATH=apps/pipeline python3 -m revoto_pipeline.convertir_v2 \
   --salida apps/web/public/data
 npm run check:data && npm run check:budget
 ```
+
+La geometría sale del marco geoestadístico INEGI ya proyectada (Lambert conforme cónica, EPSG:6372, metros): la app la dibuja en SVG sin librería de mapas.
 
 Limitaciones de esta versión:
 
