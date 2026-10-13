@@ -1,0 +1,1 @@
+{"schema_version":2,"estado":"10","anio_eleccion":2015,"grano":"entidad","fuentes":["INE"],"referencias":{"censo":2010,"cartografia":2021,"referencia_retroactiva":true},"medidas":[{"AELEC":2015,"EDOCVE":10,"publicacion":"available","ln":1200244,"sv":458200,"nv":649215,"ns":92829,"participacion_pct":41.375636053331405}]}
