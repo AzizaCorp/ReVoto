@@ -1,17 +1,23 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-01 «IconButton». */
 .iconButton {
   display: inline-grid;
   place-items: center;
   flex: none;
   width: var(--rv-touch-target);
   height: var(--rv-touch-target);
+  padding: 0;
   border-radius: var(--rv-radius-pill);
   border: var(--rv-border-width) solid currentColor;
   background: transparent;
   color: inherit;
   font-family: var(--rv-font-title);
-  font-weight: var(--rv-weight-title);
+  font-weight: var(--rv-weight-bold);
   font-size: var(--rv-text-button-small);
   cursor: pointer;
+  transition: scale var(--rv-duration-press) ease-out;
+}
+.iconButton:active:not(:disabled) {
+  scale: 0.96;
 }
 .iconButton:disabled {
   cursor: not-allowed;

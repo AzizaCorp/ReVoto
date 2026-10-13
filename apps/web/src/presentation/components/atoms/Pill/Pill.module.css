@@ -1,5 +1,7 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-01 «Pill». */
 .pill {
   align-self: flex-start;
+  flex: none;
   display: inline-flex;
   align-items: center;
   gap: var(--rv-space-1);
@@ -8,6 +10,7 @@
   border-radius: var(--rv-radius-pill);
   font-size: var(--rv-text-label);
   font-weight: var(--rv-weight-bold);
+  line-height: 1;
   letter-spacing: var(--rv-tracking-label);
   text-transform: uppercase;
   white-space: nowrap;
@@ -21,7 +24,14 @@
   color: var(--rv-color-ink);
 }
 .pending {
+  gap: var(--rv-space-05);
+  min-height: var(--rv-pill-height-small);
+  padding: 0 var(--rv-space-1);
   background: var(--rv-color-paper);
   border: var(--rv-border-thin) dashed var(--rv-color-brand);
   color: var(--rv-color-brand-text);
+  font-size: calc(var(--rv-text-label) - 1px);
+}
+.pending .text {
+  font-weight: var(--rv-weight-bold);
 }

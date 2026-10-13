@@ -1,3 +1,4 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-00 «Tipografía». */
 .h1,
 .h2,
 .lead,
@@ -11,6 +12,7 @@
   font-weight: var(--rv-weight-title);
   line-height: var(--rv-line-height-title);
   letter-spacing: var(--rv-tracking-title);
+  text-wrap: balance;
 }
 /* The h1 gets programmatic focus when the screen changes (HU-14); it is not interactive. */
 .h1:focus,
@@ -23,10 +25,13 @@
   font-size: var(--rv-text-h2);
   font-weight: var(--rv-weight-title);
   line-height: var(--rv-line-height-title);
+  letter-spacing: var(--rv-tracking-title);
 }
 .lead {
   font-size: var(--rv-text-lead);
+  line-height: var(--rv-line-height);
   color: var(--rv-color-ink-2);
+  text-wrap: pretty;
 }
 .body {
   font-size: var(--rv-text-body);
@@ -40,11 +45,22 @@
   font-weight: var(--rv-weight-bold);
   letter-spacing: var(--rv-tracking-label);
   text-transform: uppercase;
+  color: var(--rv-color-ink-2);
+}
+.figure,
+.figureSmall {
+  font-family: var(--rv-font-title);
+  font-weight: var(--rv-weight-title);
+  line-height: 1.06;
+  letter-spacing: var(--rv-tracking-title);
+  white-space: nowrap;
 }
 .figure {
-  font-family: var(--rv-font-title);
   font-size: var(--rv-text-figure);
-  font-weight: var(--rv-weight-title);
-  line-height: 1;
+}
+.figureSmall {
+  font-size: var(--rv-text-figure-small);
+}
+.pending {
   color: var(--rv-color-muted);
 }

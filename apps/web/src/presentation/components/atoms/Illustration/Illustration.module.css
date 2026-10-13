@@ -1,0 +1,13 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. */
+.illustration {
+  display: block;
+  width: 100%;
+  max-width: calc(var(--rv-frame-width) * 0.75);
+  height: auto;
+  margin: auto;
+}
+@media (min-width: 1200px) {
+  .illustration {
+    max-width: calc(var(--rv-frame-width) * 1.4);
+  }
+}

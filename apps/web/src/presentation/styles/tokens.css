@@ -16,6 +16,8 @@
   --rv-color-track: #f0eaee;
   --rv-color-control: #c9c1c7;
   --rv-color-pending: #e0a3c4;
+  --rv-color-fill-3: #f8f3f6; /* stage, disabled field */
+  --rv-color-brand-on-dark: #ff8cc6;
   --rv-color-paper: #ffffff;
   --rv-color-background: #fdf9fa;
   --rv-color-brand: #ff2d94;
@@ -97,6 +99,19 @@
   /* ── Interaction ── */
   --rv-touch-target: 44px; /* WCAG 2.5.8 */
   --rv-button-height-small: 36px;
+  --rv-button-padding: 14px;
+  --rv-button-padding-large: 24px;
+  --rv-icon-size: 16px;
+  --rv-field-height: 46px;
+  --rv-row-height: 48px;
+  --rv-switch-width: 50px;
+  --rv-switch-height: 30px;
+  --rv-switch-knob: 24px;
+  --rv-radio-size: 20px;
+  --rv-pill-height-small: 22px;
+  --rv-chip-height: 36px;
+  --rv-chip-height-small: 30px;
+  --rv-track-height: 10px;
   --rv-button-height: 44px; /* medium */
   --rv-button-height-large: 52px;
   --rv-radius-sm: 8px;
@@ -127,6 +142,10 @@
   /* ── Skeleton and layers ── */
   --rv-progress-height: 3px;
   --rv-pill-height: 24px;
+  --rv-sheet-panel-width: 480px;
+  --rv-popover-width: 380px;
+  --rv-sheet-handle-width: 40px;
+  --rv-sheet-handle-height: 4px;
   --rv-logo-height: 18px;
   --rv-sheet-height: 70dvh;
   --rv-sheet-max-width: 640px;

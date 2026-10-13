@@ -1,29 +1,30 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-01 «Switch». */
 .switch {
   position: relative;
   flex: none;
-  width: calc(var(--rv-touch-target) * 1.2);
-  height: var(--rv-touch-target);
+  width: var(--rv-switch-width);
+  height: var(--rv-switch-height);
   padding: 0;
-  border: var(--rv-border-width) solid var(--rv-color-ink);
+  border: 0;
   border-radius: var(--rv-radius-pill);
-  background: var(--rv-color-fill-2);
+  background: var(--rv-color-fill);
   cursor: pointer;
+  transition: background-color var(--rv-duration-press) ease-out;
 }
 .knob {
   position: absolute;
-  top: 50%;
-  left: var(--rv-space-1);
-  width: var(--rv-space-3);
-  height: var(--rv-space-3);
+  top: calc((var(--rv-switch-height) - var(--rv-switch-knob)) / 2);
+  left: calc((var(--rv-switch-height) - var(--rv-switch-knob)) / 2);
+  width: var(--rv-switch-knob);
+  height: var(--rv-switch-knob);
   border-radius: var(--rv-radius-pill);
-  background: var(--rv-color-ink);
-  translate: 0 -50%;
-  transition: left var(--rv-duration) var(--rv-easing);
+  background: var(--rv-color-paper);
+  box-shadow: var(--rv-shadow-sm);
+  transition: translate var(--rv-duration-press) ease-out;
 }
 .on {
-  background: var(--rv-color-ink);
+  background: var(--rv-color-brand);
 }
 .on .knob {
-  left: calc(100% - var(--rv-space-1) - var(--rv-space-3));
-  background: var(--rv-color-paper);
+  translate: calc(var(--rv-switch-width) - var(--rv-switch-height)) 0;
 }

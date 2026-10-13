@@ -14,3 +14,17 @@ describe('Button', () => {
     expect(screen.getByRole('link', { name: 'Ver resumen' })).toHaveAttribute('href', '#/W-10');
   });
 });
+
+describe('Button icons', () => {
+  it('draws SVG icons that are hidden from assistive technology', () => {
+    const { container } = render(
+      <Button icon="info" trailingIcon="arrow">
+        Fuente
+      </Button>,
+    );
+    const icons = container.querySelectorAll('svg');
+    expect(icons).toHaveLength(2);
+    icons.forEach((i) => expect(i).toHaveAttribute('aria-hidden', 'true'));
+    expect(screen.getByRole('button', { name: 'Fuente' })).toBeInTheDocument();
+  });
+});

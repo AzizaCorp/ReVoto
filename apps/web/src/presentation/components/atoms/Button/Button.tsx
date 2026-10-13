@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Icon, type IconName } from '../Icon';
 import styles from './Button.module.css';
 
 export type ButtonVariant = 'primary' | 'brand' | 'secondary' | 'text';
@@ -7,11 +8,14 @@ export type ButtonSize = 'small' | 'medium' | 'large';
 export interface ButtonProps {
   children: ReactNode;
   variant?: ButtonVariant;
+  /** small 36 · medium 44 · large 52 (board C-01). */
   size?: ButtonSize;
   /** Icon before the text (decorative). */
-  icon?: ReactNode;
+  icon?: IconName;
   /** Icon after the text (decorative), e.g. the arrow of «Siguiente →». */
-  trailingIcon?: ReactNode;
+  trailingIcon?: IconName;
+  /** Icon shown alone when the button collapses into a circle (‹ › on mobile). */
+  compactIcon?: IconName;
   /** With `href` it renders as a link; otherwise as a button. */
   href?: string;
   onClick?: () => void;
@@ -27,16 +31,14 @@ export interface ButtonProps {
   collapsible?: boolean | 'mobile' | 'narrow';
 }
 
-/**
- * Brand button. `primary` (ink) is the main action, one per screen; `brand` (magenta) only on the
- * cover; `secondary` is the white pill; `text` is a link.
- */
+/** Button or link with four variants and three sizes (board C-01 «Button»). */
 export function Button({
   children,
   variant = 'secondary',
   size = 'medium',
   icon,
   trailingIcon,
+  compactIcon,
   href,
   onClick,
   disabled,
@@ -54,14 +56,19 @@ export function Button({
   const content = (
     <>
       {icon && (
-        <span className={styles.icon} aria-hidden="true">
-          {icon}
+        <span className={styles.icon}>
+          <Icon name={icon} strokeWidth={2.2} />
         </span>
       )}
       <span className={styles.content}>{children}</span>
       {trailingIcon && (
-        <span className={styles.icon} aria-hidden="true">
-          {trailingIcon}
+        <span className={styles.icon}>
+          <Icon name={trailingIcon} strokeWidth={2.4} />
+        </span>
+      )}
+      {compactIcon && (
+        <span className={styles.compact}>
+          <Icon name={compactIcon} size={18} strokeWidth={2.4} />
         </span>
       )}
     </>
