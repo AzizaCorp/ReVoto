@@ -1,5 +1,10 @@
 // In-memory adapters for tests: a tiny, synthetic territory with every port answered.
-import type { QualityRepository, StateOverview, TurnoutRepository } from '@/application';
+import type {
+  OpenDataRepository,
+  QualityRepository,
+  StateOverview,
+  TurnoutRepository,
+} from '@/application';
 import {
   election,
   figure,
@@ -78,7 +83,18 @@ export const memoryQualityRepository = (): QualityRepository => ({
   }),
 });
 
+export const memoryOpenDataRepository = (): OpenDataRepository => ({
+  links: async () => ({
+    version: '20261013-abcdef0',
+    generatedAt: '2026-10-13T16:00:00-06:00',
+    turnoutCsv: '/data/20261013-abcdef0/csv/participacion.csv',
+    nationalJson: '/data/20261013-abcdef0/nacional.json',
+    baseUrl: '/data/20261013-abcdef0/',
+  }),
+});
+
 export const memoryDependencies = () => ({
   turnout: memoryTurnoutRepository(),
   quality: memoryQualityRepository(),
+  openData: memoryOpenDataRepository(),
 });

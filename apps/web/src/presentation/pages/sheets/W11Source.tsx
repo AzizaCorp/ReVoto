@@ -1,9 +1,18 @@
 import { Button, DataList, Notice, Pill, SheetTemplate } from '@/presentation/components';
+import { place } from '@/presentation/format';
+import { useAsync } from '@/presentation/hooks/useAsync';
+import { useDependencies } from '@/presentation/providers/Dependencies';
 import { useNavigation } from '@/presentation/providers/Navigation';
+import { useStoryData } from '@/presentation/providers/Story';
+import { YEAR } from '../shared/storyFigures';
 
-/** W-11 · Source sheet (RF-12, RN-10). Pending US-12: data of the figure it was opened from. */
+/** W-11 · Source sheet (RF-12, RN-10): territory, election and version of the figures shown. */
 export function W11Source() {
   const nav = useNavigation();
+  const story = useStoryData();
+  const { openData } = useDependencies();
+  const links = useAsync(() => openData.links(), [openData]);
+  const l = links.status === 'ready' ? links.data : null;
   return (
     <SheetTemplate
       open
@@ -34,9 +43,26 @@ export function W11Source() {
             value: 'INE · DECEYEC · Conteos censales de participación',
             icon: 'info',
           },
-          { term: 'Elección', value: 'Federal [año] ([fecha])', icon: 'calendar', tone: 'violet' },
-          { term: 'Territorio', value: '[Municipio], [Entidad]', icon: 'pin', tone: 'indigo' },
-          { term: 'Fecha de corte', value: '[dd/mm/aaaa]', icon: 'calendar', tone: 'neutral' },
+          {
+            term: 'Elección',
+            value: `Federal ${YEAR} y serie 2009–2024`,
+            icon: 'calendar',
+            tone: 'violet',
+          },
+          {
+            term: 'Territorio',
+            value: story ? place(story.own.territory) : place(nav.selected),
+            icon: 'pin',
+            tone: 'indigo',
+          },
+          {
+            term: 'Versión de datos',
+            value: l
+              ? `${l.version} · ${new Date(l.generatedAt).toLocaleDateString('es-MX')}`
+              : '[AAAAMMDD-hash]',
+            icon: 'calendar',
+            tone: 'neutral',
+          },
           {
             term: 'Fórmula',
             value: 'Votaron ÷ (lista nominal − sin dato)',
@@ -45,9 +71,9 @@ export function W11Source() {
           },
         ]}
       />
-      <Notice tone="pending">
-        Se excluyeron [—.— %] de registros sin dato de participación. No son abstención: el registro
-        no trae información.
+      <Notice tone="info">
+        Los registros sin dato de participación salen del denominador. No son abstención: el
+        registro no trae información (RN-01).
       </Notice>
     </SheetTemplate>
   );

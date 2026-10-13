@@ -1,25 +1,12 @@
 // Contract test: the adapters read the L4 files published in apps/web/public/data.
-import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { compareTerritory, getPlaceInState } from '@/application';
 import { municipality, NATIONAL, state, type Territory } from '@/domain';
+import { fetchFromDisk, hasRealData as available } from '@/test/realData';
 import { JsonClient } from './JsonClient';
 import { JsonQualityRepository } from './JsonQualityRepository';
 import { JsonTurnoutRepository } from './JsonTurnoutRepository';
 
-// Vitest runs from apps/web.
-const DATA = `${resolve(process.cwd(), 'public/data')}/`;
-const available = existsSync(`${DATA}manifest.json`);
-
-/** fetch over the files on disk: «/data/x» → public/data/x. */
-const fromDisk = (async (url: RequestInfo | URL) => {
-  const path = `${DATA}${String(url).replace(/^\/data\//, '')}`;
-  return existsSync(path)
-    ? new Response(readFileSync(path, 'utf8'))
-    : new Response('', { status: 404 });
-}) as typeof fetch;
-
-const client = new JsonClient('/data', fromDisk);
+const client = new JsonClient('/data', fetchFromDisk);
 const repo = new JsonTurnoutRepository(client);
 const iztacalco = municipality(9, 6, 'Iztacalco', 'Ciudad de México') as Extract<
   Territory,

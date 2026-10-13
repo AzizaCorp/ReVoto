@@ -1,3 +1,4 @@
+import { ARCHETYPES, BADGES, gap, turnoutIn } from '@/domain';
 import {
   Button,
   SummaryRow,
@@ -5,31 +6,88 @@ import {
   type BubbleTone,
   type IconName,
 } from '@/presentation/components';
+import { percent, PENDING, points } from '@/presentation/format';
 import { useNavigation, type ViewId } from '@/presentation/providers/Navigation';
+import { useProfile } from '@/presentation/providers/Profile';
+import { useStoryData } from '@/presentation/providers/Story';
 import layout from './shared/Layout.module.css';
+import { breakdown, placeOf, YEAR } from './shared/storyFigures';
 import { StoryFrame } from './shared/StoryFrame';
 
-const FIGURES: readonly [string, string, IconName, BubbleTone, ViewId][] = [
-  ['—.— %', 'Nacional · [año]', 'chart', 'brand-strong', 'W-03'],
-  ['—.— %', '[Municipio] · [año]', 'pin', 'brand', 'W-04'],
-  ['#— de [n]', 'Tu lugar en [Entidad] · [año]', 'star', 'violet', 'W-08'],
-  ['—.— pts', '18–24 vs. 60 + · [año]', 'users', 'indigo', 'W-06'],
-  ['—.— pts', 'Mujeres vs. hombres · [año]', 'user', 'neutral', 'W-07'],
-];
+type Row = readonly [string | null, string, IconName, BubbleTone, ViewId];
 
 /** W-10 · Your summary (RF-04, US-21). Close of the story with five figures. */
 export function W10Summary() {
   const nav = useNavigation();
+  const story = useStoryData();
+  const { badge } = useProfile();
+  const t = nav.selected;
+  const national = story ? turnoutIn(story.national.elections, YEAR) : null;
+  const own = story ? turnoutIn(story.own.elections, YEAR) : null;
+  const rank = story ? placeOf(story)?.rank : null;
+  const age = story ? breakdown(story, 'age', 'territory') : null;
+  const sex = story ? breakdown(story, 'sex', 'territory') : null;
+  const ageGap = gap(age?.figures?.byAge['18-24'], age?.figures?.byAge['60+']);
+  const sexGap = gap(sex?.figures?.bySex.M, sex?.figures?.bySex.H);
+  const stateName = t.level === 'municipality' ? t.stateName : t.level === 'state' ? t.name : null;
+  const archetype = story?.profile?.archetype?.archetype;
+
+  const figures: readonly Row[] = [
+    [
+      national ? percent(national.total.value) : null,
+      `Nacional · ${YEAR}`,
+      'chart',
+      'brand-strong',
+      'W-03',
+    ],
+    ...(t.level === 'national'
+      ? []
+      : ([
+          [
+            own ? percent(own.total.value) : null,
+            `${story?.own.territory.name ?? t.name} · ${YEAR}`,
+            'pin',
+            'brand',
+            'W-04',
+          ],
+        ] as Row[])),
+    ...(t.level === 'municipality'
+      ? ([
+          [
+            rank ? `#${rank.position} de ${rank.total}` : null,
+            `Tu lugar en ${stateName} · ${YEAR}`,
+            'star',
+            'violet',
+            'W-08',
+          ],
+        ] as Row[])
+      : []),
+    [
+      ageGap === null ? null : points(ageGap),
+      `18–24 vs. 60 + · ${age?.territory.name ?? ''} · ${YEAR}`,
+      'users',
+      'indigo',
+      'W-06',
+    ],
+    [
+      sexGap === null ? null : points(sexGap),
+      `Mujeres vs. hombres · ${sex?.territory.name ?? ''} · ${YEAR}`,
+      'user',
+      'neutral',
+      'W-07',
+    ],
+  ];
+
   const rows = (
     <div className={layout.stack}>
-      {FIGURES.map(([value, context, icon, tone, target]) => (
+      {figures.map(([value, context, icon, tone, target]) => (
         <SummaryRow
-          key={context}
+          key={icon}
           icon={icon}
           tone={tone}
-          value={value}
+          value={value ?? `${PENDING}`}
           context={context}
-          pending
+          pending={value === null}
           onClick={() => nav.goTo(target)}
         />
       ))}
@@ -43,13 +101,16 @@ export function W10Summary() {
       secondaryAction={{ label: 'Metodología', icon: 'info', onClick: () => nav.goTo('W-18') }}
       visual={<div className={layout.wideOnly}>{rows}</div>}
     >
-      <Text variant="h1">Lo esencial, en cinco cifras</Text>
+      <Text variant="h1">
+        Lo esencial, en {figures.length === 5 ? 'cinco' : figures.length === 4 ? 'cuatro' : 'tres'}{' '}
+        cifras
+      </Text>
       <div className={layout.row}>
         <Button size="small" icon="pin" onClick={() => nav.goTo('W-09')}>
-          Tu municipio: «[Arquetipo]»
+          {archetype ? `Tu municipio: «${ARCHETYPES[archetype]}»` : 'Tu municipio: sin arquetipo'}
         </Button>
-        <Button size="small" icon="star" onClick={() => nav.goTo('W-09b')}>
-          Tú: «[Insignia]»
+        <Button size="small" icon="star" onClick={() => nav.goTo(badge ? 'W-09b' : 'W-02b')}>
+          {badge ? `Tú: «${BADGES[badge]}»` : 'Tú: responde «Sobre ti»'}
         </Button>
       </div>
       <div className={[layout.narrowOnly, layout.fill].join(' ')}>{rows}</div>

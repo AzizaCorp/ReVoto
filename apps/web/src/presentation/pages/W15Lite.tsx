@@ -3,7 +3,9 @@ import { next, previous, progress, type ScreenId } from '@/domain';
 import { LiteScreen } from '@/presentation/components';
 import { useMediaQuery } from '@/presentation/hooks/useMediaQuery';
 import { useNavigation } from '@/presentation/providers/Navigation';
+import { place } from '@/presentation/format';
 import { useProfile } from '@/presentation/providers/Profile';
+import { useStoryData } from '@/presentation/providers/Story';
 import { liteStep } from './lite/LiteSteps';
 import styles from './lite/Lite.module.css';
 
@@ -14,6 +16,7 @@ import styles from './lite/Lite.module.css';
 export function W15Lite() {
   const nav = useNavigation();
   const profile = useProfile();
+  const story = useStoryData();
   const wide = useMediaQuery('(min-width: 768px)');
   const [id, setId] = useState<ScreenId>(nav.lastScreen);
   const title = useRef<HTMLHeadingElement>(null);
@@ -36,6 +39,9 @@ export function W15Lite() {
     answer: profile.answer,
     badge: profile.badge,
     votes: profile.votes,
+    territory: nav.selected,
+    story,
+    choose: nav.chooseTerritory,
   });
   const previousId = previous(nav.sequence, id);
   const nextId = next(nav.sequence, id);
@@ -69,7 +75,7 @@ export function W15Lite() {
         {id === 'W-01' ? step.label : `${position} · ${step.label}`}
         {step.territory && (
           <>
-            {' · [Municipio], [Entidad] · '}
+            {` · ${place(nav.selected)} · `}
             <button type="button" className={styles.link} onClick={() => show('W-02')}>
               cambiar
             </button>

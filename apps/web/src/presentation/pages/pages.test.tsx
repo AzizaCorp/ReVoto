@@ -1,22 +1,9 @@
-import { act, render, screen } from '@testing-library/react';
-import { createSequence } from '@/domain';
-import { NavigationProvider, type SheetId, type ViewId } from '@/presentation/providers/Navigation';
-import { DependenciesProvider } from '@/presentation/providers/Dependencies';
-import { ProfileProvider } from '@/presentation/providers/Profile';
-import { memoryDependencies } from '@/test/memoryRepositories';
+import { screen } from '@testing-library/react';
+import { type SheetId, type ViewId } from '@/presentation/providers/Navigation';
+import { renderWithApp } from '@/test/renderWithApp';
 import { PAGES, SHEETS } from '.';
 
-const withProviders = async (ui: React.ReactNode) => {
-  const r = render(
-    <DependenciesProvider value={memoryDependencies()}>
-      <ProfileProvider>
-        <NavigationProvider sequence={createSequence()}>{ui}</NavigationProvider>
-      </ProfileProvider>
-    </DependenciesProvider>,
-  );
-  await act(async () => {}); // lets the use cases answer
-  return r;
-};
+const withProviders = (ui: React.ReactNode) => renderWithApp(ui);
 
 describe('Skeleton pages', () => {
   it.each(Object.entries(PAGES) as [ViewId, () => React.JSX.Element][])(

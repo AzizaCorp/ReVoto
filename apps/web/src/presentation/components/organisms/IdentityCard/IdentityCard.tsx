@@ -91,7 +91,7 @@ export function ArchetypeCard({
       theme={t}
       format={format}
       chip={format === 'story' ? 'TU ARQUETIPO · 2009–2024' : '2009–2024'}
-      kicker="[MUNICIPIO] ES…"
+      kicker={`${place.split(',')[0]!.toUpperCase()} ES…`}
       name={name}
       label={`Arquetipo de ${place}: ${name}. ${t.phrase}`}
       phrase={t.phrase}

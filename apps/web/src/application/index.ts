@@ -14,6 +14,9 @@ export {
   getArchetype,
   getExpectedVotes,
   getPlaceInState,
+  placeInState,
   type PlaceInState,
 } from './use-cases/municipalityInsights';
 export { getQualityReport } from './use-cases/getQualityReport';
+export { getTerritoryStory, type TerritoryStory } from './use-cases/getTerritoryStory';
+export type { OpenDataLinks, OpenDataRepository } from './ports/OpenDataRepository';

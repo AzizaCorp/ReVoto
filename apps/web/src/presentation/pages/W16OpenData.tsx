@@ -8,18 +8,54 @@ import {
   type BubbleTone,
   type IconName,
 } from '@/presentation/components';
+import { useAsync } from '@/presentation/hooks/useAsync';
+import { useDependencies } from '@/presentation/providers/Dependencies';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import layout from './shared/Layout.module.css';
 
-const DATASETS: readonly [string, IconName, BubbleTone][] = [
-  ['Participación por entidad y municipio', 'pin', 'brand'],
-  ['Participación por edad y sexo', 'users', 'violet'],
-  ['Arquetipos municipales', 'star', 'indigo'],
+type Link = 'csv' | 'national' | 'folder' | null;
+const DATASETS: readonly [string, IconName, BubbleTone, Link, Link, string][] = [
+  [
+    'Participación por entidad y municipio',
+    'pin',
+    'brand',
+    'csv',
+    'folder',
+    'csv/participacion.csv · entidad/ y municipio/',
+  ],
+  [
+    'Participación por edad y sexo',
+    'users',
+    'violet',
+    'csv',
+    'national',
+    'columnas grupo_edad y sexo · nacional.json',
+  ],
+  [
+    'Arquetipos municipales',
+    'star',
+    'indigo',
+    null,
+    'folder',
+    'campo «arquetipo» de municipio/<ent>-<mun>.json',
+  ],
 ];
 
-/** W-16 · Open data (US-22). Pending: links to the published CSV/JSON files. */
+/** W-16 · Open data (US-22). Links to the files of the current data version. */
 export function W16OpenData() {
   const nav = useNavigation();
+  const { openData } = useDependencies();
+  const links = useAsync(() => openData.links(), [openData]);
+  const l = links.status === 'ready' ? links.data : null;
+  const url = (k: Link) =>
+    !l || !k
+      ? undefined
+      : k === 'csv'
+        ? l.turnoutCsv
+        : k === 'national'
+          ? l.nationalJson
+          : l.baseUrl;
+  const date = l ? new Date(l.generatedAt).toLocaleDateString('es-MX') : '[dd/mm/aaaa]';
   return (
     <UtilityScreen
       top={
@@ -32,21 +68,27 @@ export function W16OpenData() {
       title="Datos abiertos"
       lead="Los mismos agregados que usa este sitio. Úsalos, verifícalos y cítalos."
     >
-      <Pill tone="pending">Se publican con el dataset final</Pill>
-      {DATASETS.map(([name, icon, tone]) => (
+      {l ? (
+        <Pill number="Versión">{l.version}</Pill>
+      ) : (
+        <Pill tone="pending">{links.status === 'error' ? 'No disponible' : 'Cargando'}</Pill>
+      )}
+      {DATASETS.map(([name, icon, tone, csv, json, files]) => (
         <section key={name} className={layout.panel}>
           <div className={layout.row}>
             <IconBubble icon={icon} tone={tone} size={36} />
             <div>
               <h2 className={layout.panelTitle}>{name}</h2>
-              <Text variant="meta">2009–2024 · corte [dd/mm/aaaa] · [peso]</Text>
+              <Text variant="meta">
+                2009–2024 · corte {date} · {files}
+              </Text>
             </div>
           </div>
           <div className={layout.grid2}>
-            <Button size="small" icon="download" disabled>
+            <Button size="small" icon="download" href={url(csv)} disabled={!url(csv)}>
               CSV
             </Button>
-            <Button size="small" icon="download" disabled>
+            <Button size="small" icon="download" href={url(json)} disabled={!url(json)}>
               JSON
             </Button>
           </div>

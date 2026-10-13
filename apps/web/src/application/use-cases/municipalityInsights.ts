@@ -8,8 +8,8 @@ import {
   type StateRank,
   type Territory,
 } from '@/domain';
-import type { TurnoutRepository } from '../ports/TurnoutRepository';
-import { turnoutIn } from './compareTerritory';
+import type { StateOverview, TurnoutRepository } from '../ports/TurnoutRepository';
+import { municipalTurnoutIn } from './compareTerritory';
 
 type Municipality = Extract<Territory, { level: 'municipality' }>;
 
@@ -19,18 +19,30 @@ export interface PlaceInState {
   readonly top: readonly MunicipalityTurnout[];
 }
 
+/** W-08 · Place of a municipality among those of its state, from an overview already read. */
+export function placeInState(
+  overview: StateOverview,
+  municipalityCode: number,
+  year: ElectionYear = 2024,
+): PlaceInState {
+  const list = municipalTurnoutIn(overview.municipalities, year);
+  return {
+    rank: rankInState(list, municipalityCode),
+    top: rankMunicipalities(list).slice(0, 5),
+  };
+}
+
 /** W-08 · Place of the municipality among those of its state. */
 export async function getPlaceInState(
   repo: TurnoutRepository,
   municipality: Municipality,
   year: ElectionYear = 2024,
 ): Promise<PlaceInState> {
-  const overview = await repo.stateOverview(municipality.stateCode);
-  const list = turnoutIn(overview.municipalities, year);
-  return {
-    rank: rankInState(list, municipality.municipalityCode),
-    top: rankMunicipalities(list).slice(0, 5),
-  };
+  return placeInState(
+    await repo.stateOverview(municipality.stateCode),
+    municipality.municipalityCode,
+    year,
+  );
 }
 
 /** W-09 · Archetype of the municipality; null with a short history or when suppressed. */

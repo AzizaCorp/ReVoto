@@ -2,7 +2,12 @@
 // Infrastructure adapters are chosen here and injected into the presentation.
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { JsonClient, JsonQualityRepository, JsonTurnoutRepository } from '@/infrastructure';
+import {
+  JsonClient,
+  JsonOpenDataRepository,
+  JsonQualityRepository,
+  JsonTurnoutRepository,
+} from '@/infrastructure';
 import { App } from '@/presentation/App';
 import { DependenciesProvider } from '@/presentation/providers/Dependencies';
 import '@fontsource/plus-jakarta-sans/latin-400.css';
@@ -18,6 +23,7 @@ const client = new JsonClient();
 const dependencies = {
   turnout: new JsonTurnoutRepository(client),
   quality: new JsonQualityRepository(client),
+  openData: new JsonOpenDataRepository(client),
 };
 
 const root = document.getElementById('root');

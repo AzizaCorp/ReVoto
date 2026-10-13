@@ -4,6 +4,7 @@ import { useNavigationShortcuts } from '@/presentation/hooks/useNavigationShortc
 import { PAGES, SHEETS } from '@/presentation/pages';
 import { NavigationProvider, useNavigation } from '@/presentation/providers/Navigation';
 import { ProfileProvider } from '@/presentation/providers/Profile';
+import { StoryProvider } from '@/presentation/providers/Story';
 
 /** Mounts the current page, the open sheet and the live region with the progress (HU-14). */
 function View() {
@@ -34,7 +35,9 @@ export function App() {
   return (
     <ProfileProvider>
       <NavigationProvider>
-        <View />
+        <StoryProvider>
+          <View />
+        </StoryProvider>
       </NavigationProvider>
     </ProfileProvider>
   );

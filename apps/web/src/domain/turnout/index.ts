@@ -5,3 +5,4 @@ export * from './Sex';
 export * from './Figure';
 export * from './TurnoutSeries';
 export * from './Comparison';
+export * from './Insights';

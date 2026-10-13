@@ -16,6 +16,8 @@ export interface DuoCardProps {
   /** Line of the person, e.g. «2 de 3 · tu generación en [Entidad]: —.— de 3». */
   you?: string;
   place?: string;
+  /** Formatted figure of the archetype, e.g. «+11.0 pts»; replaces the «—.—» of the design. */
+  figure?: string;
 }
 
 interface HalfProps {
@@ -87,6 +89,7 @@ export function DuoCard({
   format = 'story',
   you,
   place = '[Municipio], [Entidad]',
+  figure,
 }: DuoCardProps) {
   useEffect(registerCardFonts, []);
   const story = format === 'story';
@@ -126,7 +129,11 @@ export function DuoCard({
             label="MI MUNICIPIO ES…"
             name={ARCHETYPES[archetype]}
             nameScale={aScale}
-            stat={ARCHETYPE_STAT[archetype][story ? 1 : 0]}
+            stat={
+              figure
+                ? ARCHETYPE_STAT[archetype][story ? 1 : 0].replace(/[+−]?—\.— pts/, figure)
+                : ARCHETYPE_STAT[archetype][story ? 1 : 0]
+            }
             vertical={!story}
           />
           {story && (

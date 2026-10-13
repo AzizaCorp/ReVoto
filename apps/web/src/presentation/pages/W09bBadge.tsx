@@ -2,25 +2,55 @@ import { BadgeCard, Button, ComparisonBar, Text } from '@/presentation/component
 import { useMediaQuery } from '@/presentation/hooks/useMediaQuery';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import { useProfile } from '@/presentation/providers/Profile';
+import { useStoryData } from '@/presentation/providers/Story';
 import layout from './shared/Layout.module.css';
+import { ageGroupOfAnswer } from './shared/storyFigures';
 import { StoryFrame } from './shared/StoryFrame';
 
 /**
  * W-09b · Your badge. It comes from the W-02b answers; without answers the card invites to
- * answer and the story can go on.
+ * answer and the story can go on. The comparison is the expected votes of the person's age group
+ * in their state (entidad/<cve>.json → votos_esperados_por_edad).
  */
 export function W09bBadge() {
   const nav = useNavigation();
-  const { badge, votes } = useProfile();
+  const story = useStoryData();
+  const { badge, votes, answers } = useProfile();
   const wide = useMediaQuery('(min-width: 768px)');
   const you = `${votes} de 3`;
+  const group = ageGroupOfAnswer(answers.age);
+  const stateName = story?.overview?.state.name ?? null;
+  const expected = group && story?.overview ? (story.overview.expectedVotes[group] ?? null) : null;
+  const generation = expected === null ? '—.— de 3' : `${expected.toFixed(1)} de 3`;
+  const pace =
+    expected === null
+      ? undefined
+      : votes > expected + 0.5
+        ? 'Por encima de tu generación'
+        : votes < expected - 0.5
+          ? 'Por debajo de tu generación'
+          : 'Al ritmo de tu generación';
+  const comparedWith = !stateName
+    ? 'Tu generación (elige tu entidad)'
+    : !group
+      ? `Tu generación en ${stateName} (dinos tu edad)`
+      : `${answers.age} en ${stateName}`;
   return (
     <StoryFrame
-      pending={Boolean(badge)}
+      pending={Boolean(badge) && expected === null}
       label="Tu insignia"
       shareable={false}
       visualFirst
-      visual={<BadgeCard badge={badge} you={you} format={wide ? 'story' : 'hero'} />}
+      visual={
+        <BadgeCard
+          badge={badge}
+          you={you}
+          generation={generation}
+          {...(stateName ? { entity: stateName } : {})}
+          {...(pace ? { pace } : {})}
+          format={wide ? 'story' : 'hero'}
+        />
+      }
     >
       <Text variant="h1">Y tú, ¿cómo votas?</Text>
       <Text variant="lead">
@@ -32,7 +62,11 @@ export function W09bBadge() {
         <section className={layout.panel}>
           <h2 className={layout.panelTitle}>Tú y tu generación</h2>
           <ComparisonBar label="Tú" value={you} ratio={votes / 3} />
-          <ComparisonBar label="[Edad] en [Entidad]" value="—.— de 3" ratio={null} />
+          <ComparisonBar
+            label={comparedWith}
+            value={generation}
+            ratio={expected === null ? null : expected / 3}
+          />
         </section>
       )}
       <div className={layout.row}>

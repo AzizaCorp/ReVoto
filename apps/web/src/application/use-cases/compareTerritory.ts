@@ -33,7 +33,7 @@ const at = (s: Extract<TurnoutSeries, { status: 'published' }>, year: ElectionYe
   s.elections.find((e) => e.election.year === year) ?? null;
 
 /** Municipalities of the overview as plain turnout of one year. */
-export const turnoutIn = (
+export const municipalTurnoutIn = (
   municipalities: readonly {
     municipality: Municipality;
     suppressed: boolean;
@@ -72,7 +72,10 @@ export async function compareTerritory(
     ]);
     stateFigure =
       stateSeries.status === 'published' ? (at(stateSeries, year)?.total ?? null) : null;
-    const average = averageTurnout(turnoutIn(overview.municipalities, year), profile.neighbours);
+    const average = averageTurnout(
+      municipalTurnoutIn(overview.municipalities, year),
+      profile.neighbours,
+    );
     neighbours = average === null ? null : { average, count: profile.neighbours.length };
   }
 

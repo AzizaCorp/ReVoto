@@ -34,3 +34,24 @@ export interface ArchetypeProfile {
   readonly typicality: number;
   readonly trait: ArchetypeTrait;
 }
+
+/**
+ * Figure that names each archetype on its card: level (A1), trend (A2, A5), volatility (A3) or
+ * presidential effect (A4). Volatility has no sign: it is a spread, not a direction.
+ */
+export function archetypeFigure(p: ArchetypeProfile): {
+  readonly value: number;
+  readonly signed: boolean;
+} {
+  switch (p.archetype) {
+    case 'A1':
+      return { value: p.level, signed: true };
+    case 'A2':
+    case 'A5':
+      return { value: p.trend, signed: true };
+    case 'A3':
+      return { value: p.volatility, signed: false };
+    case 'A4':
+      return { value: p.presidentialEffect, signed: true };
+  }
+}
