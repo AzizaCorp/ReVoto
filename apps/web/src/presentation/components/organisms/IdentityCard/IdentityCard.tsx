@@ -2,6 +2,7 @@ import { useEffect, type CSSProperties, type ReactNode } from 'react';
 import { ARCHETYPES, BADGES, type ArchetypeId, type BadgeId } from '@/domain';
 import { Logo } from '../../atoms';
 import { registerCardFonts } from './fonts';
+import { SITE } from './site';
 import { IdentityArt } from './IdentityArt';
 import { ARCHETYPE_THEMES, BADGE_THEMES, MYSTERY_THEME, type CardTheme } from './themes';
 import styles from './IdentityCard.module.css';
@@ -105,8 +106,8 @@ export function ArchetypeCard({
       {format !== 'hero' && (
         <span className={[styles.footer, styles.t].join(' ')}>
           {format === 'story'
-            ? 'Fuente: INE, conteos censales 2009–2024 · arquetipo calculado por ReVoto · [dominio]'
-            : `${place} · Fuente: INE · [dominio]`}
+            ? `Fuente: INE, conteos censales 2009–2024 · arquetipo calculado por ReVoto · ${SITE}`
+            : `${place} · Fuente: INE · ${SITE}`}
         </span>
       )}
     </CardFrame>
@@ -183,8 +184,8 @@ export function BadgeCard({
       {format !== 'hero' && (
         <span className={[styles.footer, styles.t].join(' ')}>
           {format === 'story'
-            ? `Insignia según tus respuestas · ${entity} · Comparación: INE, participación por edad 2018–2024 · [dominio]`
-            : `Insignia según tus respuestas · ${entity} · Comparación: INE · [dominio]`}
+            ? `Insignia según tus respuestas · ${entity} · Comparación: INE, participación por edad 2018–2024 · ${SITE}`
+            : `Insignia según tus respuestas · ${entity} · Comparación: INE · ${SITE}`}
         </span>
       )}
     </CardFrame>

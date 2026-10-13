@@ -28,3 +28,32 @@ export function registerCardFonts(): void {
     );
   }
 }
+
+let embedded: Promise<string> | undefined;
+
+/**
+ * @font-face rules of the card fonts with the files inlined as data URLs. The PNG export draws
+ * the card inside an SVG image, where the FontFace registrations above are not visible.
+ */
+export function cardFontFaceCss(): Promise<string> {
+  embedded ??= Promise.all(
+    FACES.map(async ([family, url, d]) => {
+      // A font file bundled with the app, not data: it does not go through a use case.
+      // eslint-disable-next-line no-restricted-globals
+      const blob = await (await fetch(url)).blob();
+      const data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(blob);
+      });
+      return `@font-face{font-family:'${family}';font-weight:${d.weight};font-style:${d.style};src:url(${data}) format('woff2');}`;
+    }),
+  )
+    .then((rules) => rules.join('\n'))
+    .catch((error: unknown) => {
+      embedded = undefined;
+      throw error;
+    });
+  return embedded;
+}

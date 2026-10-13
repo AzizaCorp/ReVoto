@@ -118,7 +118,7 @@ export function W10Summary() {
         variant="primary"
         icon="share"
         fullWidth="mobile"
-        onClick={() => nav.openSheet('W-12')}
+        onClick={() => nav.openSheet('W-12', { share: 'both' })}
       >
         Compartir mi resumen
       </Button>

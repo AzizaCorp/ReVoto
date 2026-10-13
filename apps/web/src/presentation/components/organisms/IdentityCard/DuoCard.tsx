@@ -3,6 +3,7 @@ import { ARCHETYPES, BADGES, type ArchetypeId, type BadgeId } from '@/domain';
 import { Logo } from '../../atoms';
 import { ARCHETYPE_STAT, CROSSINGS, headlineSize } from './crossings';
 import { registerCardFonts } from './fonts';
+import { SITE } from './site';
 import { IdentityArt } from './IdentityArt';
 import { ARCHETYPE_THEMES, BADGE_THEMES, type CardTheme } from './themes';
 import styles from './DuoCard.module.css';
@@ -156,7 +157,7 @@ export function DuoCard({
         </div>
         {story && <span className={styles.spacer} />}
         <span className={[styles.footer, styles.t].join(' ')}>
-          Arquetipo: datos INE 2009–2024 · Insignia: según mis respuestas · {place} · [dominio]
+          Arquetipo: datos INE 2009–2024 · Insignia: según mis respuestas · {place} · {SITE}
         </span>
       </figure>
     </div>

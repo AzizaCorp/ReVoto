@@ -79,5 +79,6 @@ export const ARCHETYPE_STAT: Record<ArchetypeId, [string, string]> = {
 /** Headline size: the longest word must fit the available width (design `head_size`). */
 export function headlineSize(title: string, base: number, available: number): number {
   const longest = Math.max(...title.split(/[­ ]/).map((w) => w.length));
-  return Math.min(base, Math.floor(available / (longest * 0.84)));
+  // Unbounded 900 in capitals averages ~0.92 em per letter (measured: «TEMPORADA» overflowed at 0.84).
+  return Math.min(base, Math.floor(available / (longest * 0.92)));
 }

@@ -26,6 +26,8 @@ export type AuxiliaryViewId = 'W-15' | 'W-16' | 'W-17' | 'W-18' | 'W-19';
 export type ViewId = ScreenId | AuxiliaryViewId;
 /** Bottom sheets that open on top of any screen. */
 export type SheetId = 'W-11' | 'W-12' | 'W-13' | 'W-20';
+/** What the share sheet (W-12) starts with: the archetype, the badge or both cards. */
+export type ShareSubject = 'archetype' | 'badge' | 'both';
 
 const AUXILIARY: readonly AuxiliaryViewId[] = ['W-15', 'W-16', 'W-17', 'W-18', 'W-19'];
 
@@ -46,7 +48,10 @@ export interface Navigation {
   /** `null` at the ends (HU-10: no wrap-around). */
   next: (() => void) | null;
   previous: (() => void) | null;
-  openSheet: (sheet: SheetId) => void;
+  /** `share` preselects the card when opening W-12 (W-09 → archetype, W-09b → badge, W-09c → both). */
+  openSheet: (sheet: SheetId, options?: { share?: ShareSubject }) => void;
+  /** Card chosen by the button that opened W-12. */
+  shareSubject: ShareSubject;
   closeSheet: () => void;
   /** Opens W-02 from the chip and remembers where to come back to (HU-28). */
   changeTerritory: () => void;
@@ -81,6 +86,7 @@ export function NavigationProvider({
   );
   const [lastScreen, setLastScreen] = useState<ScreenId>(isScreen(current) ? current : 'W-01');
   const [sheet, setSheet] = useState<SheetId | null>(null);
+  const [shareSubject, setShareSubject] = useState<ShareSubject>('archetype');
   const [returnTo, setReturnTo] = useState<ScreenId | null>(null);
   const [selected, setSelected] = useState<Territory>(NATIONAL);
 
@@ -124,7 +130,11 @@ export function NavigationProvider({
       goTo,
       next: nextId ? () => goTo(nextId) : null,
       previous: previousId ? () => goTo(previousId) : null,
-      openSheet: setSheet,
+      openSheet: (id, options) => {
+        setShareSubject(options?.share ?? 'archetype');
+        setSheet(id);
+      },
+      shareSubject,
       closeSheet: () => setSheet(null),
       changeTerritory: () => {
         if (isScreen(current) && current !== 'W-02') setReturnTo(current);
@@ -136,7 +146,7 @@ export function NavigationProvider({
         goTo(target);
       },
     };
-  }, [sequence, current, lastScreen, sheet, goTo, returnTo, selected]);
+  }, [sequence, current, lastScreen, sheet, goTo, returnTo, selected, shareSubject]);
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

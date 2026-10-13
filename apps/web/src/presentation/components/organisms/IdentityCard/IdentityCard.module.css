@@ -142,8 +142,8 @@
   position: absolute;
   right: calc(14 * var(--u));
   top: calc(46 * var(--u));
-  width: calc(200 * var(--u));
-  height: calc(148 * var(--u));
+  width: calc(180 * var(--u));
+  height: calc(128 * var(--u));
 }
 .kicker {
   margin-top: calc(4 * var(--u));
@@ -153,7 +153,12 @@
   color: var(--card-sub);
 }
 .post .kicker {
+  /* The art sits top-right (absolute): the text block goes to the bottom, under it (board A1–A5 1:1). */
+  margin-top: auto;
   font-size: calc(11 * var(--u));
+}
+.post .spacer {
+  display: none;
 }
 .name {
   font-family: var(--card-font);
@@ -165,7 +170,7 @@
   text-transform: var(--card-case);
 }
 .post .name {
-  font-size: calc(var(--card-name) * 0.72 * var(--u));
+  font-size: calc(var(--card-name) * 0.64 * var(--u));
 }
 .phrase {
   font-size: calc(16 * var(--u));

@@ -37,3 +37,10 @@ body {
     transition: none !important;
   }
 }
+
+/* PNG export of a card (share/exportCard.ts): every element drawn at its final state. */
+[data-exporting],
+[data-exporting] * {
+  animation: none !important;
+  transition: none !important;
+}

@@ -4,7 +4,7 @@ import { useNavigation } from '@/presentation/providers/Navigation';
 import { useProfile } from '@/presentation/providers/Profile';
 import { useStoryData } from '@/presentation/providers/Story';
 import layout from './shared/Layout.module.css';
-import { ageGroupOfAnswer } from './shared/storyFigures';
+import { compareWithGeneration } from './shared/storyFigures';
 import { StoryFrame } from './shared/StoryFrame';
 
 /**
@@ -18,23 +18,13 @@ export function W09bBadge() {
   const { badge, votes, answers } = useProfile();
   const wide = useMediaQuery('(min-width: 768px)');
   const you = `${votes} de 3`;
-  const group = ageGroupOfAnswer(answers.age);
-  const stateName = story?.overview?.state.name ?? null;
-  const expected = group && story?.overview ? (story.overview.expectedVotes[group] ?? null) : null;
-  const generation = expected === null ? '—.— de 3' : `${expected.toFixed(1)} de 3`;
-  const pace =
-    expected === null
-      ? undefined
-      : votes > expected + 0.5
-        ? 'Por encima de tu generación'
-        : votes < expected - 0.5
-          ? 'Por debajo de tu generación'
-          : 'Al ritmo de tu generación';
-  const comparedWith = !stateName
-    ? 'Tu generación (elige tu entidad)'
-    : !group
-      ? `Tu generación en ${stateName} (dinos tu edad)`
-      : `${answers.age} en ${stateName}`;
+  const {
+    generation,
+    expected,
+    stateName,
+    pace,
+    label: comparedWith,
+  } = compareWithGeneration(story, votes, answers.age);
   return (
     <StoryFrame
       pending={Boolean(badge) && expected === null}
@@ -72,7 +62,11 @@ export function W09bBadge() {
       <div className={layout.row}>
         {badge ? (
           <>
-            <Button variant="primary" icon="share" onClick={() => nav.openSheet('W-12')}>
+            <Button
+              variant="primary"
+              icon="share"
+              onClick={() => nav.openSheet('W-12', { share: 'badge' })}
+            >
               Compartir mi insignia
             </Button>
             <Button variant="text" onClick={() => nav.goTo('W-02b')}>

@@ -83,7 +83,7 @@ export function W09cMyMunicipalityAndMe() {
           variant="primary"
           icon="share"
           fullWidth="mobile"
-          onClick={() => nav.openSheet('W-12')}
+          onClick={() => nav.openSheet('W-12', { share: 'both' })}
         >
           Compartir los dos
         </Button>

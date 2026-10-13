@@ -88,3 +88,47 @@ export function traitSentence(p: ArchetypeProfile): string {
       return `Su participación varía ${pointsAbs(p.volatility)} de una elección a otra, más allá de su tendencia.`;
   }
 }
+
+export interface GenerationComparison {
+  /** «1.7 de 3», or «—.— de 3» without state or age. */
+  readonly generation: string;
+  readonly expected: number | null;
+  readonly stateName: string | null;
+  /** «Al ritmo de tu generación», «Por encima…», «Por debajo…». */
+  readonly pace?: string;
+  /** Label of the comparison row: «18–24 en Ciudad de México». */
+  readonly label: string;
+}
+
+/**
+ * W-09b · The person's votes against the expected votes of their age group in their state
+ * (entidad/<cve>.json → votos_esperados_por_edad).
+ */
+export function compareWithGeneration(
+  story: TerritoryStory | null,
+  votes: number,
+  ageAnswer: string | null,
+): GenerationComparison {
+  const group = ageGroupOfAnswer(ageAnswer);
+  const stateName = story?.overview?.state.name ?? null;
+  const expected = group && story?.overview ? (story.overview.expectedVotes[group] ?? null) : null;
+  const pace =
+    expected === null
+      ? undefined
+      : votes > expected + 0.5
+        ? 'Por encima de tu generación'
+        : votes < expected - 0.5
+          ? 'Por debajo de tu generación'
+          : 'Al ritmo de tu generación';
+  return {
+    generation: expected === null ? '—.— de 3' : `${expected.toFixed(1)} de 3`,
+    expected,
+    stateName,
+    ...(pace ? { pace } : {}),
+    label: !stateName
+      ? 'Tu generación (elige tu entidad)'
+      : !group
+        ? `Tu generación en ${stateName} (dinos tu edad)`
+        : `${ageAnswer} en ${stateName}`,
+  };
+}
