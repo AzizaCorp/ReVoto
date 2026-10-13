@@ -3,7 +3,7 @@ import { ARCHETYPES, BADGES, type ArchetypeId, type BadgeId } from '@/domain';
 import { Logo } from '../../atoms';
 import { registerCardFonts } from './fonts';
 import { IdentityArt } from './IdentityArt';
-import { ARCHETYPE_THEMES, BADGE_THEMES, type CardTheme } from './themes';
+import { ARCHETYPE_THEMES, BADGE_THEMES, MYSTERY_THEME, type CardTheme } from './themes';
 import styles from './IdentityCard.module.css';
 
 /** `story` 9:16, `post` 1:1, `hero` the compact card of the mobile screens (W-09, W-09b). */
@@ -114,7 +114,8 @@ export function ArchetypeCard({
 }
 
 export interface BadgeCardProps {
-  badge: BadgeId;
+  /** `null` while «Sobre ti» is unanswered: the card invites to answer. */
+  badge: BadgeId | null;
   format?: CardFormat;
   /** Votes of the person, e.g. «2 de 3». */
   you?: string;
@@ -134,6 +135,27 @@ export function BadgeCard({
   entity = '[Entidad]',
   pace = '[Al ritmo de tu generación]',
 }: BadgeCardProps) {
+  if (!badge) {
+    return (
+      <CardFrame
+        theme={MYSTERY_THEME}
+        format={format}
+        chip="TU INSIGNIA"
+        kicker="AÚN SIN INSIGNIA"
+        name="¿Cuál es la tuya?"
+        label={`Aún no tienes insignia. ${MYSTERY_THEME.phrase}`}
+        phrase={MYSTERY_THEME.phrase}
+        heroScale={0.62}
+      >
+        <span className={[styles.pace, styles.t].join(' ')}>Responde «Sobre ti»: 4 toques.</span>
+        {format !== 'hero' && (
+          <span className={[styles.footer, styles.t].join(' ')}>
+            Tus respuestas se quedan en tu teléfono: no las guardamos ni las enviamos.
+          </span>
+        )}
+      </CardFrame>
+    );
+  }
   const t = BADGE_THEMES[badge];
   const name = BADGES[badge];
   return (

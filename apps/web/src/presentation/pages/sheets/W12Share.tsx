@@ -5,7 +5,7 @@ import {
   Button,
   Notice,
   SegmentedControl,
-  ShareCard,
+  DuoCard,
   SheetTemplate,
   Text,
 } from '@/presentation/components';
@@ -63,13 +63,7 @@ export function W12Share() {
           <Notice tone="pending">Responde «Sobre ti» para crear tu insignia.</Notice>
         ))}
       {what === 'both' && (
-        <ShareCard
-          format={format === 'square' ? 'square' : 'story'}
-          kicker="Mi municipio y yo"
-          title="[Titular del cruce]"
-          subtitle="Mi municipio es «[Arquetipo]»; yo, «[Insignia]»."
-          footer="Arquetipo: datos INE 2009–2024 · Insignia: según mis respuestas"
-        />
+        <DuoCard archetype="A1" badge={badge} format={format === 'square' ? 'post' : 'story'} />
       )}
       <Text variant="meta">
         Plantillas P1–P7, P8 (tu insignia) y P9 (mi municipio y yo). Nunca incluye datos personales.

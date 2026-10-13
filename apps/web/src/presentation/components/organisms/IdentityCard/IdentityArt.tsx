@@ -435,6 +435,61 @@ function FirstTime() {
   );
 }
 
+function Mystery({ t }: { t: CardTheme }) {
+  return (
+    <>
+      <g className={styles.pop} style={delay(120)}>
+        <g transform="rotate(-6 156 120)">
+          <rect
+            x={76}
+            y={62}
+            width={160}
+            height={108}
+            rx={14}
+            fill="#ffffff"
+            stroke={t.ink}
+            strokeWidth={3}
+            strokeDasharray="10 8"
+          />
+          <rect x={92} y={82} width={44} height={56} rx={8} fill="#ffe3f1" />
+          <rect x={148} y={88} width={72} height={9} rx={4} fill="#eee7ec" />
+          <rect x={148} y={106} width={56} height={7} rx={3} fill="#eee7ec" />
+          <rect x={148} y={121} width={64} height={7} rx={3} fill="#eee7ec" />
+        </g>
+      </g>
+      <g className={styles.pop} style={delay(520)}>
+        <circle cx={240} cy={60} r={28} fill={t.accent} stroke={t.ink} strokeWidth={3} />
+        <text
+          x={240}
+          y={70}
+          textAnchor="middle"
+          fontFamily="Bricolage Grotesque, sans-serif"
+          fontWeight={800}
+          fontSize={30}
+          fill="#ffffff"
+        >
+          ?
+        </text>
+      </g>
+      {(
+        [
+          [48, 60],
+          [62, 186],
+          [272, 176],
+        ] as const
+      ).map(([cx, cy], i) => (
+        <path
+          key={cx}
+          className={styles.pop}
+          style={delay(760 + i * 120)}
+          d={sparkle(cx, cy, 8)}
+          fill={t.accent}
+        />
+      ))}
+    </>
+  );
+}
+
 const ART = {
   A1: AlwaysPresent,
   A2: Rising,
@@ -443,6 +498,7 @@ const ART = {
   A5: SlowingDown,
   I1: Debut,
   I6: FirstTime,
+  mystery: Mystery,
 } as const;
 
 /** Card illustration (viewBox 312 × 230). Decorative: the card text says the same. */

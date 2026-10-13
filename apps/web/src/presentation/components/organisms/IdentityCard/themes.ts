@@ -18,7 +18,7 @@ export interface CardTheme {
   /** Logo for a dark or light background. */
   logoOn: 'dark' | 'light';
   /** Art drawn above the name. */
-  art: ArchetypeId | 'I1' | 'I6';
+  art: ArchetypeId | 'I1' | 'I6' | 'mystery';
 }
 
 export interface ArchetypeCopy {
@@ -188,4 +188,23 @@ export const BADGE_THEMES: Record<BadgeId, CardTheme & { phrase: string }> = {
     art: 'I6',
     phrase: 'Tu próximo voto cuenta igual que todos.',
   },
+};
+
+/** Card shown while the person has not answered «Sobre ti» (W-09b, W-09c without answers). */
+export const MYSTERY_THEME: CardTheme & { phrase: string } = {
+  font: BRICOLAGE,
+  weight: 800,
+  italic: false,
+  uppercase: false,
+  nameSize: 48,
+  background: 'radial-gradient(circle at 25% 15%, #ffffff 0%, #fdf9fa 50%, #ffe3f1 100%)',
+  ink: '#171824',
+  accent: '#c8106e',
+  sub: '#7a4b5f',
+  chip: '#171824',
+  chipInk: '#ffffff',
+  statColor: '#c8106e',
+  logoOn: 'light',
+  art: 'mystery',
+  phrase: 'Contesta 4 preguntas y te damos tu insignia, comparada con tu generación.',
 };
