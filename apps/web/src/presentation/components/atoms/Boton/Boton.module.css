@@ -1,0 +1,43 @@
+/* Solo tokens de presentation/styles/tokens.css: nada de valores literales. */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rv-espacio-1);
+  min-height: var(--rv-boton-alto);
+  min-width: var(--rv-objetivo-tactil);
+  padding: 0 var(--rv-espacio-3);
+  border-radius: var(--rv-radio-pildora);
+  border: var(--rv-borde) solid var(--rv-color-tinta);
+  font: inherit;
+  font-weight: var(--rv-peso-semi);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--rv-duracion) var(--rv-curva);
+}
+.boton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.primario {
+  background: var(--rv-color-tinta);
+  color: var(--rv-color-papel);
+}
+.secundario {
+  background: var(--rv-color-papel);
+  color: var(--rv-color-tinta);
+}
+.texto {
+  background: transparent;
+  border-color: transparent;
+  color: var(--rv-color-tinta);
+  text-decoration: underline;
+  padding: 0 var(--rv-espacio-1);
+}
+.ancho {
+  width: 100%;
+}
+.compacto {
+  padding: 0 var(--rv-espacio-2);
+}

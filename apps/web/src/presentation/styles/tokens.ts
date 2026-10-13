@@ -15,6 +15,9 @@ export const marco = {
 
 export const objetivoTactil = 44;
 
+/** Cortes responsive (px). En CSS se escriben literales dentro de @media (ver tokens.css). */
+export const cortes = { tablet: 768, escritorio: 1200 } as const;
+
 /** Tipos de elección que deben distinguirse en toda comparación temporal (RN-03). */
 export type TipoEleccion = 'presidencial' | 'intermedia';
 

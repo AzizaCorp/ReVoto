@@ -1,0 +1,35 @@
+.ranura {
+  display: grid;
+  place-items: center;
+  padding: var(--rv-espacio-1) var(--rv-espacio-2);
+  border: var(--rv-borde) dashed var(--rv-ranura-borde);
+  border-radius: var(--rv-radio);
+  background: var(--rv-ranura-fondo);
+  color: var(--rv-color-tinta-2);
+  text-align: center;
+}
+.etiqueta {
+  font-size: var(--rv-texto-meta);
+}
+.linea {
+  min-height: var(--rv-objetivo-tactil);
+}
+.chica {
+  min-height: var(--rv-ranura-chica);
+}
+.media {
+  min-height: var(--rv-ranura-media);
+}
+.grande {
+  min-height: var(--rv-ranura-grande);
+}
+.llena {
+  flex: 1;
+  min-height: var(--rv-ranura-media);
+}
+
+@media (min-width: 768px) {
+  .llena {
+    min-height: var(--rv-ranura-grande);
+  }
+}

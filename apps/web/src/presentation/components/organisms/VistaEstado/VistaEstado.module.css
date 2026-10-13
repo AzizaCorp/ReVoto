@@ -1,0 +1,10 @@
+.vistaEstado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-espacio-2);
+}
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rv-espacio-1);
+}

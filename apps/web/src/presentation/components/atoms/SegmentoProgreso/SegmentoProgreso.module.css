@@ -1,0 +1,9 @@
+.segmentoProgreso {
+  flex: 1;
+  height: var(--rv-progreso-alto);
+  border-radius: var(--rv-radio-pildora);
+  background: var(--rv-color-relleno);
+}
+.activo {
+  background: var(--rv-color-tinta);
+}

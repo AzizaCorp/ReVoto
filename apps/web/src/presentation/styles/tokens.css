@@ -63,6 +63,24 @@
   --rv-curva: cubic-bezier(0.2, 0, 0, 1);
 }
 
+/* ── Responsive (RIU-01) ──
+   Las media queries no aceptan var(): los cortes viven en tokens.ts (`cortes`) y se escriben
+   como literal solo dentro de @media: 768 px (tablet) y 1200 px (escritorio). */
+:root {
+  --rv-contenido-max: 1200px;
+  --rv-hoja-alto: 70dvh;
+  --rv-hoja-ancho-max: 640px;
+  --rv-velo: rgb(26 26 26 / 0.45);
+  --rv-ranura-fondo: var(--rv-color-relleno-2);
+  --rv-ranura-borde: var(--rv-color-linea);
+  --rv-ranura-chica: 48px;
+  --rv-ranura-media: 120px;
+  --rv-ranura-grande: 240px;
+  --rv-progreso-alto: 4px;
+  --rv-capa-barra: 10;
+  --rv-capa-hoja: 100;
+}
+
 /* ── Lectura fácil (HU-10 · W-13): texto mayor y sin animaciones ── */
 :root[data-lectura='facil'] {
   --rv-texto-cifra: 64px;

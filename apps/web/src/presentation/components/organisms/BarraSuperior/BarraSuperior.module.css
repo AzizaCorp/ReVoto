@@ -1,0 +1,49 @@
+/* Móvil: progreso arriba a todo lo ancho; marca, chip y «Aa» debajo.
+   Escritorio (≥ 1200 px): una sola fila con la marca, el progreso con el nombre del paso y las
+   acciones. */
+.barraSuperior {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    'progreso progreso'
+    'marca acciones';
+  align-items: center;
+  gap: var(--rv-espacio-1) var(--rv-espacio-2);
+  padding: var(--rv-espacio-1) var(--rv-margen-lateral);
+  min-height: var(--rv-zona-superior);
+  background: var(--rv-color-fondo);
+}
+.marca {
+  grid-area: marca;
+  font-weight: var(--rv-peso-fuerte);
+}
+.progreso {
+  grid-area: progreso;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-espacio-1);
+}
+.paso {
+  display: none;
+}
+.acciones {
+  grid-area: acciones;
+  min-width: 0;
+  justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  gap: var(--rv-espacio-1);
+}
+
+@media (min-width: 1200px) {
+  .barraSuperior {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'marca progreso acciones';
+    gap: var(--rv-espacio-4);
+    padding: var(--rv-espacio-2) var(--rv-espacio-6);
+    border-bottom: var(--rv-borde) solid var(--rv-color-relleno);
+  }
+  .paso {
+    display: block;
+  }
+}

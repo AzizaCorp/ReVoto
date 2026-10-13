@@ -1,0 +1,31 @@
+.pantallaLigera {
+  max-width: var(--rv-hoja-ancho-max);
+  margin: 0 auto;
+  padding: var(--rv-espacio-2) var(--rv-margen-lateral);
+  background: var(--rv-color-papel);
+  min-height: 100dvh;
+}
+.encabezado,
+.pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rv-espacio-2);
+}
+.cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-espacio-2);
+  padding: var(--rv-espacio-3) 0;
+}
+.cuerpo table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--rv-texto-meta);
+}
+.cuerpo th,
+.cuerpo td {
+  padding: var(--rv-espacio-1);
+  border-bottom: var(--rv-borde) solid var(--rv-color-relleno);
+  text-align: left;
+}

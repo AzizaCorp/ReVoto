@@ -1,0 +1,11 @@
+.filaInterruptor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rv-espacio-2);
+  padding: var(--rv-espacio-1) 0;
+}
+.textos {
+  display: flex;
+  flex-direction: column;
+}

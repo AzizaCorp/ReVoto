@@ -1,0 +1,72 @@
+.pantallaNarrativa {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: var(--rv-marco-max);
+  margin: 0 auto;
+}
+.superior,
+.inferior {
+  position: sticky;
+  z-index: var(--rv-capa-barra);
+}
+.superior {
+  top: 0;
+}
+.inferior {
+  bottom: 0;
+}
+.contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-espacio-2);
+  padding: var(--rv-espacio-2) var(--rv-margen-lateral);
+  min-height: 0;
+}
+.texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-espacio-2);
+}
+.visual {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-espacio-2);
+  flex: 1;
+  min-height: 0;
+}
+
+/* Tablet: dos columnas, texto a la izquierda y visual a la derecha. */
+@media (min-width: 768px) {
+  .pantallaNarrativa {
+    max-width: none;
+  }
+  .contenido {
+    padding: var(--rv-espacio-4);
+    justify-content: center;
+  }
+  .conVisual {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: var(--rv-espacio-4);
+  }
+  .conVisual .texto {
+    align-self: center;
+  }
+}
+
+/* Escritorio: rejilla 5/7 centrada, contenido hasta 1200 px. */
+@media (min-width: 1200px) {
+  .contenido {
+    width: 100%;
+    max-width: var(--rv-contenido-max);
+    margin: 0 auto;
+    padding: var(--rv-espacio-6);
+  }
+  .conVisual {
+    grid-template-columns: 5fr 7fr;
+    gap: var(--rv-espacio-6);
+  }
+}

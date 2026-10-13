@@ -1,0 +1,30 @@
+.barraInferior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rv-espacio-1);
+  min-height: var(--rv-zona-inferior);
+  padding: var(--rv-espacio-1) var(--rv-margen-lateral);
+  background: var(--rv-color-fondo);
+}
+/* En móvil «Compartir» queda solo con su icono para que la barra quepa en 360 px. */
+.textoAncho {
+  display: none;
+}
+@media (min-width: 768px) {
+  .textoAncho {
+    display: inline;
+  }
+}
+.grupo {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-espacio-1);
+}
+
+@media (min-width: 1200px) {
+  .barraInferior {
+    padding: var(--rv-espacio-2) var(--rv-espacio-6);
+    border-top: var(--rv-borde) solid var(--rv-color-relleno);
+  }
+}

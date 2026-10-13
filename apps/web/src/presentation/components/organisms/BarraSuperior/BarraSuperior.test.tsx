@@ -1,0 +1,29 @@
+import { fireEvent, render, screen } from '@testing-library/react';
+import { BarraSuperior } from './BarraSuperior';
+
+describe('BarraSuperior', () => {
+  it('muestra el progreso, el territorio y el acceso a ajustes', () => {
+    const onAjustes = vi.fn();
+    const onTerritorio = vi.fn();
+    render(
+      <BarraSuperior
+        progreso={{ posicion: 3, total: 10, texto: 'Pantalla 3 de 10' }}
+        nombrePaso="México votó"
+        territorio="Nacional"
+        onTerritorio={onTerritorio}
+        onAjustes={onAjustes}
+      />,
+    );
+    expect(screen.getByRole('banner')).toBeInTheDocument();
+    expect(screen.getByText('Pantalla 3 de 10')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Ajustes de lectura' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Cambiar territorio: Nacional' }));
+    expect(onAjustes).toHaveBeenCalledOnce();
+    expect(onTerritorio).toHaveBeenCalledOnce();
+  });
+
+  it('sin progreso no dibuja la barra', () => {
+    render(<BarraSuperior onAjustes={() => {}} />);
+    expect(screen.queryByText(/Pantalla/)).not.toBeInTheDocument();
+  });
+});

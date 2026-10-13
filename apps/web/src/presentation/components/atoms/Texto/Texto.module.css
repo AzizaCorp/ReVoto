@@ -1,0 +1,34 @@
+.h1,
+.h2,
+.cuerpo,
+.meta {
+  margin: 0;
+}
+.h1 {
+  font-size: var(--rv-texto-h1);
+  font-weight: var(--rv-peso-fuerte);
+  line-height: 1.2;
+}
+/* El h1 recibe foco por programa al cambiar de pantalla (HU-14); no es interactivo. */
+.h1:focus,
+.h1:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.h2 {
+  font-size: var(--rv-texto-h2);
+  font-weight: var(--rv-peso-fuerte);
+}
+.cuerpo {
+  font-size: var(--rv-texto-cuerpo);
+}
+.meta {
+  font-size: var(--rv-texto-meta);
+  color: var(--rv-color-tinta-2);
+}
+.etiqueta {
+  font-size: var(--rv-texto-etiqueta);
+  font-weight: var(--rv-peso-semi);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
