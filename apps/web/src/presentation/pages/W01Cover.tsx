@@ -8,6 +8,8 @@ export function W01Cover() {
   return (
     <StoryFrame
       cover
+      hasSource={false}
+      shareable={false}
       label="Elecciones federales · 2009–2024"
       visual={<Slot label="Ilustración: urna con boleta marcada" height="fill" />}
     >

@@ -14,8 +14,8 @@ export function W09Archetype() {
     >
       <Text variant="h1">Tu municipio tiene personalidad</Text>
       <Text variant="lead">
-        Agrupamos los municipios por cómo han votado de 2009 a 2024: su nivel, su tendencia, cuánto
-        suben en presidenciales y qué tan predecibles son.
+        Agrupamos los 2,477 municipios por cómo han votado de 2009 a 2024: su nivel, su tendencia,
+        cuánto suben en presidenciales y qué tan predecibles son.
       </Text>
       <Slot label="¿Por qué?" height="small">
         [Rasgo dominante] · Qué tan típico: —.—

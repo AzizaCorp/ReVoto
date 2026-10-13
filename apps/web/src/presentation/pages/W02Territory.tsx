@@ -31,6 +31,9 @@ export function W02Territory() {
           >
             Continuar
           </Button>
+          <Button size="small" icon="←" onClick={() => nav.goTo('W-01')}>
+            Inicio
+          </Button>
           <Button variant="text" onClick={nav.confirmTerritory}>
             Usar cifras nacionales
           </Button>

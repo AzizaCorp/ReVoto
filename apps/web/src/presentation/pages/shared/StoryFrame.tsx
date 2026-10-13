@@ -10,7 +10,10 @@ export interface StoryFrameProps {
   label?: string;
   /** Shows the skeleton's «Datos pendientes» pill. */
   pending?: boolean;
-  /** The screen shows figures: it gets «Fuente» (RF-12). */
+  /**
+   * The screen shows figures: it gets «Fuente» (RF-12). Fuente and Compartir only make sense
+   * from W-03 on (after «Sobre ti»), so the cover turns both off.
+   */
   hasSource?: boolean;
   /** The screen can be shared: it gets «Compartir» (RF-15). */
   shareable?: boolean;

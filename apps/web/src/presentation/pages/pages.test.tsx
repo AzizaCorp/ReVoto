@@ -27,4 +27,20 @@ describe('Skeleton pages', () => {
       expect(screen.getByRole('dialog')).toHaveAccessibleName();
     },
   );
+
+  it.each(['W-01', 'W-02', 'W-02b'] as ViewId[])(
+    '%s has no «Fuente» or «Compartir» (they start at W-03)',
+    (id) => {
+      const Page = PAGES[id];
+      withProviders(<Page />);
+      expect(screen.queryByRole('button', { name: /fuente/i })).toBeNull();
+      expect(screen.queryByRole('button', { name: /compartir/i })).toBeNull();
+    },
+  );
+
+  it('W-02 offers a way back to the cover', () => {
+    const Page = PAGES['W-02'];
+    withProviders(<Page />);
+    expect(screen.getByRole('button', { name: /inicio/i })).toBeInTheDocument();
+  });
 });

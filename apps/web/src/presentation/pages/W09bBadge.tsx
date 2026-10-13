@@ -15,6 +15,10 @@ export function W09bBadge() {
       visual={<Slot label="Tarjeta de tu insignia (I1–I6)" height="fill" />}
     >
       <Text variant="h1">Y tú, ¿cómo votas?</Text>
+      <Text variant="lead">
+        Tu insignia sale de tus respuestas; la comparación, de la participación del INE para tu edad
+        en tu entidad.
+      </Text>
       {complete ? (
         <Slot label="Tú y tu generación" height="small">
           Tú: — de 3 · [Edad] en [Entidad]: —.— de 3

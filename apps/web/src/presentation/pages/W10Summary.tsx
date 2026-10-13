@@ -38,6 +38,9 @@ export function W10Summary() {
           <Button size="small" icon="↺" onClick={() => nav.goTo('W-01')}>
             Volver a empezar
           </Button>
+          <Text variant="meta">
+            Fuente: conteos censales INE 2009–2024 · Hecho por Angel y Kira · Sin datos personales
+          </Text>
           <Button
             size="small"
             icon="‹"

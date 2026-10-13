@@ -8,27 +8,27 @@ componente real.
 
 Los nombres de archivos y componentes están en inglés; los textos que ve la persona usuaria, en español.
 
-| Archivo | Wireframe | Plantilla | Prioridad |
-| --- | --- | --- | --- |
-| `W01Cover.tsx` | W-01 Portada | `NarrativeScreen` (sin progreso) | Must |
-| `W02Territory.tsx` | W-02 Elige tu territorio | `UtilityScreen` | Must |
-| `W02bAboutYou.tsx` | W-02b Sobre ti (subpantalla del paso 2) | `UtilityScreen` | Could |
-| `W03MexicoVoted.tsx` | W-03 México votó | `NarrativeScreen` | Must |
-| `W04YourTerritory.tsx` | W-04 Tu territorio | `NarrativeScreen` | Must |
-| `W05FifteenYears.tsx` | W-05 Quince años de elecciones | `NarrativeScreen` | Must |
-| `W06YourGeneration.tsx` | W-06 Tu generación | `NarrativeScreen` | Must |
-| `W07WomenAndMen.tsx` | W-07 Mujeres y hombres | `NarrativeScreen` | Should |
-| `W08YourPlace.tsx` | W-08 Tu lugar en tu entidad | `NarrativeScreen` | Could |
-| `W09Archetype.tsx` | W-09 El arquetipo de tu municipio | `NarrativeScreen` | Should |
-| `W09bBadge.tsx` | W-09b Tu insignia (subpantalla del paso 9) | `NarrativeScreen` | Could |
-| `W09cMyMunicipalityAndMe.tsx` | W-09c Mi municipio y yo (subpantalla del paso 9) | `NarrativeScreen` | Could |
-| `W10Summary.tsx` | W-10 Tu resumen (cierre) | `UtilityScreen` | Must |
-| `sheets/W11Source.tsx` | W-11 Ficha de fuente | `SheetTemplate` | Must |
-| `sheets/W12Share.tsx` | W-12 Crear tarjeta | `SheetTemplate` | Must |
-| `sheets/W13Settings.tsx` | W-13 Ajustes de lectura | `SheetTemplate` | Must |
-| `W15Lite.tsx` | W-15 Versión ligera | `LiteScreen` | Must |
-| `W16OpenData.tsx` | W-16 Datos abiertos | `UtilityScreen` | Should |
-| `W17States.tsx` | W-17 Catálogo de estados (solo QA, `#/W-17`) | `UtilityScreen` | — |
+| Archivo                       | Wireframe                                        | Plantilla                        | Prioridad |
+| ----------------------------- | ------------------------------------------------ | -------------------------------- | --------- |
+| `W01Cover.tsx`                | W-01 Portada                                     | `NarrativeScreen` (sin progreso) | Must      |
+| `W02Territory.tsx`            | W-02 Elige tu territorio                         | `UtilityScreen`                  | Must      |
+| `W02bAboutYou.tsx`            | W-02b Sobre ti (subpantalla del paso 2)          | `UtilityScreen`                  | Could     |
+| `W03MexicoVoted.tsx`          | W-03 México votó                                 | `NarrativeScreen`                | Must      |
+| `W04YourTerritory.tsx`        | W-04 Tu territorio                               | `NarrativeScreen`                | Must      |
+| `W05FifteenYears.tsx`         | W-05 Quince años de elecciones                   | `NarrativeScreen`                | Must      |
+| `W06YourGeneration.tsx`       | W-06 Tu generación                               | `NarrativeScreen`                | Must      |
+| `W07WomenAndMen.tsx`          | W-07 Mujeres y hombres                           | `NarrativeScreen`                | Should    |
+| `W08YourPlace.tsx`            | W-08 Tu lugar en tu entidad                      | `NarrativeScreen`                | Could     |
+| `W09Archetype.tsx`            | W-09 El arquetipo de tu municipio                | `NarrativeScreen`                | Should    |
+| `W09bBadge.tsx`               | W-09b Tu insignia (subpantalla del paso 9)       | `NarrativeScreen`                | Could     |
+| `W09cMyMunicipalityAndMe.tsx` | W-09c Mi municipio y yo (subpantalla del paso 9) | `NarrativeScreen`                | Could     |
+| `W10Summary.tsx`              | W-10 Tu resumen (cierre)                         | `UtilityScreen`                  | Must      |
+| `sheets/W11Source.tsx`        | W-11 Ficha de fuente                             | `SheetTemplate`                  | Must      |
+| `sheets/W12Share.tsx`         | W-12 Crear tarjeta                               | `SheetTemplate`                  | Must      |
+| `sheets/W13Settings.tsx`      | W-13 Ajustes de lectura                          | `SheetTemplate`                  | Must      |
+| `W15Lite.tsx`                 | W-15 Versión ligera                              | `LiteScreen`                     | Must      |
+| `W16OpenData.tsx`             | W-16 Datos abiertos                              | `UtilityScreen`                  | Should    |
+| `W17States.tsx`               | W-17 Catálogo de estados (solo QA, `#/W-17`)     | `UtilityScreen`                  | —         |
 
 - `index.ts` registra cada vista en `PAGES` y cada hoja en `SHEETS`. El **orden** lo decide
   `domain/narrative`; el registro solo dice qué componente dibuja cada id.
