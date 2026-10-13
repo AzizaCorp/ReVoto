@@ -53,10 +53,10 @@ export function W16OpenData() {
         </section>
       ))}
       <div className={layout.grid2}>
-        <Button>Diccionario de datos</Button>
-        <Button>Metodología</Button>
+        <Button onClick={() => nav.goTo('W-19')}>Diccionario de datos</Button>
+        <Button onClick={() => nav.goTo('W-18')}>Metodología</Button>
       </div>
-      <Button icon="check" fullWidth>
+      <Button icon="check" fullWidth onClick={() => nav.openSheet('W-20')}>
         Reporte de calidad y validación
       </Button>
       <Text variant="meta">

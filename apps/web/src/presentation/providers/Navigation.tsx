@@ -19,13 +19,13 @@ import {
   type Sequence,
 } from '@/domain';
 
-/** Views outside the sequence: lite version, open data and states catalog. */
-export type AuxiliaryViewId = 'W-15' | 'W-16' | 'W-17';
+/** Views outside the sequence: lite version, open data, states catalog, methodology, dictionary. */
+export type AuxiliaryViewId = 'W-15' | 'W-16' | 'W-17' | 'W-18' | 'W-19';
 export type ViewId = ScreenId | AuxiliaryViewId;
 /** Bottom sheets that open on top of any screen. */
-export type SheetId = 'W-11' | 'W-12' | 'W-13';
+export type SheetId = 'W-11' | 'W-12' | 'W-13' | 'W-20';
 
-const AUXILIARY: readonly AuxiliaryViewId[] = ['W-15', 'W-16', 'W-17'];
+const AUXILIARY: readonly AuxiliaryViewId[] = ['W-15', 'W-16', 'W-17', 'W-18', 'W-19'];
 
 export interface Navigation {
   sequence: Sequence;

@@ -45,4 +45,22 @@ describe('App · sequence engine', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
     expect(title()).toHaveTextContent('[Municipio], [Entidad]');
   });
+
+  it('open data leads to the methodology, the dictionary and the quality report', () => {
+    window.location.hash = '#/W-16';
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Metodología' }));
+    expect(title()).toHaveTextContent('Metodología');
+    fireEvent.click(screen.getByRole('button', { name: 'Reporte de calidad' }));
+    expect(
+      screen.getByRole('dialog', { name: 'Reporte de calidad y validación' }),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Ver metodología' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Datos abiertos' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Diccionario de datos' }));
+    expect(title()).toHaveTextContent('Diccionario de datos');
+    expect(
+      screen.getByRole('table', { name: /Participación por entidad y municipio/ }),
+    ).toBeInTheDocument();
+  });
 });

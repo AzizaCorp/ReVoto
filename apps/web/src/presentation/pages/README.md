@@ -22,13 +22,16 @@ Los nombres de archivos y componentes están en inglés; los textos que ve la pe
 | `W09Archetype.tsx`            | W-09 El arquetipo de tu municipio                | `NarrativeScreen`                | Should    |
 | `W09bBadge.tsx`               | W-09b Tu insignia (subpantalla del paso 9)       | `NarrativeScreen`                | Could     |
 | `W09cMyMunicipalityAndMe.tsx` | W-09c Mi municipio y yo (subpantalla del paso 9) | `NarrativeScreen`                | Could     |
-| `W10Summary.tsx`              | W-10 Tu resumen (cierre)                         | `UtilityScreen`                  | Must      |
+| `W10Summary.tsx`              | W-10 Tu resumen (cierre)                         | `NarrativeScreen`                | Must      |
 | `sheets/W11Source.tsx`        | W-11 Ficha de fuente                             | `SheetTemplate`                  | Must      |
 | `sheets/W12Share.tsx`         | W-12 Crear tarjeta                               | `SheetTemplate`                  | Must      |
 | `sheets/W13Settings.tsx`      | W-13 Ajustes de lectura                          | `SheetTemplate`                  | Must      |
 | `W15Lite.tsx`                 | W-15 Versión ligera                              | `LiteScreen`                     | Must      |
 | `W16OpenData.tsx`             | W-16 Datos abiertos                              | `UtilityScreen`                  | Should    |
 | `W17States.tsx`               | W-17 Catálogo de estados (solo QA, `#/W-17`)     | `UtilityScreen`                  | —         |
+| `W18Methodology.tsx`          | W-18 Metodología                                 | `UtilityScreen` (`sidebar`)      | Should    |
+| `W19Dictionary.tsx`           | W-19 Diccionario de datos                        | `UtilityScreen`                  | Should    |
+| `sheets/W20Quality.tsx`       | W-20 Reporte de calidad y validación             | `SheetTemplate`                  | Should    |
 
 - `index.ts` registra cada vista en `PAGES` y cada hoja en `SHEETS`. El **orden** lo decide
   `domain/narrative`; el registro solo dice qué componente dibuja cada id.

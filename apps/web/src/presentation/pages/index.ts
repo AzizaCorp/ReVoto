@@ -15,6 +15,8 @@ import { W10Summary } from './W10Summary';
 import { W15Lite } from './W15Lite';
 import { W16OpenData } from './W16OpenData';
 import { W17States } from './W17States';
+import { W18Methodology } from './W18Methodology';
+import { W19Dictionary } from './W19Dictionary';
 
 export { SHEETS } from './sheets';
 
@@ -36,4 +38,6 @@ export const PAGES: Record<ViewId, () => React.JSX.Element> = {
   'W-15': W15Lite,
   'W-16': W16OpenData,
   'W-17': W17States,
+  'W-18': W18Methodology,
+  'W-19': W19Dictionary,
 };

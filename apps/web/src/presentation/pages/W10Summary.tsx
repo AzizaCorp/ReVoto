@@ -40,7 +40,7 @@ export function W10Summary() {
       label="Resumen"
       hasSource={false}
       shareable={false}
-      secondaryAction={{ label: 'Metodología', icon: 'info', onClick: () => nav.goTo('W-16') }}
+      secondaryAction={{ label: 'Metodología', icon: 'info', onClick: () => nav.goTo('W-18') }}
       visual={<div className={layout.wideOnly}>{rows}</div>}
     >
       <Text variant="h1">Lo esencial, en cinco cifras</Text>

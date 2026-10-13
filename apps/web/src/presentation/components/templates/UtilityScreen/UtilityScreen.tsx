@@ -18,6 +18,8 @@ export interface UtilityScreenProps {
   actions?: ReactNode;
   /** Second column on tablet and desktop (map, preview); below the content on mobile. */
   aside?: ReactNode;
+  /** `sidebar`: on desktop the main column is a narrow sidebar and the aside takes the rest (W-18). */
+  columns?: 'even' | 'sidebar';
 }
 
 /**
@@ -34,12 +36,19 @@ export function UtilityScreen({
   children,
   actions,
   aside,
+  columns = 'even',
 }: UtilityScreenProps) {
   return (
     <div className={styles.utilityScreen}>
       {top ?? <div />}
       <div className={styles.scroller}>
-        <div className={[styles.layout, aside ? styles.withAside : ''].join(' ')}>
+        <div
+          className={[
+            styles.layout,
+            aside ? styles.withAside : '',
+            columns === 'sidebar' ? styles.sidebar : '',
+          ].join(' ')}
+        >
           <div className={styles.body}>
             {onBack && (
               <div>

@@ -82,6 +82,13 @@
   .withAside {
     gap: var(--rv-space-8);
   }
+  .sidebar {
+    grid-template-columns: minmax(0, calc(var(--rv-frame-width) - var(--rv-space-6))) minmax(0, 1fr);
+  }
+  .sidebar .body {
+    position: sticky;
+    top: var(--rv-space-4);
+  }
 }
 @keyframes rv-rise {
   from {
