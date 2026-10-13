@@ -45,6 +45,11 @@ UMBRAL_RN05 = 50
 LIMITE_ENTIDAD_KB = 300  # RNF-04
 LIMITE_MUNICIPIO_KB = 20
 INSUMOS = Path(__file__).resolve().parent.parent / "insumos"
+# Cónica conforme de Lambert para México (INEGI, EPSG:6372). Las coordenadas salen en metros ya
+# proyectadas: la app dibuja SVG sin librería de mapas (y crece hacia el norte).
+PROYECCION = ("+proj=lcc +lat_1=17.5 +lat_2=29.5 +lat_0=12 +lon_0=-102 "
+              "+x_0=2500000 +y_0=0 +ellps=GRS80 +units=m +no_defs")
+LIMITE_MAPA_NACIONAL_KB = 650
 
 
 def tipo(anio: int) -> str:
@@ -190,12 +195,12 @@ def convertir(v2: Path, marco: Path, salida: Path, mapshaper: str, ahora: dateti
     try:
         base = shlex.split(mapshaper)
         subprocess.run(base + [
-            "-i", str(marco / "00mun.shp"), "encoding=latin1", "snap", "-proj", "wgs84",
+            "-i", str(marco / "00mun.shp"), "encoding=latin1", "snap", "-proj", PROYECCION,
             "-simplify", "6%", "keep-shapes", "-filter-fields", "CVEGEO,CVE_ENT", "-split", "CVE_ENT",
             "-o", "format=topojson", "quantization=10000", "singles", f"{tmp}/",
         ], check=True, capture_output=True)
         subprocess.run(base + [
-            "-i", str(marco / "00ent.shp"), "encoding=latin1", "snap", "-proj", "wgs84",
+            "-i", str(marco / "00ent.shp"), "encoding=latin1", "snap", "-proj", PROYECCION,
             "-simplify", "2%", "keep-shapes", "-filter-fields", "CVE_ENT",
             "-o", "format=topojson", "quantization=10000", str(tmp / "entidades.topo.json"),
         ], check=True, capture_output=True)
@@ -220,6 +225,18 @@ def convertir(v2: Path, marco: Path, salida: Path, mapshaper: str, ahora: dateti
             cve = int(g["properties"]["CVE_ENT"])
             g["properties"] = {"cve": cve, "nombre": entidades[cve]}
         archivos["geo/entidades.topo.json"] = dump(topo)
+        # W-03: todos los municipios del país, más simplificados; solo la clave INEGI.
+        subprocess.run(base + [
+            "-i", str(marco / "00mun.shp"), "encoding=latin1", "snap", "-proj", PROYECCION,
+            "-simplify", "1%", "keep-shapes", "-filter-fields", "CVEGEO",
+            "-o", "format=topojson", "quantization=10000", str(tmp / "municipios.topo.json"),
+        ], check=True, capture_output=True)
+        topo = json.loads((tmp / "municipios.topo.json").read_text("utf-8"))
+        objeto = next(iter(topo["objects"].values()))
+        topo["objects"] = {"municipios": objeto}
+        for g in objeto["geometries"]:
+            g["properties"] = {"cvegeo": g["properties"]["CVEGEO"]}
+        archivos["geo/municipios.topo.json"] = dump(topo)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -308,6 +325,15 @@ def convertir(v2: Path, marco: Path, salida: Path, mapshaper: str, ahora: dateti
             "municipios": municipios_ent,
         })
 
+    # W-03: participación de cada municipio del país, compacta: cvegeo → [nombre, entidad,
+    # [participación por año en el orden de "anios"]] (null = sin dato o suprimido, RN-05).
+    mapa = {}
+    for (edo, mun), cg in sorted(cruce.items()):
+        doc = json.loads(archivos[f"municipio/{edo}-{mun:03d}.json"])
+        por_anio = {e["anio"]: e["participacion"] for e in doc["elecciones"]}
+        mapa[cg] = [doc["territorio"]["nombre"], edo, [por_anio.get(a) for a in ANIOS]]
+    archivos["mapa/participacion.json"] = dump({"fuente": FUENTE_CORTA, "anios": list(ANIOS), "municipios": mapa})
+
     # Nacional: se suman conteos, nunca se promedian porcentajes.
     elecciones_nac = []
     for anio in ANIOS:
@@ -335,7 +361,9 @@ def convertir(v2: Path, marco: Path, salida: Path, mapshaper: str, ahora: dateti
 
     # Reporte de calidad (W-20).
     max_ent = max(len(b) for k, b in archivos.items() if k.startswith("entidad/"))
-    max_geo = max(len(b) for k, b in archivos.items() if k.startswith("geo/"))
+    max_geo = max(len(b) for k, b in archivos.items()
+                  if k.startswith("geo/") and k != "geo/municipios.topo.json")
+    nacional_kb = len(archivos["geo/municipios.topo.json"]) / 1024
     n_mun = len(municipios_ine)
     reglas = [
         ("RN-01", "Participación = votaron ÷ (lista nominal − sin dato), recalculada en cada fila",
@@ -362,8 +390,9 @@ def convertir(v2: Path, marco: Path, salida: Path, mapshaper: str, ahora: dateti
          "aprobada", f"{calidad['con_arquetipo']} de {n_mun}."),
         ("RNF-04", f"Entidad ≤ {LIMITE_ENTIDAD_KB} KB, municipio ≤ {LIMITE_MUNICIPIO_KB} KB, geometría ≤ {LIMITE_ENTIDAD_KB} KB",
          "aprobada" if max_ent <= LIMITE_ENTIDAD_KB * 1024 and max_mun <= LIMITE_MUNICIPIO_KB * 1024
-         and max_geo <= LIMITE_ENTIDAD_KB * 1024 else "fallida",
-         f"Máximos: entidad {max_ent / 1024:.1f} KB, municipio {max_mun / 1024:.1f} KB, geometría {max_geo / 1024:.1f} KB."),
+         and max_geo <= LIMITE_ENTIDAD_KB * 1024 and nacional_kb <= LIMITE_MAPA_NACIONAL_KB else "fallida",
+         f"Máximos: entidad {max_ent / 1024:.1f} KB, municipio {max_mun / 1024:.1f} KB, geometría {max_geo / 1024:.1f} KB; "
+         f"mapa nacional {nacional_kb:.1f} KB (≤ {LIMITE_MAPA_NACIONAL_KB} KB, solo se descarga en W-03)."),
         ("RF-23", "Diferencia contra cifras oficiales del INE ≤ 1 pp",
          "pendiente", "cifras_oficiales.csv aún no tiene filas: no se puede comparar."),
     ]

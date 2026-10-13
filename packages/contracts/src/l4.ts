@@ -120,3 +120,31 @@ export interface CalidadDto {
     detalle: string;
   }[];
 }
+
+/**
+ * TopoJSON proyectado (Lambert conforme cónica para México, metros): geo/entidades.topo.json,
+ * geo/<cve>.topo.json y geo/municipios.topo.json. Un solo objeto; arcos cuantizados y delta-codificados.
+ */
+export interface TopologiaDto {
+  type: 'Topology';
+  transform: { scale: [number, number]; translate: [number, number] };
+  arcs: [number, number][][];
+  objects: Record<
+    string,
+    {
+      type: 'GeometryCollection';
+      geometries: {
+        type: 'Polygon' | 'MultiPolygon' | null;
+        arcs?: number[][] | number[][][];
+        properties: { cvegeo?: string; cve?: number; nombre?: string };
+      }[];
+    }
+  >;
+}
+
+/** W-03: cvegeo → [nombre, entidad, participación por año en el orden de `anios`]. */
+export interface MapaParticipacionDto {
+  fuente: string;
+  anios: AnioEleccion[];
+  municipios: Record<Cvegeo, [string, number, (Proporcion | null)[]]>;
+}

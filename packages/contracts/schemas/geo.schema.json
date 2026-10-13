@@ -1,12 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "geo.schema.json",
-  "title": "Geometría TopoJSON (geo/entidades.topo.json y geo/<cve>.topo.json)",
+  "title": "Geometría TopoJSON proyectada (Lambert conforme cónica, metros): geo/entidades, geo/<cve> y geo/municipios",
   "type": "object",
   "required": [
     "type",
     "arcs",
-    "objects"
+    "objects",
+    "transform"
   ],
   "properties": {
     "type": {
@@ -16,7 +17,23 @@
       "type": "array"
     },
     "transform": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "scale",
+        "translate"
+      ],
+      "properties": {
+        "scale": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "translate": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
     },
     "bbox": {
       "type": "array"
@@ -42,9 +59,6 @@
               "properties": {
                 "properties": {
                   "type": "object",
-                  "required": [
-                    "nombre"
-                  ],
                   "properties": {
                     "cve": {
                       "type": "integer",

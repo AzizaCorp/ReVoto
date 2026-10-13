@@ -22,7 +22,8 @@ const esquemaPara = (rel) => {
   if (/\/entidad\/\d+\.json$/.test(rel)) return 'entidad.schema.json';
   if (/\/municipio\/\d+-\d{3}\.json$/.test(rel)) return 'municipio.schema.json';
   if (/^\d{8}-[0-9a-f]{7}\/calidad\.json$/.test(rel)) return 'calidad.schema.json';
-  if (/\/geo\/(entidades|\d+)\.topo\.json$/.test(rel)) return 'geo.schema.json';
+  if (/\/geo\/(entidades|municipios|\d+)\.topo\.json$/.test(rel)) return 'geo.schema.json';
+  if (/\/mapa\/participacion\.json$/.test(rel)) return 'mapa.schema.json';
   return null;
 };
 

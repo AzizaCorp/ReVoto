@@ -37,7 +37,9 @@ const datos = join(raiz, 'apps', 'web', 'public', 'data');
 for (const archivo of listar(datos).filter((f) => f.endsWith('.json'))) {
   const rel = relative(datos, archivo).split(sep).join('/');
   const tam = statSync(archivo).size;
-  const limite = rel.includes('/entidad/') || rel.includes('/geo/')
+  const limite = rel.endsWith('/geo/municipios.topo.json')
+    ? presupuesto.mapa_nacional_kb
+    : rel.includes('/entidad/') || rel.includes('/geo/') || rel.includes('/mapa/')
     ? presupuesto.entidad_kb
     : rel.includes('/municipio/')
       ? presupuesto.municipio_kb
