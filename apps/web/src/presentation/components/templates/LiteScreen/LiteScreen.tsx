@@ -1,25 +1,42 @@
 import type { ReactNode } from 'react';
-import { Button } from '../../atoms';
 import styles from './LiteScreen.module.css';
 
 export interface LiteScreenProps {
   onFullVersion: () => void;
+  /** «Fuente» in the header (tablet and desktop only, as in boards TL/DL). */
+  onSource?: () => void;
   children: ReactNode;
   /** Text navigation at the foot («‹ Anterior · Siguiente ›»). */
   footer?: ReactNode;
 }
 
-/** Lite version template (W-15, RF-18): only text and tables, no images or charts. */
-export function LiteScreen({ onFullVersion, children, footer }: LiteScreenProps) {
+/**
+ * Lite version template (W-15, RF-18): text and tables only, system fonts, no images, charts or
+ * motion (boards WL/TL/DL on the «secuencia» page).
+ */
+export function LiteScreen({ onFullVersion, onSource, children, footer }: LiteScreenProps) {
   return (
     <div className={styles.liteScreen}>
       <header className={styles.header}>
-        <strong>ReVoto · versión ligera</strong>
-        <Button variant="text" onClick={onFullVersion}>
-          Versión completa
-        </Button>
+        <strong className={styles.brand}>ReVoto · versión ligera</strong>
+        <nav className={styles.nav} aria-label="Versión ligera">
+          {onSource && (
+            <button
+              type="button"
+              className={`${styles.link} ${styles.wideOnly}`}
+              onClick={onSource}
+            >
+              Fuente
+            </button>
+          )}
+          <button type="button" className={styles.link} onClick={onFullVersion}>
+            Versión completa
+          </button>
+        </nav>
       </header>
-      <div className={styles.body}>{children}</div>
+      <main className={styles.main}>
+        <div className={styles.body}>{children}</div>
+      </main>
       {footer && <footer className={styles.footer}>{footer}</footer>}
     </div>
   );

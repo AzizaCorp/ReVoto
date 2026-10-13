@@ -11,43 +11,9 @@ import {
 import { useNavigation } from '@/presentation/providers/Navigation';
 import { useStepNumber } from './shared/StoryFrame';
 import layout from './shared/Layout.module.css';
+import { STATES } from './shared/states';
 import { UtilityTopBar } from './shared/UtilityTopBar';
 
-/** The 32 states (INEGI catalog). Pending US-11: read them with `listStates`. */
-const STATES = [
-  'Aguascalientes',
-  'Baja California',
-  'Baja California Sur',
-  'Campeche',
-  'Coahuila de Zaragoza',
-  'Colima',
-  'Chiapas',
-  'Chihuahua',
-  'Ciudad de México',
-  'Durango',
-  'Guanajuato',
-  'Guerrero',
-  'Hidalgo',
-  'Jalisco',
-  'México',
-  'Michoacán de Ocampo',
-  'Morelos',
-  'Nayarit',
-  'Nuevo León',
-  'Oaxaca',
-  'Puebla',
-  'Querétaro',
-  'Quintana Roo',
-  'San Luis Potosí',
-  'Sinaloa',
-  'Sonora',
-  'Tabasco',
-  'Tamaulipas',
-  'Tlaxcala',
-  'Veracruz de Ignacio de la Llave',
-  'Yucatán',
-  'Zacatecas',
-] as const;
 const TONES: readonly BubbleTone[] = ['brand', 'violet', 'indigo', 'brand', 'neutral'];
 const normalize = (t: string) =>
   t

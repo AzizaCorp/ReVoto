@@ -1,0 +1,191 @@
+/* Content blocks of the lite version (boards WL/TL/DL). System fonts, no motion. */
+.meta {
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--rv-color-ink-2);
+}
+.intro {
+  margin: 0;
+  font-size: 15px;
+  line-height: 21px;
+}
+.title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: var(--rv-weight-bold);
+}
+.big {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: var(--rv-weight-bold);
+}
+.note {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--rv-radius-row);
+  background: var(--rv-color-background);
+  font-size: 12.5px;
+  line-height: 17px;
+  color: var(--rv-color-ink-2);
+}
+.number {
+  text-align: right !important;
+  white-space: nowrap;
+  color: var(--rv-color-ink-2);
+}
+.me th,
+.me td {
+  background: var(--rv-color-brand-soft);
+  color: var(--rv-color-ink);
+  font-weight: var(--rv-weight-bold);
+}
+.facts {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 20px;
+}
+.fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+.fact dt {
+  color: var(--rv-color-ink-2);
+}
+.fact dd {
+  margin: 0;
+  font-weight: var(--rv-weight-semibold);
+  text-align: right;
+}
+.toc {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  line-height: 20px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: var(--rv-weight-semibold);
+}
+.field select {
+  height: var(--rv-touch-target);
+  padding: 0 10px;
+  border: var(--rv-border-width) solid var(--rv-color-muted);
+  border-radius: var(--rv-radius-sm);
+  background: var(--rv-color-paper);
+  color: var(--rv-color-ink);
+  font: var(--rv-weight-regular) 15px var(--rv-font-system);
+}
+.field select:disabled {
+  color: var(--rv-color-muted);
+  border-color: var(--rv-color-border);
+  background: var(--rv-color-background);
+}
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.fieldset legend {
+  padding: 0;
+  margin-bottom: 4px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: var(--rv-weight-semibold);
+}
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  font-size: 14px;
+  line-height: 20px;
+}
+.option input {
+  accent-color: var(--rv-color-brand-text);
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rv-space-2);
+}
+.button {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--rv-touch-target);
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--rv-radius-sm);
+  background: var(--rv-color-ink);
+  color: var(--rv-color-on-ink);
+  font: var(--rv-weight-bold) 15px var(--rv-font-system);
+  cursor: pointer;
+}
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--rv-color-brand-text);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.strongLink {
+  composes: link;
+  align-self: flex-start;
+  text-align: left;
+  font-weight: var(--rv-weight-semibold);
+  font-size: 14px;
+}
+.navLink {
+  composes: link;
+  font: var(--rv-weight-semibold) 15px/var(--rv-touch-target) var(--rv-font-system);
+}
+.navLink:disabled {
+  visibility: hidden;
+}
+.end {
+  font: var(--rv-weight-bold) 15px/var(--rv-touch-target) var(--rv-font-system);
+}
+.button:focus-visible,
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--rv-focus-ring);
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 26px;
+    line-height: 34px;
+  }
+}
+@media (min-width: 1200px) {
+  .title {
+    font-size: 30px;
+    line-height: 38px;
+  }
+}

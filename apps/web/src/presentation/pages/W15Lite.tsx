@@ -1,68 +1,93 @@
-import { useState } from 'react';
-import { next, previous, progress, screenName, type ScreenId } from '@/domain';
-import { Button, LiteScreen, Text } from '@/presentation/components';
+import { useEffect, useRef, useState } from 'react';
+import { next, previous, progress, type ScreenId } from '@/domain';
+import { LiteScreen } from '@/presentation/components';
+import { useMediaQuery } from '@/presentation/hooks/useMediaQuery';
 import { useNavigation } from '@/presentation/providers/Navigation';
+import { useProfile } from '@/presentation/providers/Profile';
+import { liteStep } from './lite/LiteSteps';
+import styles from './lite/Lite.module.css';
 
-const YEARS = [
-  [2009, 'Intermedia'],
-  [2012, 'Presidencial'],
-  [2015, 'Intermedia'],
-  [2018, 'Presidencial'],
-  [2021, 'Intermedia'],
-  [2024, 'Presidencial'],
-] as const;
-
-/** W-15 · Lite version (RF-18): the same story as text and tables, ≤ 500 KB. */
+/**
+ * W-15 · Lite version (RF-18): the same story as text and tables, ≤ 500 KB. Each sequence screen
+ * has its own lite step (boards WL/TL/DL on the «secuencia» page); it starts where the person was.
+ */
 export function W15Lite() {
   const nav = useNavigation();
+  const profile = useProfile();
+  const wide = useMediaQuery('(min-width: 768px)');
   const [id, setId] = useState<ScreenId>(nav.lastScreen);
+  const title = useRef<HTMLHeadingElement>(null);
+  const first = useRef(true);
+  useEffect(() => {
+    // Move focus to the new heading so screen readers announce the step (not on first render).
+    if (first.current) first.current = false;
+    else title.current?.focus();
+  }, [id]);
+
+  const show = (target: ScreenId) => {
+    setId(nav.sequence.screens.includes(target) ? target : (next(nav.sequence, target) ?? 'W-01'));
+    window.scrollTo?.(0, 0);
+  };
+  const step = liteStep(id, {
+    show,
+    open: nav.goTo,
+    wide,
+    answers: profile.answers,
+    answer: profile.answer,
+    badge: profile.badge,
+    votes: profile.votes,
+  });
   const previousId = previous(nav.sequence, id);
   const nextId = next(nav.sequence, id);
+  const position = progress(nav.sequence, id).text;
+
   return (
     <LiteScreen
       onFullVersion={() => nav.goTo(id)}
+      onSource={step.source ? () => nav.openSheet('W-11') : undefined}
       footer={
         <>
-          <Button
-            variant="text"
+          <button
+            type="button"
+            className={styles.navLink}
             disabled={!previousId}
-            onClick={() => previousId && setId(previousId)}
+            onClick={() => previousId && show(previousId)}
           >
             ‹ Anterior
-          </Button>
-          <Button variant="text" disabled={!nextId} onClick={() => nextId && setId(nextId)}>
-            Siguiente ›
-          </Button>
+          </button>
+          {nextId ? (
+            <button type="button" className={styles.navLink} onClick={() => show(nextId)}>
+              Siguiente ›
+            </button>
+          ) : (
+            <span className={styles.end}>Fin</span>
+          )}
         </>
       }
     >
-      <Text variant="meta">
-        {progress(nav.sequence, id).text} · {nav.territory}
-      </Text>
-      <Text variant="h1">{screenName(id)}</Text>
-      <Text variant="body">[Mensaje de la pantalla]</Text>
-      <table>
-        <caption>Participación por elección federal (datos pendientes)</caption>
-        <thead>
-          <tr>
-            <th scope="col">Año</th>
-            <th scope="col">Tipo</th>
-            <th scope="col">Territorio</th>
-            <th scope="col">Nacional</th>
-          </tr>
-        </thead>
-        <tbody>
-          {YEARS.map(([year, type]) => (
-            <tr key={year}>
-              <th scope="row">{year}</th>
-              <td>{type}</td>
-              <td>—.— %</td>
-              <td>—.— %</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <Text variant="meta">Fuente: INE, conteos censales 2009–2024.</Text>
+      <p className={styles.meta}>
+        {id === 'W-01' ? step.label : `${position} · ${step.label}`}
+        {step.territory && (
+          <>
+            {' · [Municipio], [Entidad] · '}
+            <button type="button" className={styles.link} onClick={() => show('W-02')}>
+              cambiar
+            </button>
+          </>
+        )}
+      </p>
+      <h1 ref={title} tabIndex={-1} className={styles.title}>
+        {step.title}
+      </h1>
+      {step.body}
+      {step.source && (
+        <p className={styles.meta}>
+          Fuente: INE, conteos censales 2009–2024. Fórmula: votaron ÷ (lista nominal − sin dato).{' '}
+          <button type="button" className={styles.link} onClick={() => nav.openSheet('W-11')}>
+            Ver fuente
+          </button>
+        </p>
+      )}
     </LiteScreen>
   );
 }
