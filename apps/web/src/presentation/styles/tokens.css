@@ -1,5 +1,6 @@
 /* ReVoto · Design tokens
-   Source: high-fidelity design v2 (Claude Design «ReVoto · Alta fidelidad») and brand manual v2.
+   Source: component system v0.1, board C-00 «Tokens» (Claude Design «ReVoto · Alta fidelidad»,
+   page «Sistema de componentes»), extracted from the high-fidelity screens and the brand manual v2.
    Rule: no component uses literal values; everything comes from these variables.
    Contrast checked: ink and ink-2 on background ≥ 4.5:1; brand-text on brand-soft ≥ 4.5:1. */
 
@@ -12,6 +13,9 @@
   --rv-color-border: #eee7ec;
   --rv-color-fill: #ddd6db;
   --rv-color-fill-2: #f3eef1;
+  --rv-color-track: #f0eaee;
+  --rv-color-control: #c9c1c7;
+  --rv-color-pending: #e0a3c4;
   --rv-color-paper: #ffffff;
   --rv-color-background: #fdf9fa;
   --rv-color-brand: #ff2d94;
@@ -21,6 +25,22 @@
   --rv-color-notice-bg: #ffe3f1;
   --rv-color-on-ink: #ffffff;
   --rv-color-on-brand: #171824;
+
+  /* Icon bubble tones (background / icon), board C-00 */
+  --rv-tone-brand-strong-bg: #ff2d94;
+  --rv-tone-brand-strong-fg: #ffffff;
+  --rv-tone-brand-bg: #ffe3f1;
+  --rv-tone-brand-fg: #c8106e;
+  --rv-tone-violet-bg: #efe4ff;
+  --rv-tone-violet-fg: #7b45d6;
+  --rv-tone-indigo-bg: #e3e8ff;
+  --rv-tone-indigo-fg: #4b5fe0;
+  --rv-tone-neutral-bg: #f1ecf0;
+  --rv-tone-neutral-fg: #55566a;
+  --rv-tone-mint-bg: #e3f7ee;
+  --rv-tone-mint-fg: #0f7a4f;
+  --rv-tone-warning-bg: #fff4d6;
+  --rv-tone-warning-fg: #8a5a00;
 
   /* Time series (RN-03): the distinction does NOT depend on color but on the fill */
   --rv-series-presidential: var(--rv-color-ink);
@@ -34,14 +54,15 @@
   --rv-font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --rv-font-title: 'Sora', 'Plus Jakarta Sans', system-ui, sans-serif;
   --rv-text-figure: 32px;
+  --rv-text-figure-small: 19px;
   --rv-text-h1: 30px;
-  --rv-text-h2: 20px;
+  --rv-text-h2: 22px;
   --rv-text-lead: 14px;
-  --rv-text-body: 15px;
-  --rv-text-meta: 13px;
+  --rv-text-body: 14px;
+  --rv-text-meta: 12px;
   --rv-text-label: 11px;
-  --rv-text-button: 15px;
-  --rv-text-button-small: 13px;
+  --rv-text-button: 15px; /* large */
+  --rv-text-button-small: 13px; /* small and medium */
   --rv-weight-regular: 400;
   --rv-weight-medium: 500;
   --rv-weight-semibold: 600;
@@ -75,22 +96,38 @@
 
   /* ── Interaction ── */
   --rv-touch-target: 44px; /* WCAG 2.5.8 */
-  --rv-button-height: 48px;
+  --rv-button-height-small: 36px;
+  --rv-button-height: 44px; /* medium */
   --rv-button-height-large: 52px;
+  --rv-radius-sm: 8px;
   --rv-radius: 12px;
+  --rv-radius-row: 14px;
   --rv-radius-card: 18px;
+  --rv-radius-share: 26px;
   --rv-radius-pill: 999px;
   --rv-border-width: 1.5px;
   --rv-border-thin: 1px;
-  --rv-shadow: 0 1px 3px rgb(23 24 36 / 0.12);
+  --rv-shadow-sm: 0 1px 3px rgb(23 24 36 / 0.12);
+  --rv-shadow-md: 0 2px 6px rgb(23 24 36 / 0.08);
+  --rv-shadow-lg: 0 6px 18px rgb(23 24 36 / 0.14);
+  --rv-shadow-share: 0 18px 40px rgb(10 10 30 / 0.28);
+  --rv-shadow-panel: -12px 0 40px rgb(23 24 36 / 0.22);
+  --rv-shadow-modal: 0 30px 80px rgb(23 24 36 / 0.35);
+  --rv-shadow: var(--rv-shadow-sm);
   --rv-focus-ring: 0 0 0 3px var(--rv-color-paper), 0 0 0 5px var(--rv-color-focus);
+  --rv-duration-press: 160ms;
   --rv-duration: 200ms;
+  --rv-duration-enter: 480ms;
+  --rv-duration-pop: 560ms;
+  --rv-duration-grow: 640ms;
+  --rv-stagger: 70ms;
   --rv-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --rv-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* ── Skeleton and layers ── */
   --rv-progress-height: 3px;
   --rv-pill-height: 24px;
-  --rv-logo-height: 26px;
+  --rv-logo-height: 18px;
   --rv-sheet-height: 70dvh;
   --rv-sheet-max-width: 640px;
   --rv-scrim: rgb(23 24 36 / 0.45);
@@ -109,9 +146,15 @@
 @media (min-width: 768px) {
   :root {
     --rv-text-h1: 40px;
+    --rv-text-h2: 26px;
+    --rv-text-figure: 40px;
+    --rv-text-figure-small: 30px;
     --rv-text-lead: 15px;
+    --rv-text-body: 15px;
+    --rv-text-meta: 13px;
     --rv-side-margin: 40px;
-    --rv-logo-height: 28px;
+    --rv-bottom-zone: 88px;
+    --rv-logo-height: 22px;
   }
 }
 @media (min-width: 1200px) {
@@ -119,8 +162,9 @@
     --rv-text-h1: 52px;
     --rv-text-lead: 17px;
     --rv-side-margin: 64px;
+    --rv-text-label: 12px;
     --rv-top-zone: 80px;
-    --rv-logo-height: 30px;
+    --rv-logo-height: 24px;
   }
 }
 
@@ -134,15 +178,27 @@
   --rv-text-meta: 17px;
   --rv-text-label: 14px;
   --rv-line-height: 1.6;
+  --rv-duration-press: 0ms;
   --rv-duration: 0ms;
+  --rv-duration-enter: 0ms;
+  --rv-duration-pop: 0ms;
+  --rv-duration-grow: 0ms;
 }
 
 /* ── Reduced motion: system preference or W-13 setting ── */
 @media (prefers-reduced-motion: reduce) {
   :root {
+    --rv-duration-press: 0ms;
     --rv-duration: 0ms;
+    --rv-duration-enter: 0ms;
+    --rv-duration-pop: 0ms;
+    --rv-duration-grow: 0ms;
   }
 }
 :root[data-motion='reduced'] {
+  --rv-duration-press: 0ms;
   --rv-duration: 0ms;
+  --rv-duration-enter: 0ms;
+  --rv-duration-pop: 0ms;
+  --rv-duration-grow: 0ms;
 }

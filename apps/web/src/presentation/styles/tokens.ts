@@ -12,6 +12,19 @@ export const frame = {
 
 export const touchTarget = 44;
 
+/** Button heights (px): small 36 · medium 44 · large 52 (board C-01). */
+export const buttonHeight = { small: 36, medium: 44, large: 52 } as const;
+
+/** Motion durations (ms), board C-00. */
+export const duration = {
+  press: 160,
+  state: 200,
+  enter: 480,
+  pop: 560,
+  grow: 640,
+  stagger: 70,
+} as const;
+
 /** Responsive breakpoints (px). In CSS they are written as literals inside @media (see tokens.css). */
 export const breakpoints = { tablet: 768, desktop: 1200 } as const;
 
