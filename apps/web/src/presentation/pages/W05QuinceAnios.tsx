@@ -5,6 +5,8 @@ import { MarcoHistoria } from './compartido/MarcoHistoria';
 export function W05QuinceAnios() {
   return (
     <MarcoHistoria
+      pendiente
+      etiqueta="15 años"
       visual={
         <>
           <Ranura
@@ -15,7 +17,6 @@ export function W05QuinceAnios() {
         </>
       }
     >
-      <Texto rol="etiqueta">15 años</Texto>
       <Texto rol="h1">[Mensaje sobre presidenciales e intermedias]</Texto>
       <Texto rol="meta">[Territorio] · Elecciones federales 2009–2024</Texto>
       <Ranura etiqueta="Promedios" alto="chica">

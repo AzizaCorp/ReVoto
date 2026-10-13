@@ -30,16 +30,17 @@ describe('App · motor de secuencia', () => {
     window.location.hash = '#/W-03';
     render(<App />);
     expect(titulo()).toHaveTextContent('Así vota México');
-    fireEvent.click(screen.getByRole('button', { name: /Fuente/ }));
+    // «Fuente» está en la barra inferior (móvil/tablet) y en la superior (escritorio).
+    fireEvent.click(screen.getAllByRole('button', { name: 'Fuente' })[0]!);
     expect(screen.getByRole('dialog', { name: '¿De dónde sale esta cifra?' })).toBeInTheDocument();
   });
 
   it('el chip de territorio abre W-02 y regresa a la misma pantalla (HU-28)', () => {
-    window.location.hash = '#/W-05';
+    window.location.hash = '#/W-04';
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: /Cambiar territorio/ }));
     expect(titulo()).toHaveTextContent('¿Dónde votas?');
     fireEvent.click(screen.getByRole('button', { name: 'Ver mis cifras' }));
-    expect(titulo()).toHaveTextContent('[Mensaje sobre presidenciales e intermedias]');
+    expect(titulo()).toHaveTextContent('[Municipio], [Entidad]');
   });
 });

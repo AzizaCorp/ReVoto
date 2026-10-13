@@ -12,8 +12,9 @@ describe('BarraInferior', () => {
     expect(onFuente).toHaveBeenCalledOnce();
   });
 
-  it('en el primer paso «anterior» está deshabilitado', () => {
-    render(<BarraInferior onAnterior={null} onSiguiente={() => {}} />);
-    expect(screen.getByRole('button', { name: 'Pantalla anterior' })).toBeDisabled();
+  it('en el primer paso no hay «anterior» y en el último se muestra «Fin»', () => {
+    render(<BarraInferior onAnterior={null} onSiguiente={null} />);
+    expect(screen.queryByRole('button', { name: 'Pantalla anterior' })).not.toBeInTheDocument();
+    expect(screen.getByText('Fin')).toBeInTheDocument();
   });
 });

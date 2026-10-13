@@ -5,6 +5,8 @@ import { MarcoHistoria } from './compartido/MarcoHistoria';
 export function W03MexicoVoto() {
   return (
     <MarcoHistoria
+      pendiente
+      etiqueta="México"
       visual={
         <>
           <Ranura etiqueta="Mapa de participación por municipio" alto="llena" />
@@ -12,14 +14,13 @@ export function W03MexicoVoto() {
         </>
       }
     >
-      <Texto rol="etiqueta">México</Texto>
       <Texto rol="h1">Así vota México</Texto>
-      <Texto rol="cuerpo">
+      <Texto rol="entrada">
         Cada municipio, coloreado según su participación en la elección federal [año].
       </Texto>
       <Ranura etiqueta="Selector: Presidencial / Intermedia" alto="linea" />
       <Ranura etiqueta="Participación nacional" alto="chica">
-        —.— %
+        <Texto rol="cifra">—.— %</Texto>
       </Ranura>
       <Texto rol="meta">Participación nacional · [año]</Texto>
     </MarcoHistoria>

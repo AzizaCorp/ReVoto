@@ -9,10 +9,11 @@ export function W09bInsignia() {
   const { completo } = usePerfil();
   return (
     <MarcoHistoria
+      pendiente
+      etiqueta="Tu insignia"
       compartible={false}
       visual={<Ranura etiqueta="Tarjeta de tu insignia (I1–I6)" alto="llena" />}
     >
-      <Texto rol="etiqueta">Tu insignia</Texto>
       <Texto rol="h1">Y tú, ¿cómo votas?</Texto>
       {completo ? (
         <Ranura etiqueta="Tú y tu generación" alto="chica">
@@ -24,7 +25,7 @@ export function W09bInsignia() {
       <Boton variante="texto" onClick={() => nav.irA('W-02b')}>
         {completo ? 'Cambiar respuestas' : 'Responder ahora'}
       </Boton>
-      <Boton variante="primario" onClick={() => nav.abrirHoja('W-12')}>
+      <Boton variante="primario" icono="↗" onClick={() => nav.abrirHoja('W-12')}>
         Compartir mi insignia
       </Boton>
     </MarcoHistoria>

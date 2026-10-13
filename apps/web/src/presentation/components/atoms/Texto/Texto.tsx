@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import estilos from './Texto.module.css';
 
-export type RolTexto = 'h1' | 'h2' | 'cuerpo' | 'meta' | 'etiqueta';
+export type RolTexto = 'h1' | 'h2' | 'entrada' | 'cuerpo' | 'meta' | 'etiqueta' | 'cifra';
 
 export interface TextoProps {
   rol: RolTexto;
@@ -10,7 +10,10 @@ export interface TextoProps {
   id?: string;
 }
 
-/** Escala tipográfica del manual §4. `h1` recibe el foco al cambiar de pantalla (HU-14). */
+/**
+ * Escala tipográfica: títulos y cifras en Sora, texto en Plus Jakarta Sans. `h1` recibe el foco
+ * al cambiar de pantalla (HU-14); `entrada` es el texto corto bajo el título.
+ */
 export function Texto({ rol, children, id }: TextoProps) {
   if (rol === 'h1') {
     return (
@@ -26,9 +29,9 @@ export function Texto({ rol, children, id }: TextoProps) {
       </h2>
     );
   }
-  if (rol === 'etiqueta') {
+  if (rol === 'etiqueta' || rol === 'cifra') {
     return (
-      <span id={id} className={estilos.etiqueta}>
+      <span id={id} className={estilos[rol]}>
         {children}
       </span>
     );

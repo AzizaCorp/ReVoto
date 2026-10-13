@@ -4,40 +4,97 @@
   align-items: center;
   justify-content: center;
   gap: var(--rv-espacio-1);
-  min-height: var(--rv-boton-alto);
   min-width: var(--rv-objetivo-tactil);
-  padding: 0 var(--rv-espacio-3);
   border-radius: var(--rv-radio-pildora);
-  border: var(--rv-borde) solid var(--rv-color-tinta);
-  font: inherit;
-  font-weight: var(--rv-peso-semi);
+  border: var(--rv-borde) solid transparent;
+  font-family: var(--rv-fuente);
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color var(--rv-duracion) var(--rv-curva);
+  transition:
+    background-color var(--rv-duracion) var(--rv-curva),
+    scale var(--rv-duracion) var(--rv-curva);
+}
+.boton:active {
+  scale: 0.96;
 }
 .boton:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.4;
 }
+.icono {
+  display: inline-flex;
+  line-height: 1;
+}
+
+/* Tamaños */
+.chico {
+  gap: var(--rv-espacio-05);
+  min-height: var(--rv-objetivo-tactil);
+  padding: 0 var(--rv-espacio-15);
+  font-size: var(--rv-texto-boton-chico);
+  font-weight: var(--rv-peso-semi);
+}
+.normal {
+  min-height: var(--rv-boton-alto);
+  padding: 0 var(--rv-espacio-3);
+  font-size: var(--rv-texto-boton);
+  font-weight: var(--rv-peso-fuerte);
+}
+.grande {
+  min-height: var(--rv-boton-alto-grande);
+  padding: 0 var(--rv-espacio-4);
+  font-size: var(--rv-texto-boton);
+  font-weight: var(--rv-peso-fuerte);
+}
+
+/* Variantes */
 .primario {
   background: var(--rv-color-tinta);
-  color: var(--rv-color-papel);
+  color: var(--rv-color-sobre-tinta);
+}
+.marca {
+  background: var(--rv-color-marca);
+  color: var(--rv-color-sobre-marca);
 }
 .secundario {
   background: var(--rv-color-papel);
+  border-color: var(--rv-color-linea);
   color: var(--rv-color-tinta);
 }
 .texto {
   background: transparent;
-  border-color: transparent;
-  color: var(--rv-color-tinta);
+  color: var(--rv-color-tinta-2);
   text-decoration: underline;
-  padding: 0 var(--rv-espacio-1);
+  text-underline-offset: 3px;
+  padding-left: var(--rv-espacio-1);
+  padding-right: var(--rv-espacio-1);
 }
 .ancho {
   width: 100%;
 }
-.compacto {
-  padding: 0 var(--rv-espacio-2);
+@media (max-width: 767px) {
+  .anchoMovil {
+    width: 100%;
+  }
+}
+
+/* Bajo 768 px: círculo de 44 px con solo el icono. */
+@media (max-width: 767px) {
+  .colapsable {
+    width: var(--rv-objetivo-tactil);
+    padding: 0;
+  }
+  .colapsable .contenido {
+    display: none;
+  }
+}
+@media (max-width: 359px) {
+  .estrecho {
+    width: var(--rv-objetivo-tactil);
+    padding: 0;
+  }
+  .estrecho .contenido {
+    display: none;
+  }
 }

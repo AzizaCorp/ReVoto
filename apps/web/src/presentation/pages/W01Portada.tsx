@@ -6,13 +6,22 @@ import { MarcoHistoria } from './compartido/MarcoHistoria';
 export function W01Portada() {
   const nav = useNavegacion();
   return (
-    <MarcoHistoria sinProgreso visual={<Ranura etiqueta="Collage de portada" alto="grande" />}>
-      <Texto rol="etiqueta">Elecciones federales · 2009–2024</Texto>
+    <MarcoHistoria
+      portada
+      etiqueta="Elecciones federales · 2009–2024"
+      visual={<Ranura etiqueta="Ilustración: urna con boleta marcada" alto="llena" />}
+    >
       <Texto rol="h1">¿Cuánto vota tu territorio?</Texto>
-      <Texto rol="cuerpo">
+      <Texto rol="entrada">
         Descubre en 10 pantallas cómo vota tu municipio frente al país. Sin datos personales.
       </Texto>
-      <Boton variante="primario" ancho onClick={nav.siguiente ?? undefined}>
+      <Boton
+        variante="marca"
+        tamano="grande"
+        iconoFinal="→"
+        ancho="movil"
+        onClick={nav.siguiente ?? undefined}
+      >
         Descubrir mi territorio
       </Boton>
     </MarcoHistoria>

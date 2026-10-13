@@ -21,7 +21,8 @@
   width: 100%;
   max-height: var(--rv-hoja-alto);
   padding: var(--rv-espacio-1) var(--rv-margen-lateral) var(--rv-espacio-3);
-  border-radius: var(--rv-espacio-3) var(--rv-espacio-3) 0 0;
+  border-radius: var(--rv-radio-tarjeta) var(--rv-radio-tarjeta) 0 0;
+  color: var(--rv-color-tinta);
   background: var(--rv-color-papel);
 }
 .asa {
@@ -50,7 +51,7 @@
   }
   .hoja {
     max-width: var(--rv-hoja-ancho-max);
-    border-radius: var(--rv-espacio-3);
+    border-radius: var(--rv-radio-tarjeta);
     padding: var(--rv-espacio-3);
   }
   .asa {

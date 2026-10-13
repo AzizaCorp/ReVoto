@@ -7,19 +7,20 @@ export function W09Arquetipo() {
   const nav = useNavegacion();
   return (
     <MarcoHistoria
+      pendiente
+      etiqueta="Tu arquetipo"
       compartible={false}
       visual={<Ranura etiqueta="Tarjeta del arquetipo (A1–A5)" alto="llena" />}
     >
-      <Texto rol="etiqueta">Tu arquetipo</Texto>
       <Texto rol="h1">Tu municipio tiene personalidad</Texto>
-      <Texto rol="cuerpo">
+      <Texto rol="entrada">
         Agrupamos los municipios por cómo han votado de 2009 a 2024: su nivel, su tendencia, cuánto
         suben en presidenciales y qué tan predecibles son.
       </Texto>
       <Ranura etiqueta="¿Por qué?" alto="chica">
         [Rasgo dominante] · Qué tan típico: —.—
       </Ranura>
-      <Boton variante="primario" onClick={() => nav.abrirHoja('W-12')}>
+      <Boton variante="primario" icono="↗" onClick={() => nav.abrirHoja('W-12')}>
         Compartir mi arquetipo
       </Boton>
     </MarcoHistoria>

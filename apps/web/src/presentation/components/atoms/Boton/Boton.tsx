@@ -1,43 +1,75 @@
 import type { ReactNode } from 'react';
 import estilos from './Boton.module.css';
 
-export type VarianteBoton = 'primario' | 'secundario' | 'texto';
+export type VarianteBoton = 'primario' | 'marca' | 'secundario' | 'texto';
+export type TamanoBoton = 'chico' | 'normal' | 'grande';
 
 export interface BotonProps {
   children: ReactNode;
   variante?: VarianteBoton;
+  tamano?: TamanoBoton;
+  /** Icono antes del texto (decorativo). */
+  icono?: ReactNode;
+  /** Icono después del texto (decorativo), p. ej. la flecha de «Siguiente →». */
+  iconoFinal?: ReactNode;
   /** Si llega `href`, se dibuja como enlace; si no, como botón. */
   href?: string;
   onClick?: () => void;
   deshabilitado?: boolean;
-  /** Ocupa todo el ancho disponible (acción principal en móvil). */
-  ancho?: boolean;
+  /** Ocupa todo el ancho disponible; con `'movil'`, solo bajo 768 px. */
+  ancho?: boolean | 'movil';
+  /** Nombre accesible cuando el texto visible no basta o se oculta. */
   etiqueta?: string;
-  /** Menos relleno lateral, para barras con varias acciones en 360 px. */
-  compacto?: boolean;
+  /**
+   * Se dibuja como círculo de 44 px con solo el icono: `movil` bajo 768 px (‹ › en móvil),
+   * `estrecho` bajo 360 px (pantallas de 320 px). `true` equivale a `movil`.
+   */
+  colapsable?: boolean | 'movil' | 'estrecho';
 }
 
-/** Botón de acción. Alto 48 px y uno primario por pantalla (manual §6, RF-02). */
+/**
+ * Botón de la marca. `primario` (tinta) es la acción principal, una por pantalla; `marca`
+ * (magenta) solo en la portada; `secundario` es la píldora blanca; `texto` es un enlace.
+ */
 export function Boton({
   children,
   variante = 'secundario',
+  tamano = 'normal',
+  icono,
+  iconoFinal,
   href,
   onClick,
   deshabilitado,
   ancho,
   etiqueta,
-  compacto,
+  colapsable,
 }: BotonProps) {
   const clase = [
     estilos.boton,
     estilos[variante],
-    ancho ? estilos.ancho : '',
-    compacto ? estilos.compacto : '',
+    estilos[tamano],
+    ancho === 'movil' ? estilos.anchoMovil : ancho ? estilos.ancho : '',
+    colapsable === 'estrecho' ? estilos.estrecho : colapsable ? estilos.colapsable : '',
   ].join(' ');
+  const contenido = (
+    <>
+      {icono && (
+        <span className={estilos.icono} aria-hidden="true">
+          {icono}
+        </span>
+      )}
+      <span className={estilos.contenido}>{children}</span>
+      {iconoFinal && (
+        <span className={estilos.icono} aria-hidden="true">
+          {iconoFinal}
+        </span>
+      )}
+    </>
+  );
   if (href) {
     return (
       <a className={clase} href={href} aria-label={etiqueta} onClick={onClick}>
-        {children}
+        {contenido}
       </a>
     );
   }
@@ -49,7 +81,7 @@ export function Boton({
       disabled={deshabilitado}
       aria-label={etiqueta}
     >
-      {children}
+      {contenido}
     </button>
   );
 }

@@ -1,13 +1,11 @@
-/* El chip se recorta con «…» antes que empujar el «Aa» fuera de la pantalla en 360 px. */
+/* El chip se recorta con «…» antes que desbordar la pantalla en 360 px. */
 .chipTerritorio {
   display: flex;
   min-width: 0;
+  max-width: 100%;
 }
 .chipTerritorio > * {
   max-width: 100%;
-}
-.texto {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }

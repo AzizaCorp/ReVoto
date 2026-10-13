@@ -1,20 +1,30 @@
-import { Aviso, Boton, GrupoOpciones, PantallaUtilitaria, Texto } from '@/presentation/components';
+import { Aviso, Boton, GrupoOpciones, PantallaUtilitaria } from '@/presentation/components';
 import { useNavegacion } from '@/presentation/providers/Navegacion';
 import { PREGUNTAS, usePerfil } from '@/presentation/providers/Perfil';
 import { BarraUtilitaria } from './compartido/BarraUtilitaria';
+import { useNumeroPaso } from './compartido/MarcoHistoria';
 
 /** W-02b · Sobre ti (opcional). Cuatro preguntas para la insignia; nada sale del dispositivo. */
 export function W02bSobreTi() {
   const nav = useNavegacion();
   const { respuestas, responder } = usePerfil();
+  const numero = useNumeroPaso();
   return (
     <PantallaUtilitaria
       superior={<BarraUtilitaria />}
+      etiqueta="Sobre ti · Opcional"
+      numero={numero}
       titulo="Cuéntanos de ti"
       entrada="4 toques y al final te damos tu insignia, comparada con tu generación en [Entidad]."
       accion={
         <>
-          <Boton variante="primario" ancho onClick={nav.siguiente ?? undefined}>
+          <Boton
+            variante="primario"
+            tamano="grande"
+            iconoFinal="→"
+            ancho
+            onClick={nav.siguiente ?? undefined}
+          >
             Ver mis cifras
           </Boton>
           <Boton variante="texto" onClick={nav.siguiente ?? undefined}>
@@ -23,7 +33,6 @@ export function W02bSobreTi() {
         </>
       }
     >
-      <Texto rol="etiqueta">Sobre ti · Opcional</Texto>
       {PREGUNTAS.map((p) => (
         <GrupoOpciones
           key={p.clave}

@@ -5,6 +5,8 @@ import { MarcoHistoria } from './compartido/MarcoHistoria';
 export function W06TuGeneracion() {
   return (
     <MarcoHistoria
+      pendiente
+      etiqueta="Tu generación"
       visual={
         <>
           <Ranura etiqueta="Selector: [Territorio] / Nacional" alto="linea" />
@@ -12,12 +14,11 @@ export function W06TuGeneracion() {
         </>
       }
     >
-      <Texto rol="etiqueta">Tu generación</Texto>
       <Texto rol="h1">[Mensaje sobre la participación por edad]</Texto>
       <Ranura etiqueta="Brecha 18–24 vs. 60 +" alto="chica">
-        —.— pts
+        <Texto rol="cifra">—.— pts</Texto>
       </Ranura>
-      <Texto rol="cuerpo">
+      <Texto rol="entrada">
         [Texto descriptivo de la brecha entre el grupo más joven y el mayor, sin juicios.]
       </Texto>
     </MarcoHistoria>

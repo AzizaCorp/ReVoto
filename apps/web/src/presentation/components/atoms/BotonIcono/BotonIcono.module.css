@@ -1,14 +1,16 @@
 .botonIcono {
   display: inline-grid;
   place-items: center;
+  flex: none;
   width: var(--rv-objetivo-tactil);
   height: var(--rv-objetivo-tactil);
   border-radius: var(--rv-radio-pildora);
-  border: var(--rv-borde) solid var(--rv-color-tinta);
-  background: var(--rv-color-papel);
-  color: var(--rv-color-tinta);
-  font: inherit;
-  font-weight: var(--rv-peso-fuerte);
+  border: var(--rv-borde) solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: var(--rv-fuente-titulo);
+  font-weight: var(--rv-peso-titulo);
+  font-size: var(--rv-texto-boton-chico);
   cursor: pointer;
 }
 .botonIcono:disabled {
@@ -17,5 +19,6 @@
 }
 .relleno {
   background: var(--rv-color-tinta);
-  color: var(--rv-color-papel);
+  border-color: var(--rv-color-tinta);
+  color: var(--rv-color-sobre-tinta);
 }

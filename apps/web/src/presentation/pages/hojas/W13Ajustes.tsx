@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Boton,
+  ChipTerritorio,
   FilaInterruptor,
   GrupoOpciones,
   PlantillaHoja,
@@ -39,6 +40,7 @@ export function W13Ajustes() {
       onCerrar={nav.cerrarHoja}
       acciones={<Boton onClick={() => nav.irA('W-10')}>Ver resumen</Boton>}
     >
+      <ChipTerritorio territorio={nav.territorio} onClick={nav.cambiarTerritorio} />
       <FilaInterruptor
         titulo="Lectura fácil"
         descripcion="Letra más grande, frases cortas"

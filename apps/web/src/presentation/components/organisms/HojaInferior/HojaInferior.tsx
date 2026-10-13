@@ -72,7 +72,7 @@ export function HojaInferior({ abierta, titulo, onCerrar, children }: HojaInferi
           <Texto rol="h2" id={idTitulo}>
             {titulo}
           </Texto>
-          <BotonIcono etiqueta="Cerrar" onClick={onCerrar}>
+          <BotonIcono etiqueta="Cerrar hoja" onClick={onCerrar}>
             ✕
           </BotonIcono>
         </div>

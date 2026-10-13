@@ -1,0 +1,27 @@
+.pastilla {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rv-espacio-1);
+  min-height: var(--rv-pastilla-alto);
+  padding: 0 var(--rv-espacio-15);
+  border-radius: var(--rv-radio-pildora);
+  font-size: var(--rv-texto-etiqueta);
+  font-weight: var(--rv-peso-fuerte);
+  letter-spacing: var(--rv-tracking-etiqueta);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.texto {
+  color: var(--rv-color-marca-texto);
+  font-weight: var(--rv-peso-titulo);
+}
+.marca {
+  background: var(--rv-color-marca-suave);
+  color: var(--rv-color-tinta);
+}
+.pendiente {
+  background: var(--rv-color-papel);
+  border: var(--rv-borde-fino) dashed var(--rv-color-marca);
+  color: var(--rv-color-marca-texto);
+}

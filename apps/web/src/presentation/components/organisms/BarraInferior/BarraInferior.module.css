@@ -1,30 +1,50 @@
 .barraInferior {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--rv-espacio-1);
   min-height: var(--rv-zona-inferior);
-  padding: var(--rv-espacio-1) var(--rv-margen-lateral);
-  background: var(--rv-color-fondo);
+  padding: var(--rv-espacio-15) var(--rv-margen-lateral);
 }
-/* En móvil «Compartir» queda solo con su icono para que la barra quepa en 360 px. */
-.textoAncho {
-  display: none;
-}
-@media (min-width: 768px) {
-  .textoAncho {
-    display: inline;
-  }
-}
-.grupo {
+.izquierda,
+.derecha {
   display: flex;
   align-items: center;
   gap: var(--rv-espacio-1);
 }
+.derecha {
+  margin-left: auto;
+}
+.nota {
+  display: none;
+}
+.fin {
+  padding: 0 var(--rv-espacio-1);
+  font-family: var(--rv-fuente-titulo);
+  font-weight: var(--rv-peso-titulo);
+}
+.oscura {
+  --rv-color-tinta: var(--rv-color-sobre-tinta);
+  --rv-color-papel: transparent;
+  --rv-color-linea: rgb(255 255 255 / 0.35);
+  color: var(--rv-color-sobre-tinta);
+}
 
-@media (min-width: 1200px) {
+@media (min-width: 768px) {
   .barraInferior {
-    padding: var(--rv-espacio-2) var(--rv-espacio-6);
-    border-top: var(--rv-borde) solid var(--rv-color-relleno);
+    border-top: var(--rv-borde-fino) solid var(--rv-color-borde);
+  }
+  .oscura {
+    border-top-color: rgb(255 255 255 / 0.1);
+  }
+}
+
+/* Escritorio: «Fuente» y «Compartir» viven en la barra superior. */
+@media (min-width: 1200px) {
+  .izquierda {
+    display: none;
+  }
+  .nota {
+    display: block;
+    opacity: 0.8;
   }
 }

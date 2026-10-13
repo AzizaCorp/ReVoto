@@ -5,5 +5,5 @@
   background: var(--rv-color-relleno);
 }
 .activo {
-  background: var(--rv-color-tinta);
+  background: currentColor;
 }

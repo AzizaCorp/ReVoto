@@ -5,6 +5,8 @@ import { MarcoHistoria } from './compartido/MarcoHistoria';
 export function W08TuLugar() {
   return (
     <MarcoHistoria
+      pendiente
+      etiqueta="Tu lugar"
       visual={
         <>
           <Ranura etiqueta="Ranking: mayor participación → tu municipio → menor" alto="llena" />
@@ -12,13 +14,12 @@ export function W08TuLugar() {
         </>
       }
     >
-      <Texto rol="etiqueta">Tu lugar</Texto>
       <Texto rol="h1">Tu lugar en [Entidad]</Texto>
       <Texto rol="meta">Entre los [n] municipios de [Entidad] · Elección federal [año]</Texto>
       <Ranura etiqueta="Posición" alto="chica">
-        #— de [n]
+        <Texto rol="cifra">#— de [n]</Texto>
       </Ranura>
-      <Texto rol="cuerpo">Vota más que el —— % de los municipios de [Entidad].</Texto>
+      <Texto rol="entrada">Vota más que el —— % de los municipios de [Entidad].</Texto>
     </MarcoHistoria>
   );
 }

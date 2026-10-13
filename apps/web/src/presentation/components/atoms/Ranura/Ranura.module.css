@@ -1,18 +1,22 @@
+/* Hueco del esqueleto: tarjeta blanca con borde punteado, como las «ranuras» del diseño. */
 .ranura {
+  align-self: stretch;
   display: grid;
   place-items: center;
-  padding: var(--rv-espacio-1) var(--rv-espacio-2);
+  padding: var(--rv-espacio-15) var(--rv-espacio-2);
   border: var(--rv-borde) dashed var(--rv-ranura-borde);
-  border-radius: var(--rv-radio);
+  border-radius: var(--rv-radio-tarjeta);
   background: var(--rv-ranura-fondo);
-  color: var(--rv-color-tinta-2);
+  color: var(--rv-color-apagado);
   text-align: center;
+  font-size: var(--rv-texto-meta);
 }
 .etiqueta {
   font-size: var(--rv-texto-meta);
 }
 .linea {
   min-height: var(--rv-objetivo-tactil);
+  border-radius: var(--rv-radio-pildora);
 }
 .chica {
   min-height: var(--rv-ranura-chica);
@@ -26,10 +30,4 @@
 .llena {
   flex: 1;
   min-height: var(--rv-ranura-media);
-}
-
-@media (min-width: 768px) {
-  .llena {
-    min-height: var(--rv-ranura-grande);
-  }
 }

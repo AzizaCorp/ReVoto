@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Boton, CampoSelector, PantallaUtilitaria } from '@/presentation/components';
 import { useNavegacion } from '@/presentation/providers/Navegacion';
 import { BarraUtilitaria } from './compartido/BarraUtilitaria';
+import { useNumeroPaso } from './compartido/MarcoHistoria';
 
 /**
  * W-02 · Elige tu territorio (HU-28, RF-05). Entidad → municipio dependiente.
@@ -9,16 +10,25 @@ import { BarraUtilitaria } from './compartido/BarraUtilitaria';
  */
 export function W02Territorio() {
   const nav = useNavegacion();
+  const numero = useNumeroPaso();
   const [entidad, setEntidad] = useState('');
   const [municipio, setMunicipio] = useState('');
   return (
     <PantallaUtilitaria
       superior={<BarraUtilitaria />}
+      etiqueta="Tu territorio"
+      numero={numero}
       titulo="¿Dónde votas?"
       entrada="Elige tu entidad y municipio para comparar sus cifras con las del país. No guardamos tu elección."
       accion={
         <>
-          <Boton variante="primario" ancho onClick={nav.confirmarTerritorio}>
+          <Boton
+            variante="primario"
+            tamano="grande"
+            iconoFinal="→"
+            ancho
+            onClick={nav.confirmarTerritorio}
+          >
             Ver mis cifras
           </Boton>
           <Boton variante="texto" onClick={nav.confirmarTerritorio}>

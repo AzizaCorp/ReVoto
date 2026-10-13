@@ -7,17 +7,22 @@ export function W09cMunicipioYYo() {
   const nav = useNavegacion();
   return (
     <MarcoHistoria
+      pendiente
+      etiqueta="Mi municipio y yo"
       compartible={false}
       visual={<Ranura etiqueta="Tarjeta «Mi municipio y yo» (titular del cruce)" alto="llena" />}
     >
-      <Texto rol="etiqueta">Mi municipio y yo</Texto>
       <Texto rol="h1">Tu municipio y tú, en una tarjeta</Texto>
-      <Texto rol="cuerpo">
+      <Texto rol="entrada">
         Juntamos el arquetipo de [Municipio] con tu insignia: cada cruce tiene su titular.
       </Texto>
-      <Boton onClick={() => nav.irA('W-09')}>Tu municipio: «[Arquetipo]»</Boton>
-      <Boton onClick={() => nav.irA('W-09b')}>Tú: «[Insignia]»</Boton>
-      <Boton variante="primario" onClick={() => nav.abrirHoja('W-12')}>
+      <Boton tamano="chico" icono="⌖" onClick={() => nav.irA('W-09')}>
+        Tu municipio: «[Arquetipo]»
+      </Boton>
+      <Boton tamano="chico" icono="☆" onClick={() => nav.irA('W-09b')}>
+        Tú: «[Insignia]»
+      </Boton>
+      <Boton variante="primario" icono="↗" onClick={() => nav.abrirHoja('W-12')}>
         Compartir los dos
       </Boton>
     </MarcoHistoria>

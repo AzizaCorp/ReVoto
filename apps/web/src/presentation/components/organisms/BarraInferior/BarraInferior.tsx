@@ -1,4 +1,4 @@
-import { Boton, BotonIcono } from '../../atoms';
+import { Boton, Texto } from '../../atoms';
 import estilos from './BarraInferior.module.css';
 
 export interface BarraInferiorProps {
@@ -6,49 +6,81 @@ export interface BarraInferiorProps {
   onFuente?: () => void;
   /** Abre W-12 si la pantalla es compartible (RF-15). */
   onCompartir?: () => void;
-  /** `null` en el primer paso: el botón queda deshabilitado (HU-10, sin vuelta circular). */
+  /** `null` en el primer paso: el botón no se dibuja (HU-10, sin vuelta circular). */
   onAnterior: (() => void) | null;
+  /** `null` en el último paso: se muestra «Fin». */
   onSiguiente: (() => void) | null;
+  /** Texto del botón de avance (portada: «Empezar»). */
+  textoSiguiente?: string;
+  /** Fondo oscuro (portada). */
+  oscura?: boolean;
 }
 
-/** Zona inferior de 72 px: Fuente · Compartir · ‹ › (manual §7.1, RF-02). */
+/**
+ * Barra inferior del diseño de alta fidelidad.
+ * Móvil: Fuente · Compartir a la izquierda y ‹ › en círculos de 44 px a la derecha.
+ * Tablet: Fuente · Compartir y «← Anterior» / «Siguiente →» con texto.
+ * Escritorio: nota de fuente a la izquierda (Fuente y Compartir suben a la barra superior).
+ */
 export function BarraInferior({
   onFuente,
   onCompartir,
   onAnterior,
   onSiguiente,
+  textoSiguiente = 'Siguiente',
+  oscura,
 }: BarraInferiorProps) {
   return (
-    <nav className={estilos.barraInferior} aria-label="Navegación de la historia">
-      <div className={estilos.grupo}>
+    <nav
+      className={[estilos.barraInferior, oscura ? estilos.oscura : ''].join(' ')}
+      aria-label="Navegación de la historia"
+    >
+      <div className={estilos.izquierda}>
         {onFuente && (
-          <Boton compacto onClick={onFuente}>
-            <span aria-hidden="true">ⓘ</span> Fuente
+          <Boton
+            tamano="chico"
+            icono="ⓘ"
+            colapsable="estrecho"
+            etiqueta="Fuente"
+            onClick={onFuente}
+          >
+            Fuente
           </Boton>
         )}
         {onCompartir && (
-          <Boton compacto onClick={onCompartir} etiqueta="Compartir">
-            <span aria-hidden="true">↗</span>
-            <span className={estilos.textoAncho}>Compartir</span>
+          <Boton
+            tamano="chico"
+            icono="↗"
+            colapsable="estrecho"
+            etiqueta="Compartir"
+            onClick={onCompartir}
+          >
+            Compartir
           </Boton>
         )}
       </div>
-      <div className={estilos.grupo}>
-        <BotonIcono
-          etiqueta="Pantalla anterior"
-          onClick={onAnterior ?? undefined}
-          deshabilitado={!onAnterior}
-        >
-          ‹
-        </BotonIcono>
-        <BotonIcono
-          etiqueta="Pantalla siguiente"
-          onClick={onSiguiente ?? undefined}
-          deshabilitado={!onSiguiente}
-          relleno
-        >
-          ›
-        </BotonIcono>
+      <span className={estilos.nota}>
+        <Texto rol="meta">Fuente: conteos censales INE 2009–2024 · Sin datos personales</Texto>
+      </span>
+      <div className={estilos.derecha}>
+        {onAnterior && (
+          <Boton colapsable icono="←" onClick={onAnterior} etiqueta="Pantalla anterior">
+            Anterior
+          </Boton>
+        )}
+        {onSiguiente ? (
+          <Boton
+            colapsable
+            variante={oscura ? 'marca' : 'primario'}
+            iconoFinal="→"
+            onClick={onSiguiente}
+            etiqueta="Pantalla siguiente"
+          >
+            {textoSiguiente}
+          </Boton>
+        ) : (
+          <span className={estilos.fin}>Fin</span>
+        )}
       </div>
     </nav>
   );

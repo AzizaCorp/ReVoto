@@ -1,72 +1,86 @@
 .pantallaNarrativa {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  min-height: 100dvh;
+  height: 100dvh;
   width: 100%;
   max-width: var(--rv-marco-max);
   margin: 0 auto;
+  background: var(--rv-color-fondo);
 }
-.superior,
-.inferior {
-  position: sticky;
-  z-index: var(--rv-capa-barra);
-}
-.superior {
-  top: 0;
-}
-.inferior {
-  bottom: 0;
+.desplazable {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
 }
 .contenido {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--rv-espacio-2);
-  padding: var(--rv-espacio-2) var(--rv-margen-lateral);
-  min-height: 0;
+  gap: var(--rv-espacio-15);
+  width: 100%;
+  padding: var(--rv-espacio-15) var(--rv-margen-lateral);
 }
-.texto {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rv-espacio-2);
-}
+.texto,
 .visual {
   display: flex;
   flex-direction: column;
-  gap: var(--rv-espacio-2);
+  gap: var(--rv-espacio-15);
+  min-width: 0;
+}
+.visual {
   flex: 1;
-  min-height: 0;
+}
+/* Los botones conservan su ancho natural; ranuras y textos ocupan la columna. */
+.texto {
+  align-items: flex-start;
+}
+.texto > * {
+  max-width: 100%;
 }
 
-/* Tablet: dos columnas, texto a la izquierda y visual a la derecha. */
+/* Portada: fondo tinta con degradados magenta y uva. */
+.oscura {
+  --rv-color-tinta-2: rgb(255 255 255 / 0.78);
+  --rv-color-linea: rgb(255 255 255 / 0.35);
+  --rv-color-papel: transparent;
+  --rv-ranura-fondo: rgb(255 255 255 / 0.06);
+  --rv-color-apagado: rgb(255 255 255 / 0.7);
+  color: var(--rv-color-sobre-tinta);
+  background:
+    radial-gradient(circle at 80% 70%, rgb(255 45 148 / 0.5), transparent 45%),
+    radial-gradient(circle at 0% 100%, rgb(147 61 130 / 0.75), transparent 45%),
+    radial-gradient(circle at 100% 0%, rgb(93 27 109 / 0.6), transparent 35%), var(--rv-color-tinta);
+}
+.oscura .contenido {
+  --rv-color-tinta: var(--rv-color-sobre-tinta);
+}
+
 @media (min-width: 768px) {
   .pantallaNarrativa {
     max-width: none;
   }
   .contenido {
-    padding: var(--rv-espacio-4);
-    justify-content: center;
-  }
-  .conVisual {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: stretch;
-    gap: var(--rv-espacio-4);
-  }
-  .conVisual .texto {
-    align-self: center;
+    padding: var(--rv-espacio-4) var(--rv-margen-lateral);
+    gap: var(--rv-espacio-3);
   }
 }
 
 /* Escritorio: rejilla 5/7 centrada, contenido hasta 1200 px. */
 @media (min-width: 1200px) {
   .contenido {
-    width: 100%;
-    max-width: var(--rv-contenido-max);
+    max-width: calc(var(--rv-contenido-max) + 2 * var(--rv-margen-lateral));
     margin: 0 auto;
-    padding: var(--rv-espacio-6);
+    padding: var(--rv-espacio-5) var(--rv-margen-lateral);
+    justify-content: center;
   }
   .conVisual {
+    display: grid;
     grid-template-columns: 5fr 7fr;
-    gap: var(--rv-espacio-6);
+    align-items: center;
+    gap: var(--rv-espacio-8);
+  }
+  .conVisual .visual {
+    align-self: stretch;
+    justify-content: center;
   }
 }

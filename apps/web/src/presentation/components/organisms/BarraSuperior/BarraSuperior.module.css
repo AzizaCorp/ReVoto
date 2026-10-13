@@ -1,49 +1,80 @@
-/* Móvil: progreso arriba a todo lo ancho; marca, chip y «Aa» debajo.
-   Escritorio (≥ 1200 px): una sola fila con la marca, el progreso con el nombre del paso y las
-   acciones. */
 .barraSuperior {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
     'progreso progreso'
-    'marca acciones';
+    'logo aa';
   align-items: center;
-  gap: var(--rv-espacio-1) var(--rv-espacio-2);
-  padding: var(--rv-espacio-1) var(--rv-margen-lateral);
-  min-height: var(--rv-zona-superior);
-  background: var(--rv-color-fondo);
+  gap: var(--rv-espacio-15) var(--rv-espacio-2);
+  padding: var(--rv-espacio-15) var(--rv-margen-lateral) var(--rv-espacio-1);
+  color: var(--rv-color-tinta);
 }
-.marca {
-  grid-area: marca;
-  font-weight: var(--rv-peso-fuerte);
+.logo {
+  grid-area: logo;
 }
 .progreso {
   grid-area: progreso;
   display: flex;
   flex-direction: column;
   gap: var(--rv-espacio-1);
+  min-width: 0;
 }
-.paso {
+.aa {
+  grid-area: aa;
+}
+.paso,
+.contador,
+.acciones {
   display: none;
 }
-.acciones {
-  grid-area: acciones;
-  min-width: 0;
-  justify-content: flex-end;
-  display: flex;
-  align-items: center;
-  gap: var(--rv-espacio-1);
+.oscura {
+  --rv-color-tinta: var(--rv-color-sobre-tinta);
+  --rv-color-papel: transparent;
+  --rv-color-linea: rgb(255 255 255 / 0.35);
+  color: var(--rv-color-sobre-tinta);
+  --rv-color-relleno: rgb(255 255 255 / 0.22);
 }
 
+/* Tablet: una sola fila con contador «N/10». */
+@media (min-width: 768px) {
+  .barraSuperior {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: 'logo progreso contador aa';
+    gap: var(--rv-espacio-4);
+    min-height: var(--rv-zona-superior);
+    padding: 0 var(--rv-margen-lateral);
+  }
+  .contador {
+    display: block;
+    grid-area: contador;
+    font-size: var(--rv-texto-meta);
+    font-weight: var(--rv-peso-semi);
+    opacity: 0.7;
+  }
+}
+
+/* Escritorio: el paso se nombra y «Fuente» / «Compartir» suben a la barra. */
 @media (min-width: 1200px) {
   .barraSuperior {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-areas: 'marca progreso acciones';
-    gap: var(--rv-espacio-4);
-    padding: var(--rv-espacio-2) var(--rv-espacio-6);
-    border-bottom: var(--rv-borde) solid var(--rv-color-relleno);
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: 'logo progreso acciones aa';
+    gap: var(--rv-espacio-5);
+    border-bottom: var(--rv-borde-fino) solid var(--rv-color-borde);
+  }
+  .progreso {
+    width: 100%;
+    max-width: var(--rv-progreso-max);
+    justify-self: center;
   }
   .paso {
     display: block;
+  }
+  .contador {
+    display: none;
+  }
+  .acciones {
+    grid-area: acciones;
+    display: flex;
+    gap: var(--rv-espacio-1);
   }
 }

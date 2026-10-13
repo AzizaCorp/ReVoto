@@ -5,6 +5,11 @@ import { createRoot } from 'react-dom/client';
 import { JsonParticipacionRepository } from '@/infrastructure';
 import { App } from '@/presentation/App';
 import { ProveedorDependencias } from '@/presentation/providers/Dependencias';
+import '@fontsource/plus-jakarta-sans/latin-400.css';
+import '@fontsource/plus-jakarta-sans/latin-600.css';
+import '@fontsource/plus-jakarta-sans/latin-700.css';
+import '@fontsource/plus-jakarta-sans/latin-800.css';
+import '@fontsource/sora/latin-800.css';
 import '@/presentation/styles/tokens.css';
 import '@/presentation/styles/global.css';
 

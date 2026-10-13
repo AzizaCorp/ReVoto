@@ -1,4 +1,4 @@
-/* Estilos globales mínimos. Todo valor visual sale de los tokens de @revoto/ui. */
+/* Estilos globales mínimos. Todo valor visual sale de tokens.css. */
 *,
 *::before,
 *::after {
@@ -27,4 +27,13 @@ body {
 :focus-visible {
   outline: none;
   box-shadow: var(--rv-foco-anillo);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
