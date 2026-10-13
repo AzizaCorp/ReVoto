@@ -1,4 +1,4 @@
-import { StatusView, Text, UtilityScreen } from '@/presentation/components';
+import { StatusView, Text, TopBar, UtilityScreen } from '@/presentation/components';
 import { useNavigation } from '@/presentation/providers/Navigation';
 
 /**
@@ -8,7 +8,16 @@ import { useNavigation } from '@/presentation/providers/Navigation';
 export function W17States() {
   const nav = useNavigation();
   return (
-    <UtilityScreen title="Estados de pantalla" onBack={() => nav.goTo(nav.lastScreen)}>
+    <UtilityScreen
+      top={
+        <TopBar
+          onBack={() => nav.goTo(nav.lastScreen)}
+          backLabel="Volver"
+          onSettings={() => nav.openSheet('W-13')}
+        />
+      }
+      title="Estados de pantalla"
+    >
       <Text variant="label">A · Cargando</Text>
       <StatusView status="loading" />
       <Text variant="label">B · Error</Text>

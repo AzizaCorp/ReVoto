@@ -47,6 +47,19 @@ npm run ui:nuevo -- organism TopBar
 npm run ui:nuevo -- template NarrativeScreen
 ```
 
+## Sistema de componentes v0.1 (fuente visual)
+
+El aspecto y el movimiento de cada componente salen de la página **«Sistema de componentes»** del canvas de alta fidelidad: C-00 Tokens, C-01 Átomos, C-02 Moléculas, C-03 Organismos, C-04 Plantillas y C-05 Inventario. Cada componente cambia por breakpoint dentro de sí mismo; las páginas no tienen media queries de diseño.
+
+| Nivel | Implementados |
+| --- | --- |
+| Átomos | `Button` (small 36 · medium 44 · large 52, íconos SVG, círculo ‹ › en móvil), `Chip`, `Icon`, `IconBubble`, `IconButton`, `Illustration`, `Logo`, `Pill`, `ProgressSegment`, `RadioMark`, `Slot`, `Switch`, `Text` (`figure`, `figureSmall`, `pending`), `VisuallyHidden` |
+| Moléculas | `ComparisonBar`, `DataList`, `Notice`, `OptionGroup`, `ProgressBar`, `SearchField`, `SegmentedControl`, `SelectableRow`, `SelectField`, `StatCard`, `SummaryRow`, `SwitchRow`, `TerritoryChip` |
+| Organismos | `BarChart`, `BottomBar` (`secondaryAction`), `BottomSheet` (hoja · hoja con márgenes · panel lateral · `popover`), `ShareCard`, `StatusView`, `TopBar` (variante utilidad con `onBack`) |
+| Plantillas | `LiteScreen`, `NarrativeScreen` (`visualFirst`), `SheetTemplate`, `UtilityScreen` (`aside`) |
+
+Movimiento (M-01): los bloques de texto entran con *rise* (480 ms, desfase de 70 ms), el visual con *pop* (560 ms, resorte), las barras crecen (640 ms, desfase de 90 ms) y el segmento nuevo del progreso se llena (480 ms). Todo pasa a 0 ms con movimiento reducido o lectura fácil. Pendiente: el `Tooltip` del mapa, las paletas por arquetipo e insignia de `ShareCard` y los mapas.
+
 ## Inventario planeado
 
 Derivado del catálogo lo-fi (`docs/diseno/manual-de-diseno-wireframes.md` §6) y de los wireframes `W-01` a `W-17`. El esqueleto de US-09 ya implementa los de la barra, las hojas, los estados y las plantillas; los demás se construyen en las historias indicadas. El código está en inglés; los textos de la interfaz, en español.

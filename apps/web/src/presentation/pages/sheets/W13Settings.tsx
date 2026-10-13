@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import {
   Button,
-  OptionGroup,
+  Notice,
+  SegmentedControl,
   SheetTemplate,
   SwitchRow,
-  TerritoryChip,
-  Text,
 } from '@/presentation/components';
 import { useNavigation } from '@/presentation/providers/Navigation';
 
 const root = () => document.documentElement;
-const SIZES = ['A−', 'A', 'A+'] as const;
+const SIZES = [
+  { value: 'small', text: 'A−' },
+  { value: 'normal', text: 'A' },
+  { value: 'large', text: 'A+' },
+] as const;
 
 /**
  * W-13 · Reading settings (HU-10, RF-16). Settings live as attributes of `<html>`:
@@ -20,7 +23,7 @@ export function W13Settings() {
   const nav = useNavigation();
   const [easyReading, setEasyReading] = useState(() => root().dataset.reading === 'easy');
   const [reducedMotion, setReducedMotion] = useState(() => root().dataset.motion === 'reduced');
-  const [size, setSize] = useState<string>('A');
+  const [size, setSize] = useState<string>('normal');
 
   const changeEasyReading = (on: boolean) => {
     setEasyReading(on);
@@ -38,31 +41,36 @@ export function W13Settings() {
       open
       title="Ajustes de lectura"
       onClose={nav.closeSheet}
-      actions={<Button onClick={() => nav.goTo('W-10')}>Ver resumen</Button>}
+      presentation="popover"
+      actions={
+        <Button icon="chart" fullWidth onClick={() => nav.goTo('W-10')}>
+          Ver resumen
+        </Button>
+      }
     >
-      <TerritoryChip territory={nav.territory} onClick={nav.changeTerritory} />
       <SwitchRow
+        icon="type"
         title="Lectura fácil"
         description="Letra más grande, frases cortas"
         checked={easyReading}
         onChange={changeEasyReading}
       />
       <SwitchRow
+        icon="redo"
         title="Reducir movimiento"
         description="También se activa con la preferencia de tu sistema"
         checked={reducedMotion}
         onChange={changeReducedMotion}
       />
       <SwitchRow
+        icon="download"
         title="Versión ligera"
         description="Sin imágenes ni gráficas, menos datos"
         checked={false}
         onChange={() => nav.goTo('W-15')}
       />
-      <OptionGroup question="Tamaño de texto" options={SIZES} selected={size} onSelect={setSize} />
-      <Text variant="meta">
-        Aquí nunca avanzamos solos: tú decides cuándo pasar a la siguiente pantalla.
-      </Text>
+      <SegmentedControl label="Tamaño de texto" options={SIZES} value={size} onChange={setSize} />
+      <Notice>Aquí nunca avanzamos solos: tú decides cuándo pasar a la siguiente pantalla.</Notice>
     </SheetTemplate>
   );
 }

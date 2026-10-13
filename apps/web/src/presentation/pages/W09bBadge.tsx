@@ -1,6 +1,7 @@
-import { Button, Notice, Slot, Text } from '@/presentation/components';
+import { Button, ComparisonBar, Notice, ShareCard, Text } from '@/presentation/components';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import { useProfile } from '@/presentation/providers/Profile';
+import layout from './shared/Layout.module.css';
 import { StoryFrame } from './shared/StoryFrame';
 
 /** W-09b · Your badge. It comes from the W-02b answers; without answers there is no badge. */
@@ -12,7 +13,17 @@ export function W09bBadge() {
       pending
       label="Tu insignia"
       shareable={false}
-      visual={<Slot label="Tarjeta de tu insignia (I1–I6)" height="fill" />}
+      visualFirst
+      visual={
+        complete ? (
+          <ShareCard
+            kicker="Eres…"
+            title="[Insignia]"
+            subtitle="[Frase de la insignia]"
+            footer="Insignia según tus respuestas · comparación: INE"
+          />
+        ) : undefined
+      }
     >
       <Text variant="h1">Y tú, ¿cómo votas?</Text>
       <Text variant="lead">
@@ -20,18 +31,24 @@ export function W09bBadge() {
         en tu entidad.
       </Text>
       {complete ? (
-        <Slot label="Tú y tu generación" height="small">
-          Tú: — de 3 · [Edad] en [Entidad]: —.— de 3
-        </Slot>
+        <section className={layout.panel}>
+          <h2 className={layout.panelTitle}>Tú y tu generación</h2>
+          <ComparisonBar label="Tú" value="— de 3" ratio={null} />
+          <ComparisonBar label="[Edad] en [Entidad]" value="—.— de 3" ratio={null} />
+        </section>
       ) : (
-        <Notice>Responde «Sobre ti» para recibir tu insignia.</Notice>
+        <Notice tone="pending">Responde «Sobre ti» para recibir tu insignia.</Notice>
       )}
-      <Button variant="text" onClick={() => nav.goTo('W-02b')}>
-        {complete ? 'Cambiar respuestas' : 'Responder ahora'}
-      </Button>
-      <Button variant="primary" icon="↗" onClick={() => nav.openSheet('W-12')}>
-        Compartir mi insignia
-      </Button>
+      <div className={layout.row}>
+        {complete && (
+          <Button variant="primary" icon="share" onClick={() => nav.openSheet('W-12')}>
+            Compartir mi insignia
+          </Button>
+        )}
+        <Button variant="text" onClick={() => nav.goTo('W-02b')}>
+          {complete ? 'Cambiar respuestas' : 'Responder ahora'}
+        </Button>
+      </div>
     </StoryFrame>
   );
 }

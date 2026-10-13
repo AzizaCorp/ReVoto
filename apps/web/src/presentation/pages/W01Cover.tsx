@@ -1,4 +1,5 @@
-import { Button, Slot, Text } from '@/presentation/components';
+import ballotBox from '@/presentation/assets/illustration-ballot-box.svg';
+import { Button, Illustration, Text } from '@/presentation/components';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import { StoryFrame } from './shared/StoryFrame';
 
@@ -11,7 +12,7 @@ export function W01Cover() {
       hasSource={false}
       shareable={false}
       label="Elecciones federales · 2009–2024"
-      visual={<Slot label="Ilustración: urna con boleta marcada" height="fill" />}
+      visual={<Illustration src={ballotBox} />}
     >
       <Text variant="h1">¿Cuánto vota tu territorio?</Text>
       <Text variant="lead">
@@ -20,7 +21,7 @@ export function W01Cover() {
       <Button
         variant="brand"
         size="large"
-        trailingIcon="→"
+        trailingIcon="arrow"
         fullWidth="mobile"
         onClick={nav.next ?? undefined}
       >

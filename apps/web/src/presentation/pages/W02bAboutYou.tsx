@@ -21,13 +21,13 @@ export function W02bAboutYou() {
           <Button
             variant="primary"
             size="large"
-            trailingIcon="→"
-            fullWidth
+            trailingIcon="arrow"
+            fullWidth="mobile"
             onClick={nav.next ?? undefined}
           >
             Ver mis cifras
           </Button>
-          <Button size="small" icon="←" onClick={nav.previous ?? undefined}>
+          <Button icon="back" onClick={nav.previous ?? undefined}>
             Anterior
           </Button>
           <Button variant="text" onClick={nav.next ?? undefined}>

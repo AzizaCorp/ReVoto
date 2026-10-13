@@ -1,5 +1,11 @@
 import type { ReactNode } from 'react';
-import { BottomBar, NarrativeScreen, Pill, TopBar } from '@/presentation/components';
+import {
+  BottomBar,
+  NarrativeScreen,
+  Pill,
+  TopBar,
+  type BottomAction,
+} from '@/presentation/components';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import styles from './StoryFrame.module.css';
 
@@ -19,6 +25,10 @@ export interface StoryFrameProps {
   shareable?: boolean;
   /** Cover: dark background, no step number and no ‹ › (it moves on with its main button). */
   cover?: boolean;
+  /** Replaces «Fuente» and «Compartir» in the bottom bar (W-10: «Metodología»). */
+  secondaryAction?: BottomAction;
+  /** On mobile the visual goes above the text. */
+  visualFirst?: boolean;
 }
 
 /** Number of the section pill: the cover does not count, so W-03 is «2/9». */
@@ -38,6 +48,8 @@ export function StoryFrame({
   hasSource = true,
   shareable = true,
   cover,
+  secondaryAction,
+  visualFirst,
 }: StoryFrameProps) {
   const nav = useNavigation();
   const number = useStepNumber();
@@ -47,6 +59,7 @@ export function StoryFrame({
     <NarrativeScreen
       dark={cover}
       visual={visual}
+      visualFirst={visualFirst}
       top={
         <TopBar
           dark={cover}
@@ -62,6 +75,7 @@ export function StoryFrame({
           dark={cover}
           onSource={openSource}
           onShare={openShare}
+          secondaryAction={secondaryAction}
           onPrevious={nav.previous}
           onNext={nav.next}
           hideNavigation={cover}

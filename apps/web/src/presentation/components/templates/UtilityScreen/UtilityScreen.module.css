@@ -1,3 +1,4 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-04 «UtilityScreen». */
 .utilityScreen {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
@@ -11,18 +12,43 @@
   min-height: 0;
   overflow-y: auto;
 }
-.body {
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-2);
+  padding: var(--rv-space-2) var(--rv-side-margin) var(--rv-space-3);
+}
+.body,
+.aside {
   display: flex;
   flex-direction: column;
   gap: var(--rv-space-15);
-  padding: var(--rv-space-15) var(--rv-side-margin) var(--rv-space-3);
+  min-width: 0;
+}
+.body > * {
+  animation: rv-rise var(--rv-duration-enter) var(--rv-easing) backwards;
+}
+.body > :nth-child(2) {
+  animation-delay: calc(var(--rv-stagger) * 1);
+}
+.body > :nth-child(3) {
+  animation-delay: calc(var(--rv-stagger) * 2);
+}
+.body > :nth-child(4) {
+  animation-delay: calc(var(--rv-stagger) * 3);
+}
+.body > :nth-child(n + 5) {
+  animation-delay: calc(var(--rv-stagger) * 4);
+}
+.aside {
+  animation: rv-rise var(--rv-duration-enter) var(--rv-easing) calc(var(--rv-stagger) * 3) backwards;
 }
 .actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: var(--rv-space-1);
+  gap: var(--rv-space-1) var(--rv-space-15);
   padding: var(--rv-space-15) var(--rv-side-margin) var(--rv-space-2);
 }
 
@@ -30,16 +56,40 @@
   .utilityScreen {
     max-width: none;
   }
-  .body,
-  .actions {
+  .layout {
     width: 100%;
-    max-width: calc(var(--rv-sheet-max-width) + 2 * var(--rv-side-margin));
+    max-width: calc(var(--rv-content-max) + 2 * var(--rv-side-margin));
     margin: 0 auto;
-  }
-  .body {
     padding-top: var(--rv-space-4);
+    gap: var(--rv-space-4);
+  }
+  .layout:not(.withAside) .body {
+    max-width: calc(var(--rv-sheet-max-width) + var(--rv-space-8));
+  }
+  .withAside {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
   }
   .actions {
-    justify-content: flex-start;
+    justify-content: flex-end;
+    min-height: var(--rv-bottom-zone);
+    padding: var(--rv-space-1) var(--rv-side-margin);
+    border-top: var(--rv-border-thin) solid var(--rv-color-border);
+  }
+}
+@media (min-width: 1200px) {
+  .withAside {
+    gap: var(--rv-space-8);
+  }
+}
+@keyframes rv-rise {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
   }
 }

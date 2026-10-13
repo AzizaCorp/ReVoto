@@ -1,35 +1,68 @@
-import { Button, DataList, Notice, UtilityScreen } from '@/presentation/components';
+import {
+  Button,
+  IconBubble,
+  Pill,
+  Text,
+  TopBar,
+  UtilityScreen,
+  type BubbleTone,
+  type IconName,
+} from '@/presentation/components';
 import { useNavigation } from '@/presentation/providers/Navigation';
+import layout from './shared/Layout.module.css';
 
-const DATASETS = [
-  'Participación por entidad y municipio',
-  'Participación por edad y sexo',
-  'Arquetipos municipales',
-] as const;
+const DATASETS: readonly [string, IconName, BubbleTone][] = [
+  ['Participación por entidad y municipio', 'pin', 'brand'],
+  ['Participación por edad y sexo', 'users', 'violet'],
+  ['Arquetipos municipales', 'star', 'indigo'],
+];
 
 /** W-16 · Open data (US-22). Pending: links to the published CSV/JSON files. */
 export function W16OpenData() {
   const nav = useNavigation();
   return (
     <UtilityScreen
+      top={
+        <TopBar
+          onBack={() => nav.goTo('W-10')}
+          backLabel="Volver al resumen"
+          onSettings={() => nav.openSheet('W-13')}
+        />
+      }
       title="Datos abiertos"
       lead="Los mismos agregados que usa este sitio. Úsalos, verifícalos y cítalos."
-      onBack={() => nav.goTo(nav.lastScreen)}
-      actions={
-        <>
-          <Button variant="text">Diccionario</Button>
-          <Button variant="text">Metodología</Button>
-          <Button variant="text">Reporte de calidad y validación</Button>
-        </>
-      }
     >
-      <Notice tone="pending">Se publican con el dataset final.</Notice>
-      <DataList
-        items={DATASETS.map((d) => ({
-          term: d,
-          value: '2009–2024 · corte [dd/mm/aaaa] · [peso] · CSV · JSON',
-        }))}
-      />
+      <Pill tone="pending">Se publican con el dataset final</Pill>
+      {DATASETS.map(([name, icon, tone]) => (
+        <section key={name} className={layout.panel}>
+          <div className={layout.row}>
+            <IconBubble icon={icon} tone={tone} size={36} />
+            <div>
+              <h2 className={layout.panelTitle}>{name}</h2>
+              <Text variant="meta">2009–2024 · corte [dd/mm/aaaa] · [peso]</Text>
+            </div>
+          </div>
+          <div className={layout.grid2}>
+            <Button size="small" icon="download" disabled>
+              CSV
+            </Button>
+            <Button size="small" icon="download" disabled>
+              JSON
+            </Button>
+          </div>
+        </section>
+      ))}
+      <div className={layout.grid2}>
+        <Button>Diccionario de datos</Button>
+        <Button>Metodología</Button>
+      </div>
+      <Button icon="check" fullWidth>
+        Reporte de calidad y validación
+      </Button>
+      <Text variant="meta">
+        Licencia: [licencia] · Cita sugerida: ReVoto ([año]). Participación electoral 2009–2024 con
+        datos del INE.
+      </Text>
     </UtilityScreen>
   );
 }

@@ -18,7 +18,7 @@
   flex-direction: column;
   gap: var(--rv-space-15);
   width: 100%;
-  padding: var(--rv-space-15) var(--rv-side-margin);
+  padding: var(--rv-space-2) var(--rv-side-margin);
 }
 .text,
 .visual {
@@ -26,6 +26,55 @@
   flex-direction: column;
   gap: var(--rv-space-15);
   min-width: 0;
+}
+
+/* Motion (M-01): text blocks rise with a 70 ms stagger; the visual pops after them. */
+.text > * {
+  animation: rv-rise var(--rv-duration-enter) var(--rv-easing) backwards;
+}
+.text > :nth-child(2) {
+  animation-delay: calc(var(--rv-stagger) * 1);
+}
+.text > :nth-child(3) {
+  animation-delay: calc(var(--rv-stagger) * 2);
+}
+.text > :nth-child(4) {
+  animation-delay: calc(var(--rv-stagger) * 3);
+}
+.text > :nth-child(5) {
+  animation-delay: calc(var(--rv-stagger) * 4);
+}
+.text > :nth-child(6) {
+  animation-delay: calc(var(--rv-stagger) * 5);
+}
+.text > :nth-child(n + 7) {
+  animation-delay: calc(var(--rv-stagger) * 6);
+}
+.visual {
+  animation: rv-pop var(--rv-duration-pop) var(--rv-easing-spring) 300ms backwards;
+}
+@keyframes rv-rise {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes rv-pop {
+  0% {
+    opacity: 0;
+    scale: 0.94;
+  }
+  70% {
+    opacity: 1;
+    scale: 1.01;
+  }
+  100% {
+    scale: 1;
+  }
 }
 .visual {
   flex: 1;
@@ -40,6 +89,8 @@
 
 /* Cover: ink background with magenta and grape gradients. */
 .dark {
+  --rv-color-brand-soft: rgb(255 255 255 / 0.12);
+  --rv-color-brand-text: var(--rv-color-brand-on-dark);
   --rv-color-ink-2: rgb(255 255 255 / 0.78);
   --rv-color-line: rgb(255 255 255 / 0.35);
   --rv-color-paper: transparent;
@@ -55,6 +106,13 @@
   --rv-color-ink: var(--rv-color-on-ink);
 }
 
+@media (max-width: 767px) {
+  .visualFirst .visual {
+    order: -1;
+    flex: none;
+  }
+}
+
 @media (min-width: 768px) {
   .narrativeScreen {
     max-width: none;
@@ -62,6 +120,19 @@
   .content {
     padding: var(--rv-space-4) var(--rv-side-margin);
     gap: var(--rv-space-3);
+  }
+  .text {
+    gap: var(--rv-space-2);
+  }
+  .withVisual {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--rv-space-4);
+  }
+  .withVisual .visual {
+    align-self: stretch;
+    justify-content: center;
   }
 }
 
@@ -74,13 +145,7 @@
     justify-content: center;
   }
   .withVisual {
-    display: grid;
     grid-template-columns: 5fr 7fr;
-    align-items: center;
     gap: var(--rv-space-8);
-  }
-  .withVisual .visual {
-    align-self: stretch;
-    justify-content: center;
   }
 }

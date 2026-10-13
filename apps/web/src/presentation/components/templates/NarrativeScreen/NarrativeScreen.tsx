@@ -12,6 +12,8 @@ export interface NarrativeScreenProps {
   visual?: ReactNode;
   /** Dark background with brand gradients (W-01). */
   dark?: boolean;
+  /** On mobile the visual goes above the text (share cards W-09, W-09b, W-09c). */
+  visualFirst?: boolean;
 }
 
 /**
@@ -20,12 +22,25 @@ export interface NarrativeScreenProps {
  * buttons. Mobile: one column up to 480 px. Tablet: one column with 40 px margins. Desktop: 5/7
  * grid up to 1200 px.
  */
-export function NarrativeScreen({ top, bottom, children, visual, dark }: NarrativeScreenProps) {
+export function NarrativeScreen({
+  top,
+  bottom,
+  children,
+  visual,
+  dark,
+  visualFirst,
+}: NarrativeScreenProps) {
   return (
     <div className={[styles.narrativeScreen, dark ? styles.dark : ''].join(' ')}>
       {top}
       <div className={styles.scroller}>
-        <div className={[styles.content, visual ? styles.withVisual : ''].join(' ')}>
+        <div
+          className={[
+            styles.content,
+            visual ? styles.withVisual : '',
+            visualFirst ? styles.visualFirst : '',
+          ].join(' ')}
+        >
           <div className={styles.text}>{children}</div>
           {visual && <div className={styles.visual}>{visual}</div>}
         </div>

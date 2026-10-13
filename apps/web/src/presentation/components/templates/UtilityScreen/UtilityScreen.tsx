@@ -16,6 +16,8 @@ export interface UtilityScreenProps {
   children: ReactNode;
   /** Actions fixed at the bottom (manual §7.3). */
   actions?: ReactNode;
+  /** Second column on tablet and desktop (map, preview); below the content on mobile. */
+  aside?: ReactNode;
 }
 
 /**
@@ -31,23 +33,27 @@ export function UtilityScreen({
   onBack,
   children,
   actions,
+  aside,
 }: UtilityScreenProps) {
   return (
     <div className={styles.utilityScreen}>
       {top ?? <div />}
       <div className={styles.scroller}>
-        <div className={styles.body}>
-          {onBack && (
-            <div>
-              <Button variant="text" size="small" icon="←" onClick={onBack}>
-                Volver
-              </Button>
-            </div>
-          )}
-          {label && <Pill number={number}>{label}</Pill>}
-          <Text variant="h1">{title}</Text>
-          {lead && <Text variant="lead">{lead}</Text>}
-          {children}
+        <div className={[styles.layout, aside ? styles.withAside : ''].join(' ')}>
+          <div className={styles.body}>
+            {onBack && (
+              <div>
+                <Button variant="text" size="small" icon="back" onClick={onBack}>
+                  Volver
+                </Button>
+              </div>
+            )}
+            {label && <Pill number={number}>{label}</Pill>}
+            <Text variant="h1">{title}</Text>
+            {lead && <Text variant="lead">{lead}</Text>}
+            {children}
+          </div>
+          {aside && <div className={styles.aside}>{aside}</div>}
         </div>
       </div>
       {actions ? <div className={styles.actions}>{actions}</div> : <div />}
