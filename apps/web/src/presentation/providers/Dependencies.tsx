@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import type { TurnoutRepository } from '@/application';
+import type { QualityRepository, TurnoutRepository } from '@/application';
 
 /**
  * Dependency injection for the presentation. Pages ask for the repository here and pass it to
@@ -7,6 +7,7 @@ import type { TurnoutRepository } from '@/application';
  */
 export interface Dependencies {
   turnout: TurnoutRepository;
+  quality: QualityRepository;
 }
 
 const Context = createContext<Dependencies | null>(null);

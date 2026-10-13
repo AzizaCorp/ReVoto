@@ -1,5 +1,13 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { App } from './App';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { memoryDependencies } from '@/test/memoryRepositories';
+import { App as Root } from './App';
+import { DependenciesProvider } from './providers/Dependencies';
+
+const App = () => (
+  <DependenciesProvider value={memoryDependencies()}>
+    <Root />
+  </DependenciesProvider>
+);
 
 const title = () => screen.getByRole('heading', { level: 1 });
 
@@ -37,13 +45,18 @@ describe('App · sequence engine', () => {
     expect(screen.getByRole('dialog', { name: '¿De dónde sale esta cifra?' })).toBeInTheDocument();
   });
 
-  it('the territory chip opens W-02 and comes back to the same screen (HU-28)', () => {
+  it('the territory chip opens W-02 and comes back to the same screen (HU-28)', async () => {
     window.location.hash = '#/W-04';
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: /Cambiar territorio/ }));
     expect(title()).toHaveTextContent('¿Dónde votas?');
+    fireEvent.click(await screen.findByRole('radio', { name: /Ciudad de México/ }));
+    const select = screen.getByRole('combobox', { name: /Municipio/ });
+    await waitFor(() => expect(select).toBeEnabled());
+    fireEvent.change(select, { target: { value: '6' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
-    expect(title()).toHaveTextContent('[Municipio], [Entidad]');
+    expect(title()).toHaveTextContent('Iztacalco, Ciudad de México');
+    expect(await screen.findAllByText('69.4 %')).toHaveLength(2); // stat card + comparison bar
   });
 
   it('open data leads to the methodology, the dictionary and the quality report', () => {

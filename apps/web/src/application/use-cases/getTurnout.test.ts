@@ -9,6 +9,7 @@ import {
   type TurnoutSeries,
 } from '@/domain';
 import type { TurnoutRepository } from '../ports/TurnoutRepository';
+import { memoryTurnoutRepository } from '@/test/memoryRepositories';
 import { getTurnout } from './getTurnout';
 
 const source = { name: 'Datos sintéticos de prueba' };
@@ -27,14 +28,13 @@ const published = (t: Territory): TurnoutSeries => ({
   ],
 });
 
-const fakeRepo = (suppressed: Territory['level'][]): TurnoutRepository => ({
-  states: async () => [],
-  municipalities: async () => [],
-  series: async (t) =>
-    suppressed.includes(t.level)
-      ? { status: 'suppressed', territory: t, reason: 'threshold-rn05' }
-      : published(t),
-});
+const fakeRepo = (suppressed: Territory['level'][]): TurnoutRepository =>
+  memoryTurnoutRepository({
+    series: async (t) =>
+      suppressed.includes(t.level)
+        ? { status: 'suppressed', territory: t, reason: 'threshold-rn05' }
+        : published(t),
+  });
 
 describe('getTurnout (CU-02)', () => {
   const small = municipality(14, 117, 'Municipio pequeño', 'Jalisco');

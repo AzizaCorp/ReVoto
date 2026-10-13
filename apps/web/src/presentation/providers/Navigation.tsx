@@ -17,6 +17,8 @@ import {
   type Progress,
   type ScreenId,
   type Sequence,
+  NATIONAL,
+  type Territory,
 } from '@/domain';
 
 /** Views outside the sequence: lite version, open data, states catalog, methodology, dictionary. */
@@ -35,8 +37,11 @@ export interface Navigation {
   progress: Progress | null;
   stepName: string | null;
   sheet: SheetId | null;
-  /** Label of the chosen territory. No data yet: «[Entidad] · [Municipio]». */
+  /** Label of the chosen territory: «Ciudad de México · Iztacalco», «Jalisco» or «Nacional». */
   territory: string;
+  /** Territory chosen in W-02 (national until the person picks one). Never stored (RNF-13). */
+  selected: Territory;
+  chooseTerritory: (t: Territory) => void;
   goTo: (id: ViewId) => void;
   /** `null` at the ends (HU-10: no wrap-around). */
   next: (() => void) | null;
@@ -77,6 +82,7 @@ export function NavigationProvider({
   const [lastScreen, setLastScreen] = useState<ScreenId>(isScreen(current) ? current : 'W-01');
   const [sheet, setSheet] = useState<SheetId | null>(null);
   const [returnTo, setReturnTo] = useState<ScreenId | null>(null);
+  const [selected, setSelected] = useState<Territory>(NATIONAL);
 
   const goTo = useCallback((id: ViewId) => {
     setSheet(null);
@@ -109,7 +115,12 @@ export function NavigationProvider({
       progress: inSequence ? progressOf(sequence, current) : null,
       stepName: isScreen(current) ? screenName(current) : null,
       sheet,
-      territory: '[Entidad] · [Municipio]',
+      territory:
+        selected.level === 'municipality'
+          ? `${selected.stateName} · ${selected.name}`
+          : selected.name,
+      selected,
+      chooseTerritory: setSelected,
       goTo,
       next: nextId ? () => goTo(nextId) : null,
       previous: previousId ? () => goTo(previousId) : null,
@@ -125,7 +136,7 @@ export function NavigationProvider({
         goTo(target);
       },
     };
-  }, [sequence, current, lastScreen, sheet, goTo, returnTo]);
+  }, [sequence, current, lastScreen, sheet, goTo, returnTo, selected]);
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

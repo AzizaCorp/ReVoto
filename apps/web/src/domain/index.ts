@@ -4,3 +4,4 @@ export * from './territory';
 export * from './turnout';
 export * from './narrative';
 export * from './identity';
+export * from './quality';

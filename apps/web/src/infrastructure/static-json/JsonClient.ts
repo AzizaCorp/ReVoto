@@ -32,7 +32,8 @@ export class JsonClient {
     return promise;
   }
 
-  private currentVersion(): Promise<ManifiestoDto> {
+  /** Manifest of the current data version (requested once per visit, without cache). */
+  currentVersion(): Promise<ManifiestoDto> {
     this.manifest ??= this.fetchJson<ManifiestoDto>(`${this.base}/manifest.json`, {
       cache: 'no-cache',
     }).catch((error: unknown) => {
