@@ -4,7 +4,6 @@ import {
   Button,
   ComparisonBar,
   Notice,
-  Slot,
   StatCard,
   TerritoryChip,
   Text,
@@ -13,6 +12,8 @@ import { count, percent, points } from '@/presentation/format';
 import { useAsync } from '@/presentation/hooks/useAsync';
 import { useDependencies } from '@/presentation/providers/Dependencies';
 import { useNavigation } from '@/presentation/providers/Navigation';
+import { useStoryData } from '@/presentation/providers/Story';
+import { StateMap } from './shared/maps';
 import layout from './shared/Layout.module.css';
 import { StoryFrame } from './shared/StoryFrame';
 
@@ -23,6 +24,7 @@ export function W04YourTerritory() {
   const nav = useNavigation();
   const { turnout } = useDependencies();
   const t = nav.selected;
+  const story = useStoryData();
   const result = useAsync(() => compareTerritory(turnout, t, YEAR), [turnout, t]);
   const c = result.status === 'ready' ? result.data : null;
 
@@ -50,7 +52,7 @@ export function W04YourTerritory() {
       label="Tu territorio"
       visual={
         <>
-          <Slot label="Mapa del municipio y sus vecinos" height="fill" />
+          <StateMap territory={t} story={story} year={YEAR} />
           <section className={layout.panel}>
             <h2 className={layout.panelTitle}>Comparado con</h2>
             {rows.map(([label, value]) => (

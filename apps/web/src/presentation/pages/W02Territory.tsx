@@ -7,7 +7,6 @@ import {
   SearchField,
   SelectableRow,
   SelectField,
-  Slot,
   UtilityScreen,
   type BubbleTone,
 } from '@/presentation/components';
@@ -16,6 +15,7 @@ import { useDependencies } from '@/presentation/providers/Dependencies';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import { useStepNumber } from './shared/StoryFrame';
 import layout from './shared/Layout.module.css';
+import { StatesPicker } from './shared/maps';
 import { UtilityTopBar } from './shared/UtilityTopBar';
 
 const TONES: readonly BubbleTone[] = ['brand', 'violet', 'indigo', 'brand', 'neutral'];
@@ -71,7 +71,15 @@ export function W02Territory() {
       number={number}
       title="¿Dónde votas?"
       lead="Elige tu entidad y municipio para comparar sus cifras con las del país. No guardamos tu elección."
-      aside={<Slot label="Mapa de entidades (elige en la lista o en el mapa)" height="large" />}
+      aside={
+        <StatesPicker
+          selected={stateCode}
+          onSelect={(code) => {
+            setStateCode(code);
+            setMunicipality('');
+          }}
+        />
+      }
       actions={
         <>
           <Button

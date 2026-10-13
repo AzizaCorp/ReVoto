@@ -1,5 +1,7 @@
 // In-memory adapters for tests: a tiny, synthetic territory with every port answered.
 import type {
+  GeographyRepository,
+  MapLayer,
   OpenDataRepository,
   QualityRepository,
   StateOverview,
@@ -93,8 +95,41 @@ export const memoryOpenDataRepository = (): OpenDataRepository => ({
   }),
 });
 
+const square = (id: string, name: string, x: number) => ({
+  id,
+  name,
+  rings: [
+    [
+      [x, 0],
+      [x + 1, 0],
+      [x + 1, 1],
+      [x, 1],
+      [x, 0],
+    ] as [number, number][],
+  ],
+});
+const layer = (areas: ReturnType<typeof square>[]): MapLayer => ({
+  areas,
+  bounds: [0, 0, areas.length, 1],
+});
+
+export const memoryGeographyRepository = (): GeographyRepository => ({
+  states: async () => layer([square('9', 'Ciudad de México', 0), square('14', 'Jalisco', 1)]),
+  municipalities: async () => layer(towns.map(([c, n], i) => square(String(c), n, i))),
+  country: async () =>
+    layer(towns.map(([c, n], i) => square(`090${String(c).padStart(2, '0')}`, n, i))),
+  countryTurnout: async () =>
+    new Map(
+      towns.map(([c, n, v]) => [
+        `090${String(c).padStart(2, '0')}`,
+        { name: n, stateCode: 9, turnout: { 2024: proportion(v) } },
+      ]),
+    ),
+});
+
 export const memoryDependencies = () => ({
   turnout: memoryTurnoutRepository(),
   quality: memoryQualityRepository(),
   openData: memoryOpenDataRepository(),
+  geography: memoryGeographyRepository(),
 });

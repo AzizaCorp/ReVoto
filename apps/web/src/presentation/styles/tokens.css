@@ -28,6 +28,18 @@
   --rv-color-on-ink: #ffffff;
   --rv-color-on-brand: #171824;
 
+  /* ── Map scale (board W-03): 7 sequential steps, less → more turnout ── */
+  --rv-map-1: #fde3f0;
+  --rv-map-2: #f9bcdb;
+  --rv-map-3: #f08cc0;
+  --rv-map-4: #e05aa6;
+  --rv-map-5: #b8358f;
+  --rv-map-6: #86297f;
+  --rv-map-7: #5d1b6d;
+  --rv-map-empty: #e6dfe4; /* no data or below RN-05 */
+  --rv-map-stage: #f6f0f3;
+  --rv-map-line: #ffffff;
+
   /* Icon bubble tones (background / icon), board C-00 */
   --rv-tone-brand-strong-bg: #ff2d94;
   --rv-tone-brand-strong-fg: #ffffff;

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { latestOfType, type ElectionType } from '@/domain';
-import { SegmentedControl, Slot, StatCard, Text } from '@/presentation/components';
+import { SegmentedControl, StatCard, Text } from '@/presentation/components';
 import { count, percent, PENDING } from '@/presentation/format';
 import { useStoryData } from '@/presentation/providers/Story';
 import { DataStatus } from './shared/DataStatus';
+import { CountryMap } from './shared/maps';
 import { StoryFrame } from './shared/StoryFrame';
 
 const TYPES = [
@@ -22,7 +23,11 @@ export function W03MexicoVoted() {
       pending={!e}
       label="México"
       visual={
-        <Slot label="Mapa de participación por municipio (escala de menor a mayor)" height="fill" />
+        <CountryMap
+          year={e?.election.year ?? (type === 'presidential' ? 2024 : 2021)}
+          typeName={type === 'presidential' ? 'presidencial' : 'intermedia'}
+          highlight={story?.profile?.inegiCode ?? null}
+        />
       }
     >
       <Text variant="h1">Así vota México</Text>

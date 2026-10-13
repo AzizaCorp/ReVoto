@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   JsonClient,
+  JsonGeographyRepository,
   JsonOpenDataRepository,
   JsonQualityRepository,
   JsonTurnoutRepository,
@@ -27,5 +28,6 @@ export function realDependencies() {
     turnout: new JsonTurnoutRepository(client),
     quality: new JsonQualityRepository(client),
     openData: new JsonOpenDataRepository(client),
+    geography: new JsonGeographyRepository(client),
   };
 }

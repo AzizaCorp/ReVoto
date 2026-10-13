@@ -1,0 +1,174 @@
+/* Choropleth map (boards W-03, W-04): sequential scale --rv-map-1…7, zoom, tooltip, legend. */
+.choroplethMap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-1);
+  margin: 0;
+  min-height: 0;
+}
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: var(--rv-radius-card);
+  /* White, so the lightest step (--rv-map-1) still reads against the stage. */
+  background: var(--rv-color-paper);
+  border: var(--rv-border-width) solid var(--rv-color-border);
+  overflow: hidden;
+}
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  max-height: 70vh;
+  touch-action: pan-y;
+}
+.compact {
+  max-height: 340px;
+}
+@media (max-width: 767px) {
+  /* Mobile: the map is one block of the story, not the whole screen (boards W-03 230, W-04 176). */
+  .svg {
+    max-height: 300px;
+  }
+  .compact {
+    max-height: 240px;
+  }
+}
+.grab {
+  cursor: grab;
+  touch-action: none;
+}
+.area {
+  stroke: var(--rv-map-line);
+  stroke-width: 0.5px;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  transition: opacity var(--rv-duration) var(--rv-easing);
+}
+.area[role='button'] {
+  cursor: pointer;
+}
+.area:focus-visible {
+  outline: none;
+  stroke: var(--rv-color-focus);
+  stroke-width: 3px;
+}
+.hover {
+  stroke: var(--rv-color-ink);
+  stroke-width: 1.5px;
+}
+.outlined {
+  stroke: var(--rv-color-ink);
+  stroke-width: 1.25px;
+  stroke-dasharray: 3 2;
+}
+.highlight {
+  stroke: var(--rv-color-ink);
+  stroke-width: 2.5px;
+}
+.zoom {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  background: var(--rv-color-paper);
+  border: var(--rv-border-width) solid var(--rv-color-border);
+  box-shadow: var(--rv-shadow-md);
+  overflow: hidden;
+}
+.zoom button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-bottom: var(--rv-border-width) solid var(--rv-color-border);
+  background: none;
+  color: var(--rv-color-ink);
+  cursor: pointer;
+}
+.zoom button:last-child {
+  border-bottom: 0;
+}
+.zoom button:focus-visible {
+  outline: none;
+  box-shadow: inset var(--rv-focus-ring);
+}
+.tip {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  max-width: min(220px, 60%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--rv-color-paper);
+  box-shadow: var(--rv-shadow-lg);
+  font-size: var(--rv-text-meta);
+  line-height: 16px;
+  pointer-events: none;
+}
+.tip b {
+  font-family: var(--rv-font-title);
+  font-weight: var(--rv-weight-bold);
+}
+.tip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--rv-color-ink-2);
+}
+.tip i,
+.empty i {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.credit {
+  position: absolute;
+  left: 12px;
+  bottom: 8px;
+  font-size: 10px;
+  color: var(--rv-color-muted);
+}
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--rv-text-meta);
+}
+.legendTitle {
+  font-weight: var(--rv-weight-bold);
+}
+.ramp {
+  display: flex;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.ramp i {
+  flex: 1;
+}
+.ends {
+  display: flex;
+  justify-content: space-between;
+  color: var(--rv-color-ink-2);
+}
+.empty {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--rv-color-ink-2);
+}
+.empty i {
+  background: var(--rv-map-empty);
+}

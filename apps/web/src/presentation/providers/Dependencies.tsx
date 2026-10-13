@@ -1,5 +1,10 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import type { OpenDataRepository, QualityRepository, TurnoutRepository } from '@/application';
+import type {
+  GeographyRepository,
+  OpenDataRepository,
+  QualityRepository,
+  TurnoutRepository,
+} from '@/application';
 
 /**
  * Dependency injection for the presentation. Pages ask for the repository here and pass it to
@@ -9,6 +14,7 @@ export interface Dependencies {
   turnout: TurnoutRepository;
   quality: QualityRepository;
   openData: OpenDataRepository;
+  geography: GeographyRepository;
 }
 
 const Context = createContext<Dependencies | null>(null);

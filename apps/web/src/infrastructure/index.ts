@@ -4,3 +4,4 @@ export { JsonTurnoutRepository } from './static-json/JsonTurnoutRepository';
 export { JsonQualityRepository } from './static-json/JsonQualityRepository';
 export { JsonClient } from './static-json/JsonClient';
 export { JsonOpenDataRepository } from './static-json/JsonOpenDataRepository';
+export { JsonGeographyRepository } from './static-json/JsonGeographyRepository';

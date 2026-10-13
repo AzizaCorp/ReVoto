@@ -6,3 +6,4 @@ export * from './Figure';
 export * from './TurnoutSeries';
 export * from './Comparison';
 export * from './Insights';
+export * from './Scale';

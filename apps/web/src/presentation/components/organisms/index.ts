@@ -2,6 +2,7 @@
 export * from './BarChart';
 export * from './BottomBar';
 export * from './BottomSheet';
+export * from './ChoroplethMap';
 export * from './IdentityCard';
 export * from './ShareCard';
 export * from './StatusView';

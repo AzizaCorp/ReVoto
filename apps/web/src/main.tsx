@@ -4,6 +4,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   JsonClient,
+  JsonGeographyRepository,
   JsonOpenDataRepository,
   JsonQualityRepository,
   JsonTurnoutRepository,
@@ -24,6 +25,7 @@ const dependencies = {
   turnout: new JsonTurnoutRepository(client),
   quality: new JsonQualityRepository(client),
   openData: new JsonOpenDataRepository(client),
+  geography: new JsonGeographyRepository(client),
 };
 
 const root = document.getElementById('root');

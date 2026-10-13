@@ -3,6 +3,7 @@ import { compareTerritory, getPlaceInState } from '@/application';
 import { municipality, NATIONAL, state, type Territory } from '@/domain';
 import { fetchFromDisk, hasRealData as available } from '@/test/realData';
 import { JsonClient } from './JsonClient';
+import { JsonGeographyRepository } from './JsonGeographyRepository';
 import { JsonQualityRepository } from './JsonQualityRepository';
 import { JsonTurnoutRepository } from './JsonTurnoutRepository';
 
@@ -54,5 +55,19 @@ describe.runIf(available)('L4 data published in public/data', () => {
     expect(r.version).toMatch(/^\d{8}-[0-9a-f]{7}$/);
     expect(r.checks.find((c) => c.id === 'RF-23')?.result).toBe('pending');
     expect(r.checks.some((c) => c.result === 'failed')).toBe(false);
+  });
+
+  it('reads the projected maps: states, a state by INE key and the country by CVEGEO', async () => {
+    const geo = new JsonGeographyRepository(client);
+    const states = await geo.states();
+    expect(states.areas).toHaveLength(32);
+    const cdmx = await geo.municipalities(9);
+    expect(cdmx.areas.map((a) => a.id).sort((a, b) => Number(a) - Number(b))).toHaveLength(16);
+    expect(cdmx.areas.find((a) => a.id === '6')?.name).toBe('Iztacalco');
+    const [minX, minY, maxX, maxY] = (await geo.country()).bounds;
+    expect(maxX - minX).toBeGreaterThan(maxY - minY); // Mexico is wider than tall
+    const turnout = await geo.countryTurnout();
+    expect(turnout.size).toBe(2477);
+    expect(turnout.get('09006')?.turnout[2024]).toBe(0.694);
   });
 });

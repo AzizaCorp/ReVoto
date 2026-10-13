@@ -20,3 +20,9 @@ export {
 export { getQualityReport } from './use-cases/getQualityReport';
 export { getTerritoryStory, type TerritoryStory } from './use-cases/getTerritoryStory';
 export type { OpenDataLinks, OpenDataRepository } from './ports/OpenDataRepository';
+export type {
+  GeographyRepository,
+  MapArea,
+  MapLayer,
+  MunicipalTurnoutPoint,
+} from './ports/GeographyRepository';
