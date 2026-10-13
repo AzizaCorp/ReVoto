@@ -1,10 +1,56 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-03 «StatusView». */
 .statusView {
   display: flex;
   flex-direction: column;
-  gap: var(--rv-space-2);
+  gap: var(--rv-space-15);
 }
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--rv-space-1);
+  align-items: center;
+  gap: var(--rv-space-15);
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+/* Skeleton with shimmer; it stops with reduced motion. */
+.skeleton {
+  display: block;
+  height: var(--rv-space-15);
+  border-radius: var(--rv-radius-sm);
+  background: linear-gradient(
+      90deg,
+      var(--rv-color-track) 0,
+      var(--rv-color-fill-3) 50%,
+      var(--rv-color-track) 100%
+    )
+    0 0 / 400px 100%;
+  animation: rv-shimmer 1.4s linear infinite;
+}
+.title {
+  width: 70%;
+  height: var(--rv-space-3);
+}
+.short {
+  width: 80%;
+}
+.block {
+  height: calc(var(--rv-space-8) + var(--rv-space-4));
+  border-radius: var(--rv-radius-card);
+}
+@keyframes rv-shimmer {
+  from {
+    background-position: -200px 0;
+  }
+  to {
+    background-position: 200px 0;
+  }
+}
+:root[data-motion='reduced'] .skeleton {
+  animation: none;
 }

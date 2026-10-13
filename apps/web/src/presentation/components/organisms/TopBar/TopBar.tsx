@@ -1,4 +1,4 @@
-import { Button, IconButton, Logo, Text } from '../../atoms';
+import { Button, IconButton, Logo } from '../../atoms';
 import { ProgressBar } from '../../molecules';
 import styles from './TopBar.module.css';
 
@@ -9,62 +9,77 @@ export interface BarProgress {
 }
 
 export interface TopBarProps {
-  /** No progress on screens outside the story (W-16, W-17). */
+  /** No progress on screens outside the story (W-15 to W-20): utility variant. */
   progress?: BarProgress | null;
   /** Name of the current step; read next to the progress on desktop. */
   stepName?: string;
   onSettings: () => void;
-  /** On desktop «Fuente» and «Compartir» move up to this bar. */
+  /** On desktop «Fuente» and «Compartir» move up to this bar (only from W-03 on). */
   onSource?: () => void;
   onShare?: () => void;
+  /** Utility variant: back button («Volver al resumen», «Datos abiertos»). */
+  onBack?: () => void;
+  backLabel?: string;
   /** Dark background (cover). */
   dark?: boolean;
 }
 
-/**
- * Top bar of the high-fidelity design.
- * Mobile: progress full width and, below it, logo + «Aa».
- * Tablet: logo · progress · «N/10» · «Aa» in one row.
- * Desktop: logo · progress with «Paso N de 10 · nombre» · Fuente · Compartir · «Aa».
- */
-export function TopBar({ progress, stepName, onSettings, onSource, onShare, dark }: TopBarProps) {
+/** Progress, logo and settings; one shape per breakpoint (board C-03 «TopBar»). */
+export function TopBar({
+  progress,
+  stepName,
+  onSettings,
+  onSource,
+  onShare,
+  onBack,
+  backLabel = 'Volver',
+  dark,
+}: TopBarProps) {
+  const utility = !progress && onBack;
   return (
-    <header className={[styles.topBar, dark ? styles.dark : ''].join(' ')}>
+    <header
+      className={[styles.topBar, dark ? styles.dark : '', utility ? styles.utility : ''].join(' ')}
+    >
       <div className={styles.logo}>
         <Logo on={dark ? 'dark' : 'light'} />
       </div>
-      <div className={styles.progress}>
-        {progress && (
-          <>
-            <ProgressBar {...progress} />
-            {stepName && (
-              <span className={styles.step} aria-hidden="true">
-                <Text variant="meta">
-                  Paso {progress.position} de {progress.total} · {stepName}
-                </Text>
-              </span>
-            )}
-          </>
-        )}
-      </div>
+      {progress && (
+        <div className={styles.progress}>
+          <ProgressBar {...progress} />
+          {stepName && (
+            <span className={styles.step} aria-hidden="true">
+              Paso {progress.position} de {progress.total} · {stepName}
+            </span>
+          )}
+        </div>
+      )}
       {progress && (
         <span className={styles.counter} aria-hidden="true">
           {progress.position}/{progress.total}
         </span>
       )}
       <div className={styles.actions}>
+        {onBack && (
+          <span className={styles.back}>
+            <Button size="small" icon="back" onClick={onBack}>
+              {backLabel}
+            </Button>
+          </span>
+        )}
         {onSource && (
-          <Button size="small" icon="ⓘ" onClick={onSource}>
-            Fuente
-          </Button>
+          <span className={styles.wide}>
+            <Button icon="info" onClick={onSource}>
+              Fuente
+            </Button>
+          </span>
         )}
         {onShare && (
-          <Button size="small" icon="↗" onClick={onShare}>
-            Compartir
-          </Button>
+          <span className={styles.wide}>
+            <Button icon="share" onClick={onShare}>
+              Compartir
+            </Button>
+          </span>
         )}
-      </div>
-      <div className={styles.settings}>
         <IconButton label="Ajustes de lectura" onClick={onSettings}>
           Aa
         </IconButton>

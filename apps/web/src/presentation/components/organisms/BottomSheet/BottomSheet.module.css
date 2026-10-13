@@ -1,3 +1,4 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-03 «Sheet». */
 .layer {
   position: fixed;
   inset: 0;
@@ -12,49 +13,108 @@
   border: 0;
   background: var(--rv-scrim);
   cursor: pointer;
+  animation: rv-fade var(--rv-duration) linear;
 }
 .sheet {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--rv-space-2);
+  gap: var(--rv-space-15);
   width: 100%;
   max-height: var(--rv-sheet-height);
   padding: var(--rv-space-1) var(--rv-side-margin) var(--rv-space-3);
-  border-radius: var(--rv-radius-card) var(--rv-radius-card) 0 0;
+  border-radius: var(--rv-radius-share) var(--rv-radius-share) 0 0;
   color: var(--rv-color-ink);
-  background: var(--rv-color-paper);
+  background: var(--rv-color-background);
+  animation: rv-sheet-up calc(var(--rv-duration) * 1.6) var(--rv-easing);
 }
 .handle {
   align-self: center;
-  width: var(--rv-space-6);
-  height: var(--rv-progress-height);
+  width: var(--rv-sheet-handle-width);
+  height: var(--rv-sheet-handle-height);
   border-radius: var(--rv-radius-pill);
-  background: var(--rv-color-fill);
+  background: var(--rv-color-line);
 }
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--rv-space-2);
+  gap: var(--rv-space-15);
 }
 .content {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--rv-space-2);
+  gap: var(--rv-space-15);
 }
 
+/* Tablet: sheet with 64 px margins. */
 @media (min-width: 768px) {
-  .layer {
-    align-items: center;
-  }
   .sheet {
-    max-width: var(--rv-sheet-max-width);
-    border-radius: var(--rv-radius-card);
-    padding: var(--rv-space-3);
+    margin: 0 var(--rv-space-8);
+    padding: var(--rv-space-15) var(--rv-space-4) var(--rv-space-4);
+    border-radius: calc(var(--rv-radius-share) + 2px) calc(var(--rv-radius-share) + 2px) 0 0;
   }
-  .handle {
+}
+
+/* Desktop: side panel of 480 px, or popover under «Aa». */
+@media (min-width: 1200px) {
+  .asSheet .handle {
     display: none;
+  }
+  .layer.asSheet {
+    justify-content: flex-end;
+    align-items: stretch;
+  }
+  .layer.asSheet .sheet {
+    width: var(--rv-sheet-panel-width);
+    max-height: none;
+    margin: 0;
+    padding: var(--rv-space-4);
+    border-radius: 0;
+    box-shadow: var(--rv-shadow-panel);
+    animation-name: rv-sheet-left;
+  }
+  .layer.asPopover {
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: calc(var(--rv-top-zone) + var(--rv-space-15)) var(--rv-side-margin) 0;
+  }
+  .layer.asPopover .scrim {
+    background: transparent;
+  }
+  .layer.asPopover .sheet {
+    width: var(--rv-popover-width);
+    margin: 0;
+    padding: var(--rv-space-3);
+    border-radius: calc(var(--rv-radius-card) + 4px);
+    box-shadow: var(--rv-shadow-modal);
+    animation-name: rv-pop-in;
+  }
+  .layer.asPopover .handle {
+    display: none;
+  }
+}
+
+@keyframes rv-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes rv-sheet-up {
+  from {
+    translate: 0 100%;
+  }
+}
+@keyframes rv-sheet-left {
+  from {
+    translate: 100% 0;
+  }
+}
+@keyframes rv-pop-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+    translate: 0 calc(-1 * var(--rv-space-1));
   }
 }

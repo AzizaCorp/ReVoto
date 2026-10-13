@@ -1,11 +1,19 @@
-import { Button, Text } from '../../atoms';
+import { Button, type IconName } from '../../atoms';
 import styles from './BottomBar.module.css';
+
+export interface BottomAction {
+  label: string;
+  icon: IconName;
+  onClick: () => void;
+}
 
 export interface BottomBarProps {
   /** Opens W-11. Every screen with a figure shows it (RF-12, RN-10). */
   onSource?: () => void;
   /** Opens W-12 if the screen can be shared (RF-15). */
   onShare?: () => void;
+  /** Replaces «Fuente» and «Compartir» (W-10: «Metodología»). */
+  secondaryAction?: BottomAction;
   /** `null` on the first step: the button is not drawn (HU-10, no wrap-around). */
   onPrevious: (() => void) | null;
   /** `null` on the last step: «Fin» is shown. */
@@ -18,15 +26,11 @@ export interface BottomBarProps {
   hideNavigation?: boolean;
 }
 
-/**
- * Bottom bar of the high-fidelity design.
- * Mobile: Fuente · Compartir on the left and ‹ › as 44 px circles on the right.
- * Tablet: Fuente · Compartir and «← Anterior» / «Siguiente →» with text.
- * Desktop: source note on the left (Fuente and Compartir move up to the top bar).
- */
+/** Story navigation; one shape per breakpoint (board C-03 «BottomBar»). */
 export function BottomBar({
   onSource,
   onShare,
+  secondaryAction,
   onPrevious,
   onNext,
   nextLabel = 'Siguiente',
@@ -38,25 +42,41 @@ export function BottomBar({
       className={[styles.bottomBar, dark ? styles.dark : ''].join(' ')}
       aria-label="Navegación de la historia"
     >
-      <div className={styles.left}>
-        {onSource && (
-          <Button size="small" icon="ⓘ" collapsible="narrow" label="Fuente" onClick={onSource}>
-            Fuente
+      <div className={[styles.left, secondaryAction ? styles.keep : ''].join(' ')}>
+        {secondaryAction ? (
+          <Button icon={secondaryAction.icon} onClick={secondaryAction.onClick}>
+            {secondaryAction.label}
           </Button>
-        )}
-        {onShare && (
-          <Button size="small" icon="↗" collapsible="narrow" label="Compartir" onClick={onShare}>
-            Compartir
-          </Button>
+        ) : (
+          <>
+            {onSource && (
+              <Button icon="info" collapsible="narrow" label="Fuente" onClick={onSource}>
+                Fuente
+              </Button>
+            )}
+            {onShare && (
+              <Button icon="share" collapsible="narrow" label="Compartir" onClick={onShare}>
+                Compartir
+              </Button>
+            )}
+          </>
         )}
       </div>
-      <span className={styles.note}>
-        <Text variant="meta">Fuente: conteos censales INE 2009–2024 · Sin datos personales</Text>
-      </span>
+      {!secondaryAction && (onSource || onShare) && (
+        <span className={styles.note}>
+          Fuente: conteos censales INE 2009–2024 · Sin datos personales
+        </span>
+      )}
       {!hideNavigation && (
         <div className={styles.right}>
           {onPrevious && (
-            <Button collapsible icon="←" onClick={onPrevious} label="Pantalla anterior">
+            <Button
+              collapsible
+              icon="back"
+              compactIcon="chevl"
+              onClick={onPrevious}
+              label="Pantalla anterior"
+            >
               Anterior
             </Button>
           )}
@@ -64,7 +84,8 @@ export function BottomBar({
             <Button
               collapsible
               variant={dark ? 'brand' : 'primary'}
-              trailingIcon="→"
+              trailingIcon="arrow"
+              compactIcon="chev"
               onClick={onNext}
               label="Pantalla siguiente"
             >

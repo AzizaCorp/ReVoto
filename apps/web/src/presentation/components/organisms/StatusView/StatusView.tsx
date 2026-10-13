@@ -1,4 +1,4 @@
-import { Button, Slot, Text } from '../../atoms';
+import { Button, Text } from '../../atoms';
 import { Notice } from '../../molecules';
 import styles from './StatusView.module.css';
 
@@ -23,13 +23,11 @@ export function StatusView({
   if (status === 'loading') {
     return (
       <div className={styles.statusView} aria-busy="true">
-        <Text variant="meta">Cargando cifras…</Text>
-        <Slot label="Cargando" height="small">
-          {' '}
-        </Slot>
-        <Slot label="Cargando" height="large">
-          {' '}
-        </Slot>
+        <span className={styles.srOnly}>Cargando cifras…</span>
+        <i className={[styles.skeleton, styles.title].join(' ')} />
+        <i className={styles.skeleton} />
+        <i className={[styles.skeleton, styles.short].join(' ')} />
+        <i className={[styles.skeleton, styles.block].join(' ')} />
       </div>
     );
   }
@@ -42,11 +40,15 @@ export function StatusView({
         </Notice>
         <div className={styles.actions}>
           {onRetry && (
-            <Button variant="primary" onClick={onRetry}>
+            <Button variant="primary" size="small" icon="redo" onClick={onRetry}>
               Reintentar
             </Button>
           )}
-          {onLiteVersion && <Button onClick={onLiteVersion}>Versión ligera</Button>}
+          {onLiteVersion && (
+            <Button variant="text" size="small" onClick={onLiteVersion}>
+              Ver versión ligera
+            </Button>
+          )}
         </div>
       </div>
     );

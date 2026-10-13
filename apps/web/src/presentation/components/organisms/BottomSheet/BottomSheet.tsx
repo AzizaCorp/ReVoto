@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
-import { IconButton, Text } from '../../atoms';
+import { Icon, IconButton, Text } from '../../atoms';
 import styles from './BottomSheet.module.css';
 
 export interface BottomSheetProps {
@@ -7,16 +7,25 @@ export interface BottomSheetProps {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  /** `popover`: on desktop it opens under «Aa» instead of as a side panel (W-13). */
+  presentation?: 'sheet' | 'popover';
 }
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), select, input, textarea, [tabindex]:not([tabindex="-1"])';
 
 /**
- * Bottom sheet (manual §7.2, RIU-06/07/10): ~70 % of the height on mobile, centered dialog from
- * 768 px. Closes with Escape, traps focus and returns it to the control that opened it.
+ * Sheet with one presentation per breakpoint (board C-03 «Sheet»): bottom sheet on mobile, sheet
+ * with margins on tablet, side panel (or popover) on desktop. Closes with Escape, traps focus and
+ * returns it to the control that opened it.
  */
-export function BottomSheet({ open, title, onClose, children }: BottomSheetProps) {
+export function BottomSheet({
+  open,
+  title,
+  onClose,
+  children,
+  presentation = 'sheet',
+}: BottomSheetProps) {
   const titleId = useId();
   const panel = useRef<HTMLDivElement>(null);
 
@@ -52,7 +61,12 @@ export function BottomSheet({ open, title, onClose, children }: BottomSheetProps
 
   if (!open) return null;
   return (
-    <div className={styles.layer}>
+    <div
+      className={[
+        styles.layer,
+        presentation === 'popover' ? styles.asPopover : styles.asSheet,
+      ].join(' ')}
+    >
       <button
         type="button"
         className={styles.scrim}
@@ -73,7 +87,7 @@ export function BottomSheet({ open, title, onClose, children }: BottomSheetProps
             {title}
           </Text>
           <IconButton label="Cerrar hoja" onClick={onClose}>
-            ✕
+            <Icon name="close" size={18} strokeWidth={2.2} />
           </IconButton>
         </div>
         <div className={styles.content}>{children}</div>
