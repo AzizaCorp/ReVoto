@@ -1,5 +1,5 @@
-// Barril del nivel "templates". scripts/new-component.mjs agrega aquí cada componente nuevo.
-export * from './PantallaLigera';
-export * from './PantallaNarrativa';
-export * from './PantallaUtilitaria';
-export * from './PlantillaHoja';
+// Barrel of the "templates" level. scripts/new-component.mjs adds every new component here.
+export * from './LiteScreen';
+export * from './NarrativeScreen';
+export * from './SheetTemplate';
+export * from './UtilityScreen';

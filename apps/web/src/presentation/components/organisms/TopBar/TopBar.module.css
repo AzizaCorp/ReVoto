@@ -1,0 +1,80 @@
+.topBar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'progreso progreso'
+    'logo aa';
+  align-items: center;
+  gap: var(--rv-space-15) var(--rv-space-2);
+  padding: var(--rv-space-15) var(--rv-side-margin) var(--rv-space-1);
+  color: var(--rv-color-ink);
+}
+.logo {
+  grid-area: logo;
+}
+.progress {
+  grid-area: progreso;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-1);
+  min-width: 0;
+}
+.settings {
+  grid-area: aa;
+}
+.step,
+.counter,
+.actions {
+  display: none;
+}
+.dark {
+  --rv-color-ink: var(--rv-color-on-ink);
+  --rv-color-paper: transparent;
+  --rv-color-line: rgb(255 255 255 / 0.35);
+  color: var(--rv-color-on-ink);
+  --rv-color-fill: rgb(255 255 255 / 0.22);
+}
+
+/* Tablet: a single row with the «N/10» counter. */
+@media (min-width: 768px) {
+  .topBar {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: 'logo progreso contador aa';
+    gap: var(--rv-space-4);
+    min-height: var(--rv-top-zone);
+    padding: 0 var(--rv-side-margin);
+  }
+  .counter {
+    display: block;
+    grid-area: contador;
+    font-size: var(--rv-text-meta);
+    font-weight: var(--rv-weight-semibold);
+    opacity: 0.7;
+  }
+}
+
+/* Desktop: the step is named and «Fuente» / «Compartir» move up to this bar. */
+@media (min-width: 1200px) {
+  .topBar {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: 'logo progreso acciones aa';
+    gap: var(--rv-space-5);
+    border-bottom: var(--rv-border-thin) solid var(--rv-color-border);
+  }
+  .progress {
+    width: 100%;
+    max-width: var(--rv-progress-max);
+    justify-self: center;
+  }
+  .step {
+    display: block;
+  }
+  .counter {
+    display: none;
+  }
+  .actions {
+    grid-area: acciones;
+    display: flex;
+    gap: var(--rv-space-1);
+  }
+}

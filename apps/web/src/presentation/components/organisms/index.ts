@@ -1,5 +1,5 @@
-// Barril del nivel "organisms". scripts/new-component.mjs agrega aquí cada componente nuevo.
-export * from './BarraInferior';
-export * from './BarraSuperior';
-export * from './HojaInferior';
-export * from './VistaEstado';
+// Barrel of the "organisms" level. scripts/new-component.mjs adds every new component here.
+export * from './BottomBar';
+export * from './BottomSheet';
+export * from './StatusView';
+export * from './TopBar';

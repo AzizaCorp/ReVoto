@@ -1,0 +1,50 @@
+.h1,
+.h2,
+.lead,
+.body,
+.meta {
+  margin: 0;
+}
+.h1 {
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-h1);
+  font-weight: var(--rv-weight-title);
+  line-height: var(--rv-line-height-title);
+  letter-spacing: var(--rv-tracking-title);
+}
+/* The h1 gets programmatic focus when the screen changes (HU-14); it is not interactive. */
+.h1:focus,
+.h1:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.h2 {
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-h2);
+  font-weight: var(--rv-weight-title);
+  line-height: var(--rv-line-height-title);
+}
+.lead {
+  font-size: var(--rv-text-lead);
+  color: var(--rv-color-ink-2);
+}
+.body {
+  font-size: var(--rv-text-body);
+}
+.meta {
+  font-size: var(--rv-text-meta);
+  color: var(--rv-color-ink-2);
+}
+.label {
+  font-size: var(--rv-text-label);
+  font-weight: var(--rv-weight-bold);
+  letter-spacing: var(--rv-tracking-label);
+  text-transform: uppercase;
+}
+.figure {
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-figure);
+  font-weight: var(--rv-weight-title);
+  line-height: 1;
+  color: var(--rv-color-muted);
+}

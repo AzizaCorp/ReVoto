@@ -1,41 +1,41 @@
 import { useEffect } from 'react';
-import { OcultoVisual } from '@/presentation/components';
-import { useAtajosNavegacion } from '@/presentation/hooks/useAtajosNavegacion';
-import { HOJAS, PAGINAS } from '@/presentation/pages';
-import { ProveedorNavegacion, useNavegacion } from '@/presentation/providers/Navegacion';
-import { ProveedorPerfil } from '@/presentation/providers/Perfil';
+import { VisuallyHidden } from '@/presentation/components';
+import { useNavigationShortcuts } from '@/presentation/hooks/useNavigationShortcuts';
+import { PAGES, SHEETS } from '@/presentation/pages';
+import { NavigationProvider, useNavigation } from '@/presentation/providers/Navigation';
+import { ProfileProvider } from '@/presentation/providers/Profile';
 
-/** Monta la página actual, la hoja abierta y la región viva del progreso (HU-14). */
-function Vista() {
-  const nav = useNavegacion();
-  const Pagina = PAGINAS[nav.actual];
-  const Hoja = nav.hoja ? HOJAS[nav.hoja] : null;
+/** Mounts the current page, the open sheet and the live region with the progress (HU-14). */
+function View() {
+  const nav = useNavigation();
+  const Page = PAGES[nav.currentView];
+  const Sheet = nav.sheet ? SHEETS[nav.sheet] : null;
 
-  useAtajosNavegacion({ activo: !nav.hoja, siguiente: nav.siguiente, anterior: nav.anterior });
+  useNavigationShortcuts({ enabled: !nav.sheet, next: nav.next, previous: nav.previous });
 
-  // Al cambiar de pantalla, el foco va al título para que el lector de pantalla lo anuncie.
+  // When the screen changes, focus moves to the title so the screen reader announces it.
   useEffect(() => {
-    document.querySelector<HTMLElement>('#contenido h1')?.focus();
-  }, [nav.actual]);
+    document.querySelector<HTMLElement>('#content h1')?.focus();
+  }, [nav.currentView]);
 
   return (
-    <main id="contenido" aria-label="ReVoto">
-      <Pagina />
+    <main id="content" aria-label="ReVoto">
+      <Page />
       <div aria-live="polite">
-        {nav.progreso && <OcultoVisual>{nav.progreso.texto}</OcultoVisual>}
+        {nav.progress && <VisuallyHidden>{nav.progress.text}</VisuallyHidden>}
       </div>
-      {Hoja && <Hoja />}
+      {Sheet && <Sheet />}
     </main>
   );
 }
 
-/** Raíz de la presentación: proveedores de estado de la sesión y motor de secuencia (US-09). */
+/** Presentation root: session state providers and the sequence engine (US-09). */
 export function App() {
   return (
-    <ProveedorPerfil>
-      <ProveedorNavegacion>
-        <Vista />
-      </ProveedorNavegacion>
-    </ProveedorPerfil>
+    <ProfileProvider>
+      <NavigationProvider>
+        <View />
+      </NavigationProvider>
+    </ProfileProvider>
   );
 }

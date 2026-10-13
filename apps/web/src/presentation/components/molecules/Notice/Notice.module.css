@@ -1,0 +1,19 @@
+.notice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-1);
+  padding: var(--rv-space-2);
+  border-radius: var(--rv-radius);
+  background: var(--rv-color-notice-bg);
+  font-size: var(--rv-text-meta);
+}
+.info,
+.pending {
+  border: var(--rv-border-width) dashed var(--rv-color-line);
+}
+.threshold {
+  border-left: var(--rv-space-1) solid var(--rv-color-ink-2);
+}
+.error {
+  border: var(--rv-border-width) solid var(--rv-color-ink);
+}

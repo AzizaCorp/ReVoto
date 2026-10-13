@@ -1,0 +1,60 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--rv-layer-sheet);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: var(--rv-scrim);
+  cursor: pointer;
+}
+.sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-2);
+  width: 100%;
+  max-height: var(--rv-sheet-height);
+  padding: var(--rv-space-1) var(--rv-side-margin) var(--rv-space-3);
+  border-radius: var(--rv-radius-card) var(--rv-radius-card) 0 0;
+  color: var(--rv-color-ink);
+  background: var(--rv-color-paper);
+}
+.handle {
+  align-self: center;
+  width: var(--rv-space-6);
+  height: var(--rv-progress-height);
+  border-radius: var(--rv-radius-pill);
+  background: var(--rv-color-fill);
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rv-space-2);
+}
+.content {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-2);
+}
+
+@media (min-width: 768px) {
+  .layer {
+    align-items: center;
+  }
+  .sheet {
+    max-width: var(--rv-sheet-max-width);
+    border-radius: var(--rv-radius-card);
+    padding: var(--rv-space-3);
+  }
+  .handle {
+    display: none;
+  }
+}

@@ -1,0 +1,9 @@
+.progressSegment {
+  flex: 1;
+  height: var(--rv-progress-height);
+  border-radius: var(--rv-radius-pill);
+  background: var(--rv-color-fill);
+}
+.active {
+  background: currentColor;
+}

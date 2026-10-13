@@ -1,0 +1,86 @@
+.narrativeScreen {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100dvh;
+  width: 100%;
+  max-width: var(--rv-frame-max);
+  margin: 0 auto;
+  background: var(--rv-color-background);
+}
+.scroller {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+}
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-15);
+  width: 100%;
+  padding: var(--rv-space-15) var(--rv-side-margin);
+}
+.text,
+.visual {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-15);
+  min-width: 0;
+}
+.visual {
+  flex: 1;
+}
+/* Buttons keep their natural width; slots and texts take the whole column. */
+.text {
+  align-items: flex-start;
+}
+.text > * {
+  max-width: 100%;
+}
+
+/* Cover: ink background with magenta and grape gradients. */
+.dark {
+  --rv-color-ink-2: rgb(255 255 255 / 0.78);
+  --rv-color-line: rgb(255 255 255 / 0.35);
+  --rv-color-paper: transparent;
+  --rv-slot-bg: rgb(255 255 255 / 0.06);
+  --rv-color-muted: rgb(255 255 255 / 0.7);
+  color: var(--rv-color-on-ink);
+  background:
+    radial-gradient(circle at 80% 70%, rgb(255 45 148 / 0.5), transparent 45%),
+    radial-gradient(circle at 0% 100%, rgb(147 61 130 / 0.75), transparent 45%),
+    radial-gradient(circle at 100% 0%, rgb(93 27 109 / 0.6), transparent 35%), var(--rv-color-ink);
+}
+.dark .content {
+  --rv-color-ink: var(--rv-color-on-ink);
+}
+
+@media (min-width: 768px) {
+  .narrativeScreen {
+    max-width: none;
+  }
+  .content {
+    padding: var(--rv-space-4) var(--rv-side-margin);
+    gap: var(--rv-space-3);
+  }
+}
+
+/* Desktop: centered 5/7 grid, content up to 1200 px. */
+@media (min-width: 1200px) {
+  .content {
+    max-width: calc(var(--rv-content-max) + 2 * var(--rv-side-margin));
+    margin: 0 auto;
+    padding: var(--rv-space-5) var(--rv-side-margin);
+    justify-content: center;
+  }
+  .withVisual {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    align-items: center;
+    gap: var(--rv-space-8);
+  }
+  .withVisual .visual {
+    align-self: stretch;
+    justify-content: center;
+  }
+}

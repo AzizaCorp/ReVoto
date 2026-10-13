@@ -1,9 +1,0 @@
-/* Fila de píldoras sobre el título: sección a la izquierda, «Datos pendientes» a la derecha. */
-.fila {
-  align-self: stretch;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--rv-espacio-1);
-}

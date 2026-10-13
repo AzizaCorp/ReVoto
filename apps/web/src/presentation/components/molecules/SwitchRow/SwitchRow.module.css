@@ -1,0 +1,11 @@
+.switchRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rv-space-2);
+  padding: var(--rv-space-1) 0;
+}
+.texts {
+  display: flex;
+  flex-direction: column;
+}

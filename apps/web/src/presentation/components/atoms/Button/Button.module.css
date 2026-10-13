@@ -1,0 +1,100 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rv-space-1);
+  min-width: var(--rv-touch-target);
+  border-radius: var(--rv-radius-pill);
+  border: var(--rv-border-width) solid transparent;
+  font-family: var(--rv-font);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--rv-duration) var(--rv-easing),
+    scale var(--rv-duration) var(--rv-easing);
+}
+.button:active {
+  scale: 0.96;
+}
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.icon {
+  display: inline-flex;
+  line-height: 1;
+}
+
+/* Sizes */
+.small {
+  gap: var(--rv-space-05);
+  min-height: var(--rv-touch-target);
+  padding: 0 var(--rv-space-15);
+  font-size: var(--rv-text-button-small);
+  font-weight: var(--rv-weight-semibold);
+}
+.medium {
+  min-height: var(--rv-button-height);
+  padding: 0 var(--rv-space-3);
+  font-size: var(--rv-text-button);
+  font-weight: var(--rv-weight-bold);
+}
+.large {
+  min-height: var(--rv-button-height-large);
+  padding: 0 var(--rv-space-4);
+  font-size: var(--rv-text-button);
+  font-weight: var(--rv-weight-bold);
+}
+
+/* Variants */
+.primary {
+  background: var(--rv-color-ink);
+  color: var(--rv-color-on-ink);
+}
+.brand {
+  background: var(--rv-color-brand);
+  color: var(--rv-color-on-brand);
+}
+.secondary {
+  background: var(--rv-color-paper);
+  border-color: var(--rv-color-line);
+  color: var(--rv-color-ink);
+}
+.text {
+  background: transparent;
+  color: var(--rv-color-ink-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding-left: var(--rv-space-1);
+  padding-right: var(--rv-space-1);
+}
+.fullWidth {
+  width: 100%;
+}
+@media (max-width: 767px) {
+  .fullWidthMobile {
+    width: 100%;
+  }
+}
+
+/* Below 768 px: 44 px circle with only the icon. */
+@media (max-width: 767px) {
+  .collapsible {
+    width: var(--rv-touch-target);
+    padding: 0;
+  }
+  .collapsible .content {
+    display: none;
+  }
+}
+@media (max-width: 359px) {
+  .narrow {
+    width: var(--rv-touch-target);
+    padding: 0;
+  }
+  .narrow .content {
+    display: none;
+  }
+}

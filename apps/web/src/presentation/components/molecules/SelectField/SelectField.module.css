@@ -1,0 +1,14 @@
+.selectField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-1);
+}
+.select {
+  min-height: var(--rv-button-height);
+  padding: 0 var(--rv-space-2);
+  border: var(--rv-border-width) solid var(--rv-color-ink);
+  border-radius: var(--rv-radius);
+  background: var(--rv-color-paper);
+  color: var(--rv-color-ink);
+  font: inherit;
+}

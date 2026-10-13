@@ -1,0 +1,50 @@
+.bottomBar {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-1);
+  min-height: var(--rv-bottom-zone);
+  padding: var(--rv-space-15) var(--rv-side-margin);
+}
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-1);
+}
+.right {
+  margin-left: auto;
+}
+.note {
+  display: none;
+}
+.end {
+  padding: 0 var(--rv-space-1);
+  font-family: var(--rv-font-title);
+  font-weight: var(--rv-weight-title);
+}
+.dark {
+  --rv-color-ink: var(--rv-color-on-ink);
+  --rv-color-paper: transparent;
+  --rv-color-line: rgb(255 255 255 / 0.35);
+  color: var(--rv-color-on-ink);
+}
+
+@media (min-width: 768px) {
+  .bottomBar {
+    border-top: var(--rv-border-thin) solid var(--rv-color-border);
+  }
+  .dark {
+    border-top-color: rgb(255 255 255 / 0.1);
+  }
+}
+
+/* Desktop: «Fuente» and «Compartir» live in the top bar. */
+@media (min-width: 1200px) {
+  .left {
+    display: none;
+  }
+  .note {
+    display: block;
+    opacity: 0.8;
+  }
+}

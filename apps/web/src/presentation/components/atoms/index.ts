@@ -1,10 +1,10 @@
-// Barril del nivel "atoms". scripts/new-component.mjs agrega aquí cada componente nuevo.
-export * from './Boton';
-export * from './BotonIcono';
-export * from './Interruptor';
+// Barrel of the "atoms" level. scripts/new-component.mjs adds every new component here.
+export * from './Button';
+export * from './IconButton';
 export * from './Logo';
-export * from './OcultoVisual';
-export * from './Pastilla';
-export * from './Ranura';
-export * from './SegmentoProgreso';
-export * from './Texto';
+export * from './Pill';
+export * from './ProgressSegment';
+export * from './Slot';
+export * from './Switch';
+export * from './Text';
+export * from './VisuallyHidden';

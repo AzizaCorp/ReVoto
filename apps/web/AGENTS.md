@@ -7,21 +7,21 @@ App React 19 + TypeScript + Vite, publicada como sitio estático en Vercel y org
 ```text
 src/
 ├─ domain/                 # reglas puras (sin React, sin fetch)
-│  ├─ eleccion/            # AnioEleccion, tipoDeEleccion (RN-03)
-│  ├─ territorio/          # Territorio, NACIONAL, territorioSuperior (RN-02, RN-05)
-│  ├─ participacion/       # Proporcion, calcularParticipacion (RN-01), GrupoEdad (RN-04), Cifra (RN-10), SerieParticipacion
-│  └─ narrativa/           # Secuencia W-01…W-10 (+ subpantallas W-02b, W-09b, W-09c), progreso por paso
+│  ├─ election/            # ElectionYear, electionTypeOf (RN-03)
+│  ├─ territory/           # Territory, NATIONAL, parentTerritory (RN-02, RN-05)
+│  ├─ turnout/             # Proportion, calculateTurnout (RN-01), AgeGroup (RN-04), Figure (RN-10), TurnoutSeries
+│  └─ narrative/           # Sequence W-01…W-10 (+ subpantallas W-02b, W-09b, W-09c), progreso por paso
 ├─ application/            # casos de uso y puertos
-│  ├─ ports/               # ParticipacionRepository
-│  ├─ casos-uso/           # consultarParticipacion (CU-02, RN-05), listarEntidades, listarMunicipios
-│  └─ errores.ts           # DatosNoDisponibles (W-17)
+│  ├─ ports/               # TurnoutRepository
+│  ├─ use-cases/           # getTurnout (CU-02, RN-05), listStates, listMunicipalities
+│  └─ errors.ts            # DataUnavailable (W-17)
 ├─ infrastructure/         # adaptadores de los puertos
-│  └─ json-estatico/       # ClienteJson (manifiesto + caché), mapeadores DTO → dominio, JsonParticipacionRepository
+│  └─ static-json/         # JsonClient (manifiesto + caché), mappers DTO → dominio, JsonTurnoutRepository
 ├─ presentation/           # todo lo que tiene JSX
 │  ├─ components/          # Atomic Design: atoms · molecules · organisms · templates
 │  ├─ pages/               # nivel "pages": pantallas W-NN (registro en pages/index.ts)
 │  ├─ hooks/               # conectan páginas con casos de uso
-│  ├─ providers/           # ProveedorDependencias, ProveedorNavegacion (motor), ProveedorPerfil
+│  ├─ providers/           # DependenciesProvider, NavigationProvider (motor), ProfileProvider
 │  ├─ styles/              # tokens.css, tokens.ts, global.css
 │  └─ App.tsx
 └─ main.tsx                # punto de composición: crea adaptadores y los inyecta
@@ -40,15 +40,19 @@ Alias de importación: `@/` = `src/` (`@/domain`, `@/application`, `@/presentati
 | `presentation/components` | `domain` (solo tipos y funciones puras), niveles atómicos inferiores, `styles` | `application`, `pages`, `providers`, `infrastructure` |
 | `main.tsx` | todo | — |
 
+## Idioma del código
+
+Identificadores, archivos, carpetas, comentarios y nombres de pruebas van en **inglés**. Los textos que ve la persona usuaria (UI, `aria-label`, mensajes de la pantalla) van en **español**. Los nombres de campos del contrato L4 (`@revoto/contracts`) conservan su forma original y solo aparecen en `infrastructure`.
+
 ## Reglas
 
 - **Una regla de negocio nueva va primero al dominio**, con su prueba (`*.test.ts`), y después se usa desde la UI.
-- **Toda cifra en pantalla es un `Cifra` del dominio** (trae territorio, elección y fuente: RN-10). Los componentes reciben `Cifra`, no números sueltos.
-- **Las páginas no hacen `fetch`:** llaman a un caso de uso con el repositorio de `useDependencias()`.
-- **Los DTO del contrato se traducen en `infrastructure/json-estatico/mapeadores.ts`** y nunca salen de ahí.
-- Cada pantalla define carga, error con reintento (`DatosNoDisponibles`) y aviso de umbral (`aviso: 'umbral-rn05'`) (W-17).
-- Al cambiar de pantalla, anuncia `progreso(secuencia, id).texto` en `aria-live="polite"` (HU-14). Sin avance automático (HU-10).
-- Ajustes de lectura como atributos en `<html>`: `data-lectura="facil"`, `data-movimiento="reducido"`.
+- **Toda cifra en pantalla es un `Figure` del dominio** (trae territorio, elección y fuente: RN-10). Los componentes reciben `Figure`, no números sueltos.
+- **Las páginas no hacen `fetch`:** llaman a un caso de uso con el repositorio de `useDependencies()`.
+- **Los DTO del contrato se traducen en `infrastructure/static-json/mappers.ts`** y nunca salen de ahí.
+- Cada pantalla define carga, error con reintento (`DataUnavailable`) y aviso de umbral (`notice: 'threshold-rn05'`) (W-17).
+- Al cambiar de pantalla, anuncia `progress(sequence, id).text` en `aria-live="polite"` (HU-14). Sin avance automático (HU-10).
+- Ajustes de lectura como atributos en `<html>`: `data-reading="easy"`, `data-motion="reduced"`.
 - Presupuesto: carga inicial (sin `public/data`) ≤ 500 KB gzip (`npm run check:budget`).
 
 ## Vercel

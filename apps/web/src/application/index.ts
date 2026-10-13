@@ -1,5 +1,5 @@
-// Capa de aplicación: casos de uso y puertos. Orquesta el dominio; no conoce React ni fetch.
-export type { ParticipacionRepository } from './ports/ParticipacionRepository';
-export { DatosNoDisponibles } from './errores';
-export { consultarParticipacion, type ResultadoConsulta } from './casos-uso/consultarParticipacion';
-export { listarEntidades, listarMunicipios } from './casos-uso/elegirTerritorio';
+// Application layer: use cases and ports. Orchestrates the domain; knows neither React nor fetch.
+export type { TurnoutRepository } from './ports/TurnoutRepository';
+export { DataUnavailable } from './errors';
+export { getTurnout, type TurnoutResult } from './use-cases/getTurnout';
+export { listStates, listMunicipalities } from './use-cases/chooseTerritory';

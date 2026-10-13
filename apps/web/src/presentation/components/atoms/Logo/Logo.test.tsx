@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { Logo } from './Logo';
 
 describe('Logo', () => {
-  it('tiene texto alternativo', () => {
+  it('has alternative text', () => {
     render(<Logo />);
     expect(screen.getByRole('img', { name: 'ReVoto' })).toBeInTheDocument();
   });

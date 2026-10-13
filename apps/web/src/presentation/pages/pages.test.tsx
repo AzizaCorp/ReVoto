@@ -1,33 +1,29 @@
 import { render, screen } from '@testing-library/react';
-import { crearSecuencia } from '@/domain';
-import {
-  ProveedorNavegacion,
-  type IdHoja,
-  type IdVista,
-} from '@/presentation/providers/Navegacion';
-import { ProveedorPerfil } from '@/presentation/providers/Perfil';
-import { HOJAS, PAGINAS } from '.';
+import { createSequence } from '@/domain';
+import { NavigationProvider, type SheetId, type ViewId } from '@/presentation/providers/Navigation';
+import { ProfileProvider } from '@/presentation/providers/Profile';
+import { PAGES, SHEETS } from '.';
 
-const conProveedores = (ui: React.ReactNode) =>
+const withProviders = (ui: React.ReactNode) =>
   render(
-    <ProveedorPerfil>
-      <ProveedorNavegacion secuencia={crearSecuencia()}>{ui}</ProveedorNavegacion>
-    </ProveedorPerfil>,
+    <ProfileProvider>
+      <NavigationProvider sequence={createSequence()}>{ui}</NavigationProvider>
+    </ProfileProvider>,
   );
 
-describe('Páginas del esqueleto', () => {
-  it.each(Object.entries(PAGINAS) as [IdVista, () => React.JSX.Element][])(
-    '%s tiene un único título de nivel 1',
-    (_, Pagina) => {
-      conProveedores(<Pagina />);
+describe('Skeleton pages', () => {
+  it.each(Object.entries(PAGES) as [ViewId, () => React.JSX.Element][])(
+    '%s has a single level-1 heading',
+    (_, Page) => {
+      withProviders(<Page />);
       expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     },
   );
 
-  it.each(Object.entries(HOJAS) as [IdHoja, () => React.JSX.Element][])(
-    'la hoja %s es un diálogo con nombre',
-    (_, Hoja) => {
-      conProveedores(<Hoja />);
+  it.each(Object.entries(SHEETS) as [SheetId, () => React.JSX.Element][])(
+    'sheet %s is a named dialog',
+    (_, Sheet) => {
+      withProviders(<Sheet />);
       expect(screen.getByRole('dialog')).toHaveAccessibleName();
     },
   );

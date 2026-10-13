@@ -1,8 +1,8 @@
-// Barril del nivel "molecules". scripts/new-component.mjs agrega aquí cada componente nuevo.
-export * from './Aviso';
-export * from './BarraProgreso';
-export * from './CampoSelector';
-export * from './ChipTerritorio';
-export * from './FilaInterruptor';
-export * from './GrupoOpciones';
-export * from './ListaDatos';
+// Barrel of the "molecules" level. scripts/new-component.mjs adds every new component here.
+export * from './DataList';
+export * from './Notice';
+export * from './OptionGroup';
+export * from './ProgressBar';
+export * from './SelectField';
+export * from './SwitchRow';
+export * from './TerritoryChip';

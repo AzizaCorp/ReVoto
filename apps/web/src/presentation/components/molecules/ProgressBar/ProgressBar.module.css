@@ -1,0 +1,6 @@
+.progressBar {
+  display: flex;
+  gap: var(--rv-space-1);
+  align-items: center;
+  width: 100%;
+}

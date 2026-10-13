@@ -1,4 +1,4 @@
-/* Estilos globales mínimos. Todo valor visual sale de tokens.css. */
+/* Minimal global styles. Every visual value comes from tokens.css. */
 *,
 *::before,
 *::after {
@@ -12,21 +12,21 @@ body {
 }
 
 body {
-  background: var(--rv-color-fondo);
-  color: var(--rv-color-tinta);
-  font-family: var(--rv-fuente);
-  font-size: var(--rv-texto-cuerpo);
-  line-height: var(--rv-interlineado);
+  background: var(--rv-color-background);
+  color: var(--rv-color-ink);
+  font-family: var(--rv-font);
+  font-size: var(--rv-text-body);
+  line-height: var(--rv-line-height);
   -webkit-text-size-adjust: 100%;
 }
 
-#raiz {
+#root {
   min-height: 100%;
 }
 
 :focus-visible {
   outline: none;
-  box-shadow: var(--rv-foco-anillo);
+  box-shadow: var(--rv-focus-ring);
 }
 
 @media (prefers-reduced-motion: reduce) {

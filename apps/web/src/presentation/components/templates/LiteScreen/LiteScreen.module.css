@@ -1,0 +1,31 @@
+.liteScreen {
+  max-width: var(--rv-sheet-max-width);
+  margin: 0 auto;
+  padding: var(--rv-space-2) var(--rv-side-margin);
+  background: var(--rv-color-paper);
+  min-height: 100dvh;
+}
+.header,
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rv-space-2);
+}
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-2);
+  padding: var(--rv-space-3) 0;
+}
+.body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--rv-text-meta);
+}
+.body th,
+.body td {
+  padding: var(--rv-space-1);
+  border-bottom: var(--rv-border-width) solid var(--rv-color-fill);
+  text-align: left;
+}

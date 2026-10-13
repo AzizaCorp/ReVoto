@@ -1,5 +1,5 @@
-// Capa de dominio: reglas de negocio puras. No depende de React, del navegador ni de los datos.
-export * from './eleccion';
-export * from './territorio';
-export * from './participacion';
-export * from './narrativa';
+// Domain layer: pure business rules. Does not depend on React, the browser or the data files.
+export * from './election';
+export * from './territory';
+export * from './turnout';
+export * from './narrative';

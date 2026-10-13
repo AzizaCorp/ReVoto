@@ -1,5 +1,0 @@
-.acciones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--rv-espacio-1);
-}

@@ -1,0 +1,32 @@
+.optionGroup {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-1);
+}
+.legend {
+  padding: 0;
+  font-weight: var(--rv-weight-semibold);
+}
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rv-space-1);
+}
+.option {
+  min-height: var(--rv-touch-target);
+  padding: 0 var(--rv-space-2);
+  border: var(--rv-border-width) solid var(--rv-color-line);
+  border-radius: var(--rv-radius-pill);
+  background: var(--rv-color-paper);
+  color: var(--rv-color-ink);
+  font: inherit;
+  cursor: pointer;
+}
+.selected {
+  border-color: var(--rv-color-ink);
+  background: var(--rv-color-ink);
+  color: var(--rv-color-paper);
+}

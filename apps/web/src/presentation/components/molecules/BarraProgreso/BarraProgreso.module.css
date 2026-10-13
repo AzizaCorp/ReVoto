@@ -1,6 +1,0 @@
-.barraProgreso {
-  display: flex;
-  gap: var(--rv-espacio-1);
-  align-items: center;
-  width: 100%;
-}

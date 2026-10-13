@@ -1,148 +1,148 @@
-/* ReVoto · Tokens de diseño
-   Fuente: diseño de alta fidelidad v2 (Claude Design «ReVoto · Alta fidelidad») y manual de marca v2.
-   Regla: ningún componente usa valores literales; todo sale de estas variables.
-   Contraste verificado: tinta y tinta-2 sobre fondo ≥ 4.5:1; magenta-texto sobre rosa claro ≥ 4.5:1. */
+/* ReVoto · Design tokens
+   Source: high-fidelity design v2 (Claude Design «ReVoto · Alta fidelidad») and brand manual v2.
+   Rule: no component uses literal values; everything comes from these variables.
+   Contrast checked: ink and ink-2 on background ≥ 4.5:1; brand-text on brand-soft ≥ 4.5:1. */
 
 :root {
-  /* ── Color de marca ── */
-  --rv-color-tinta: #171824;
-  --rv-color-tinta-2: #55566a;
-  --rv-color-apagado: #8c8796;
-  --rv-color-linea: #d6ced4;
-  --rv-color-borde: #eee7ec;
-  --rv-color-relleno: #ddd6db;
-  --rv-color-relleno-2: #f3eef1;
-  --rv-color-papel: #ffffff;
-  --rv-color-fondo: #fdf9fa;
-  --rv-color-marca: #ff2d94;
-  --rv-color-marca-texto: #c8106e;
-  --rv-color-marca-suave: #ffe3f1;
-  --rv-color-foco: #c8106e;
-  --rv-color-aviso-fondo: #ffe3f1;
-  --rv-color-sobre-tinta: #ffffff;
-  --rv-color-sobre-marca: #171824;
+  /* ── Brand color ── */
+  --rv-color-ink: #171824;
+  --rv-color-ink-2: #55566a;
+  --rv-color-muted: #8c8796;
+  --rv-color-line: #d6ced4;
+  --rv-color-border: #eee7ec;
+  --rv-color-fill: #ddd6db;
+  --rv-color-fill-2: #f3eef1;
+  --rv-color-paper: #ffffff;
+  --rv-color-background: #fdf9fa;
+  --rv-color-brand: #ff2d94;
+  --rv-color-brand-text: #c8106e;
+  --rv-color-brand-soft: #ffe3f1;
+  --rv-color-focus: #c8106e;
+  --rv-color-notice-bg: #ffe3f1;
+  --rv-color-on-ink: #ffffff;
+  --rv-color-on-brand: #171824;
 
-  /* Series temporales (RN-03): la distinción NO depende del color, sino del relleno */
-  --rv-serie-presidencial: var(--rv-color-tinta);
-  --rv-serie-intermedia: repeating-linear-gradient(
+  /* Time series (RN-03): the distinction does NOT depend on color but on the fill */
+  --rv-series-presidential: var(--rv-color-ink);
+  --rv-series-midterm: repeating-linear-gradient(
     45deg,
-    var(--rv-color-papel) 0 4px,
-    var(--rv-color-tinta-2) 4px 6px
+    var(--rv-color-paper) 0 4px,
+    var(--rv-color-ink-2) 4px 6px
   );
 
-  /* ── Tipografía: Sora (títulos y cifras) + Plus Jakarta Sans (texto) ── */
-  --rv-fuente: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --rv-fuente-titulo: 'Sora', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --rv-texto-cifra: 32px;
-  --rv-texto-h1: 30px;
-  --rv-texto-h2: 20px;
-  --rv-texto-entrada: 14px;
-  --rv-texto-cuerpo: 15px;
-  --rv-texto-meta: 13px;
-  --rv-texto-etiqueta: 11px;
-  --rv-texto-boton: 15px;
-  --rv-texto-boton-chico: 13px;
-  --rv-peso-normal: 400;
-  --rv-peso-medio: 500;
-  --rv-peso-semi: 600;
-  --rv-peso-fuerte: 700;
-  --rv-peso-titulo: 800;
-  --rv-interlineado: 1.45;
-  --rv-interlineado-titulo: 1.13;
-  --rv-tracking-titulo: -0.02em;
-  --rv-tracking-etiqueta: 0.06em;
+  /* ── Typography: Sora (titles and figures) + Plus Jakarta Sans (text) ── */
+  --rv-font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --rv-font-title: 'Sora', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --rv-text-figure: 32px;
+  --rv-text-h1: 30px;
+  --rv-text-h2: 20px;
+  --rv-text-lead: 14px;
+  --rv-text-body: 15px;
+  --rv-text-meta: 13px;
+  --rv-text-label: 11px;
+  --rv-text-button: 15px;
+  --rv-text-button-small: 13px;
+  --rv-weight-regular: 400;
+  --rv-weight-medium: 500;
+  --rv-weight-semibold: 600;
+  --rv-weight-bold: 700;
+  --rv-weight-title: 800;
+  --rv-line-height: 1.45;
+  --rv-line-height-title: 1.13;
+  --rv-tracking-title: -0.02em;
+  --rv-tracking-label: 0.06em;
 
-  /* ── Espaciado: módulo base de 8 px ── */
-  --rv-espacio-05: 4px;
-  --rv-espacio-1: 8px;
-  --rv-espacio-15: 12px;
-  --rv-espacio-2: 16px;
-  --rv-espacio-3: 24px;
-  --rv-espacio-4: 32px;
-  --rv-espacio-5: 40px;
-  --rv-espacio-6: 48px;
-  --rv-espacio-8: 64px;
-  --rv-margen-lateral: 16px;
+  /* ── Spacing: 8 px base module ── */
+  --rv-space-05: 4px;
+  --rv-space-1: 8px;
+  --rv-space-15: 12px;
+  --rv-space-2: 16px;
+  --rv-space-3: 24px;
+  --rv-space-4: 32px;
+  --rv-space-5: 40px;
+  --rv-space-6: 48px;
+  --rv-space-8: 64px;
+  --rv-side-margin: 16px;
 
-  /* ── Marco y zonas ── */
-  --rv-marco-ancho: 360px;
-  --rv-marco-alto: 760px;
-  --rv-marco-max: 480px; /* en móvil el marco se centra hasta 480 px */
-  --rv-contenido-max: 1200px;
-  --rv-progreso-max: 560px;
-  --rv-zona-superior: 88px;
-  --rv-zona-inferior: 72px;
+  /* ── Frame and zones ── */
+  --rv-frame-width: 360px;
+  --rv-frame-height: 760px;
+  --rv-frame-max: 480px; /* on mobile the frame is centered up to 480 px */
+  --rv-content-max: 1200px;
+  --rv-progress-max: 560px;
+  --rv-top-zone: 88px;
+  --rv-bottom-zone: 72px;
 
-  /* ── Interacción ── */
-  --rv-objetivo-tactil: 44px; /* WCAG 2.5.8 */
-  --rv-boton-alto: 48px;
-  --rv-boton-alto-grande: 52px;
-  --rv-radio: 12px;
-  --rv-radio-tarjeta: 18px;
-  --rv-radio-pildora: 999px;
-  --rv-borde: 1.5px;
-  --rv-borde-fino: 1px;
-  --rv-sombra: 0 1px 3px rgb(23 24 36 / 0.12);
-  --rv-foco-anillo: 0 0 0 3px var(--rv-color-papel), 0 0 0 5px var(--rv-color-foco);
-  --rv-duracion: 200ms;
-  --rv-curva: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* ── Interaction ── */
+  --rv-touch-target: 44px; /* WCAG 2.5.8 */
+  --rv-button-height: 48px;
+  --rv-button-height-large: 52px;
+  --rv-radius: 12px;
+  --rv-radius-card: 18px;
+  --rv-radius-pill: 999px;
+  --rv-border-width: 1.5px;
+  --rv-border-thin: 1px;
+  --rv-shadow: 0 1px 3px rgb(23 24 36 / 0.12);
+  --rv-focus-ring: 0 0 0 3px var(--rv-color-paper), 0 0 0 5px var(--rv-color-focus);
+  --rv-duration: 200ms;
+  --rv-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
 
-  /* ── Esqueleto y capas ── */
-  --rv-progreso-alto: 3px;
-  --rv-pastilla-alto: 24px;
-  --rv-logo-alto: 26px;
-  --rv-hoja-alto: 70dvh;
-  --rv-hoja-ancho-max: 640px;
-  --rv-velo: rgb(23 24 36 / 0.45);
-  --rv-ranura-fondo: var(--rv-color-papel);
-  --rv-ranura-borde: var(--rv-color-linea);
-  --rv-ranura-chica: 56px;
-  --rv-ranura-media: 120px;
-  --rv-ranura-grande: 240px;
-  --rv-capa-barra: 10;
-  --rv-capa-hoja: 100;
+  /* ── Skeleton and layers ── */
+  --rv-progress-height: 3px;
+  --rv-pill-height: 24px;
+  --rv-logo-height: 26px;
+  --rv-sheet-height: 70dvh;
+  --rv-sheet-max-width: 640px;
+  --rv-scrim: rgb(23 24 36 / 0.45);
+  --rv-slot-bg: var(--rv-color-paper);
+  --rv-slot-border: var(--rv-color-line);
+  --rv-slot-small: 56px;
+  --rv-slot-medium: 120px;
+  --rv-slot-large: 240px;
+  --rv-layer-bar: 10;
+  --rv-layer-sheet: 100;
 }
 
 /* ── Responsive (RIU-01) ──
-   Las media queries no aceptan var(): los cortes viven en tokens.ts (`cortes`) y se escriben
-   como literal solo dentro de @media: 768 px (tablet) y 1200 px (escritorio). */
+   Media queries do not accept var(): breakpoints live in tokens.ts (`breakpoints`) and are written
+   as literals only inside @media: 768 px (tablet) and 1200 px (desktop). */
 @media (min-width: 768px) {
   :root {
-    --rv-texto-h1: 40px;
-    --rv-texto-entrada: 15px;
-    --rv-margen-lateral: 40px;
-    --rv-logo-alto: 28px;
+    --rv-text-h1: 40px;
+    --rv-text-lead: 15px;
+    --rv-side-margin: 40px;
+    --rv-logo-height: 28px;
   }
 }
 @media (min-width: 1200px) {
   :root {
-    --rv-texto-h1: 52px;
-    --rv-texto-entrada: 17px;
-    --rv-margen-lateral: 64px;
-    --rv-zona-superior: 80px;
-    --rv-logo-alto: 30px;
+    --rv-text-h1: 52px;
+    --rv-text-lead: 17px;
+    --rv-side-margin: 64px;
+    --rv-top-zone: 80px;
+    --rv-logo-height: 30px;
   }
 }
 
-/* ── Lectura fácil (HU-10 · W-13): texto mayor y sin animaciones ── */
-:root[data-lectura='facil'] {
-  --rv-texto-cifra: 40px;
-  --rv-texto-h1: 34px;
-  --rv-texto-h2: 24px;
-  --rv-texto-entrada: 18px;
-  --rv-texto-cuerpo: 19px;
-  --rv-texto-meta: 17px;
-  --rv-texto-etiqueta: 14px;
-  --rv-interlineado: 1.6;
-  --rv-duracion: 0ms;
+/* ── Easy reading (HU-10 · W-13): larger text and no animations ── */
+:root[data-reading='easy'] {
+  --rv-text-figure: 40px;
+  --rv-text-h1: 34px;
+  --rv-text-h2: 24px;
+  --rv-text-lead: 18px;
+  --rv-text-body: 19px;
+  --rv-text-meta: 17px;
+  --rv-text-label: 14px;
+  --rv-line-height: 1.6;
+  --rv-duration: 0ms;
 }
 
-/* ── Movimiento reducido: preferencia del sistema o ajuste de W-13 ── */
+/* ── Reduced motion: system preference or W-13 setting ── */
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --rv-duracion: 0ms;
+    --rv-duration: 0ms;
   }
 }
-:root[data-movimiento='reducido'] {
-  --rv-duracion: 0ms;
+:root[data-motion='reduced'] {
+  --rv-duration: 0ms;
 }
