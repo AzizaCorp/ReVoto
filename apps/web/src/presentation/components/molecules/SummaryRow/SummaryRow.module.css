@@ -1,0 +1,55 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-02 «SummaryRow». */
+.summaryRow {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-15);
+  width: 100%;
+  min-height: calc(var(--rv-row-height) + var(--rv-space-1));
+  padding: var(--rv-space-05) var(--rv-space-15) var(--rv-space-05) var(--rv-space-1);
+  border: var(--rv-border-thin) solid var(--rv-color-border);
+  border-radius: var(--rv-radius-row);
+  background: var(--rv-color-paper);
+  color: var(--rv-color-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--rv-duration) var(--rv-easing),
+    scale var(--rv-duration-press) ease-out;
+}
+.summaryRow:active {
+  scale: 0.98;
+}
+@media (hover: hover) {
+  .summaryRow:hover {
+    border-color: var(--rv-color-line);
+  }
+}
+.texts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.value {
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-figure-small);
+  font-weight: var(--rv-weight-title);
+  line-height: 1.15;
+}
+.pending {
+  color: var(--rv-color-muted);
+}
+.context {
+  font-size: var(--rv-text-meta);
+  color: var(--rv-color-ink-2);
+}
+.chevron {
+  display: inline-flex;
+  color: var(--rv-color-ink-2);
+}
+@media (min-width: 768px) {
+  .value {
+    font-size: var(--rv-text-h2);
+  }
+}

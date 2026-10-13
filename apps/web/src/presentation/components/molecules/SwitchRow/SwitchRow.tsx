@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { Switch, Text } from '../../atoms';
+import { IconBubble, Switch, type IconName } from '../../atoms';
 import styles from './SwitchRow.module.css';
 
 export interface SwitchRowProps {
@@ -7,18 +7,20 @@ export interface SwitchRowProps {
   description?: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  icon?: IconName;
 }
 
-/** Setting with title, description and a switch (W-01, W-13). */
-export function SwitchRow({ title, description, checked, onChange }: SwitchRowProps) {
+/** Setting row: bubble, title, description and a switch (board C-02 «SwitchRow»), W-13. */
+export function SwitchRow({ title, description, checked, onChange, icon }: SwitchRowProps) {
   const id = useId();
   return (
     <div className={styles.switchRow}>
+      {icon && <IconBubble icon={icon} tone="brand" size={38} />}
       <div className={styles.texts}>
-        <Text variant="body" id={id}>
+        <span className={styles.title} id={id}>
           {title}
-        </Text>
-        {description && <Text variant="meta">{description}</Text>}
+        </span>
+        {description && <span className={styles.description}>{description}</span>}
       </div>
       <Switch labelledBy={id} checked={checked} onChange={onChange} />
     </div>

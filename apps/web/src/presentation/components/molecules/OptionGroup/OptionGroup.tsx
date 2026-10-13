@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { Text } from '../../atoms';
+import { Chip } from '../../atoms';
 import styles from './OptionGroup.module.css';
 
 export interface OptionGroupProps {
@@ -9,27 +9,19 @@ export interface OptionGroupProps {
   onSelect: (option: string) => void;
 }
 
-/** Single-choice question with large buttons (W-02b). Navigated with Tab and Space. */
+/** Question + option chips (board C-02 «OptionGroup»), W-02b. Navigated with Tab and Space. */
 export function OptionGroup({ question, options, selected, onSelect }: OptionGroupProps) {
   const id = useId();
   return (
     <fieldset className={styles.optionGroup} aria-labelledby={id}>
-      <legend className={styles.legend}>
-        <Text variant="body" id={id}>
-          {question}
-        </Text>
+      <legend className={styles.legend} id={id}>
+        {question}
       </legend>
       <div className={styles.options}>
         {options.map((o) => (
-          <button
-            key={o}
-            type="button"
-            aria-pressed={selected === o}
-            className={[styles.option, selected === o ? styles.selected : ''].join(' ')}
-            onClick={() => onSelect(o)}
-          >
+          <Chip key={o} pressed={selected === o} onClick={() => onSelect(o)}>
             {o}
-          </button>
+          </Chip>
         ))}
       </div>
     </fieldset>

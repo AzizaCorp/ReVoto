@@ -4,16 +4,16 @@ import styles from './ProgressBar.module.css';
 export interface ProgressBarProps {
   position: number;
   total: number;
-  /** Text from the domain (`progress().text`), e.g. «Pantalla 4 de 10». */
+  /** Full text for screen readers, e.g. «Pantalla 3 de 10: Así vota México». */
   text: string;
 }
 
-/** Bar of N segments (RF-03). It recomputes itself if the sequence gets shorter (SRS 10.3). */
+/** Ten segments; the newest one fills in (board C-02 «ProgressBar»). */
 export function ProgressBar({ position, total, text }: ProgressBarProps) {
   return (
     <div className={styles.progressBar}>
       {Array.from({ length: total }, (_, i) => (
-        <ProgressSegment key={i} active={i < position} />
+        <ProgressSegment key={i} active={i < position} current={i === position - 1} />
       ))}
       <VisuallyHidden>{text}</VisuallyHidden>
     </div>

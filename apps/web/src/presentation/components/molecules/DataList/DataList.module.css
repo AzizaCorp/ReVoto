@@ -1,21 +1,37 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-02 «DataList». */
 .dataList {
   display: flex;
   flex-direction: column;
-  gap: var(--rv-space-1);
   margin: 0;
+  padding: var(--rv-space-05) var(--rv-button-padding);
+  border: var(--rv-border-thin) solid var(--rv-color-border);
+  border-radius: var(--rv-radius-card);
+  background: var(--rv-color-paper);
 }
 .row {
   display: flex;
+  align-items: center;
+  gap: var(--rv-space-15);
+  padding: var(--rv-space-1) 0;
+  border-bottom: var(--rv-border-thin) solid var(--rv-color-track);
+}
+.row:last-child {
+  border-bottom: 0;
+}
+.texts {
+  display: flex;
   flex-direction: column;
-  padding-bottom: var(--rv-space-1);
-  border-bottom: var(--rv-border-width) solid var(--rv-color-fill);
+  min-width: 0;
 }
 .term {
   font-size: var(--rv-text-label);
   font-weight: var(--rv-weight-semibold);
+  letter-spacing: var(--rv-tracking-label);
   color: var(--rv-color-ink-2);
   text-transform: uppercase;
 }
 .value {
   margin: 0;
+  font-size: var(--rv-text-body);
+  font-weight: var(--rv-weight-semibold);
 }
