@@ -10,7 +10,7 @@ src/
 │  ├─ eleccion/            # AnioEleccion, tipoDeEleccion (RN-03)
 │  ├─ territorio/          # Territorio, NACIONAL, territorioSuperior (RN-02, RN-05)
 │  ├─ participacion/       # Proporcion, calcularParticipacion (RN-01), GrupoEdad (RN-04), Cifra (RN-10), SerieParticipacion
-│  └─ narrativa/           # Secuencia W-01…W-10, progreso «Pantalla N de M»
+│  └─ narrativa/           # Secuencia W-01…W-10 (+ subpantallas W-02b, W-09b, W-09c), progreso por paso
 ├─ application/            # casos de uso y puertos
 │  ├─ ports/               # ParticipacionRepository
 │  ├─ casos-uso/           # consultarParticipacion (CU-02, RN-05), listarEntidades, listarMunicipios
@@ -19,9 +19,9 @@ src/
 │  └─ json-estatico/       # ClienteJson (manifiesto + caché), mapeadores DTO → dominio, JsonParticipacionRepository
 ├─ presentation/           # todo lo que tiene JSX
 │  ├─ components/          # Atomic Design: atoms · molecules · organisms · templates
-│  ├─ pages/               # nivel "pages": pantallas W-NN
+│  ├─ pages/               # nivel "pages": pantallas W-NN (registro en pages/index.ts)
 │  ├─ hooks/               # conectan páginas con casos de uso
-│  ├─ providers/           # ProveedorDependencias (inyección)
+│  ├─ providers/           # ProveedorDependencias, ProveedorNavegacion (motor), ProveedorPerfil
 │  ├─ styles/              # tokens.css, tokens.ts, global.css
 │  └─ App.tsx
 └─ main.tsx                # punto de composición: crea adaptadores y los inyecta
