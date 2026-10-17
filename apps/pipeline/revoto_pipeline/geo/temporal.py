@@ -33,3 +33,25 @@ def resolve_reference(cfg: Settings,anio_eleccion: int,censo: int | None=None,
         raise ValueError(f'Eleccion {anio_eleccion}: requiere cartografia {expected_carto}, no {cartografia}')
     return TemporalReference(anio_eleccion,expected_census,expected_carto,
                              anio_eleccion<expected_carto)
+
+
+@dataclass(frozen=True)
+class InegiGeometryReference:
+    censo_ref: int
+    marco_inegi_anio: int | None
+    poligono_compatible: bool
+    razon: str
+
+
+def inegi_geometry_reference(cfg: Settings, anio_eleccion: int) -> InegiGeometryReference:
+    """Fail closed: difference in census and INEGI SHP vintage forbids strong polygon allocation.
+
+    This is not the same as reference DERFE. Matching census vintage is a
+    necessary screening condition, never proof of territorial equivalence.
+    """
+    ref = resolve_reference(cfg, anio_eleccion)
+    marco = int(cfg.geo.get('inegi_marco_anio', 0)) or None
+    compatible = marco == ref.censo_ref
+    return InegiGeometryReference(ref.censo_ref, marco, compatible,
+        'mismo_anio_requiere_validacion_cartografica' if compatible else
+        'marco_inegi_distinto_del_censo')

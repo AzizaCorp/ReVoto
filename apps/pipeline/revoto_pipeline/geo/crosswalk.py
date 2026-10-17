@@ -11,7 +11,7 @@ from revoto_pipeline.config import Settings, connection, sql_path
 from revoto_pipeline.sql_utils import atomic_write
 from revoto_pipeline.validation.quality import save_report
 from revoto_pipeline.geo.inegi_shapes import geo_code, read_inegi_state, read_inegi_rural_points
-from revoto_pipeline.geo.temporal import resolve_reference
+from revoto_pipeline.geo.temporal import resolve_reference, inegi_geometry_reference
 
 DMS_RE = re.compile(r'''^\s*(\d{1,3})\s*°\s*(\d{1,2})\s*'\s*([\d.]+)\s*"?\s*([NSEW])\s*$''', re.I)
 
@@ -278,9 +278,10 @@ def build_crosswalk(cfg: Settings, estado: int, anio_eleccion: int, *,
              crs = 'EPSG:4326')
         point_match = assign_points_to_sections(points, sections)
         marco_year = int(cfg.geo.get('inegi_marco_anio', 0))
-        # 00l geometries of an unknown/different vintage cannot override ITER censo.
+        # 00l polygons are NEVER assumed equivalent to another census vintage.
+        geo_reference = inegi_geometry_reference(cfg, anio_eleccion)
         polygon_match = (assign_locality_polygons_to_sections(locality_shapes, sections)
-                         if marco_year == census else {})
+                         if geo_reference.poligono_compatible else {})
         records = []
         for record in local.itertuples(index = False):
             section, status = point_match.get(record.cvegeo, (None, 'sin_coordenadas'))
@@ -323,7 +324,36 @@ def build_crosswalk(cfg: Settings, estado: int, anio_eleccion: int, *,
                     CAST(equivalencia_historica_verificada AS BOOLEAN)
                     AS equivalencia_historica_verificada FROM geo_result''', target)
         os.replace(tmp, target)
-        report = {'estado':f'{estado:02}', 'anio_eleccion':anio_eleccion,
+        # Row-level eligibility: do not mistake point location for census allocation.
+        allow_points = 'TRUE' if cfg.integration.permitir_localidades_por_punto else 'FALSE'
+        diagnostic_sql = f"""WITH classified AS (
+          SELECT g.metodo_localidad, g.status_seccion, g.status_distrito,
+                 i.POBTOT AS poblacion,
+                 CASE WHEN g.status_seccion <> 'unico' THEN g.status_seccion
+                      WHEN g.seccion_referencia IS NULL THEN 'sin_seccion'
+                      WHEN NOT {allow_points} AND g.metodo_localidad <> 'poligono_localidad_contenido'
+                        THEN 'metodo_no_autorizado'
+                      ELSE 'espacialmente_elegible' END AS motivo
+          FROM geo_result g LEFT JOIN
+          (SELECT cvegeo, POBTOT FROM read_parquet('{sql_path(source)}')
+           WHERE record_level='localidad_regular') i USING(cvegeo)
+        ) SELECT metodo_localidad,status_seccion,status_distrito,motivo,
+            COUNT(*) AS localidades,COUNT(poblacion) AS poblacion_valida_filas,
+            SUM(poblacion) AS poblacion_disponible
+          FROM classified GROUP BY ALL ORDER BY localidades DESC"""
+        diagnostic_result = con.execute(diagnostic_sql)
+        diag_columns = [d[0] for d in diagnostic_result.description]
+        diagnosis = [dict(zip(diag_columns, r)) for r in diagnostic_result.fetchall()]
+        eligible_count = sum(r['localidades'] for r in diagnosis
+                             if r['motivo'] == 'espacialmente_elegible')
+        report = {'eligibilidad': diagnosis, 'localidades_elegibles': eligible_count,
+                  'referencia_geometrica': {
+                      'censo_ref': geo_reference.censo_ref,
+                      'marco_inegi_anio': geo_reference.marco_inegi_anio,
+                      'poligono_compatible': geo_reference.poligono_compatible,
+                      'razon': geo_reference.razon},
+                  'resultado': 'sin_asignaciones_elegibles' if eligible_count == 0
+                  else 'asignaciones_elegibles', 'estado':f'{estado:02}', 'anio_eleccion':anio_eleccion,
                   'censo_ref':census, 'anio_cartografia':year,
                   'anio_marco_inegi':marco_year if marco_year else None,
                   'poligonos_localidad_compatibles_censo':marco_year == census,

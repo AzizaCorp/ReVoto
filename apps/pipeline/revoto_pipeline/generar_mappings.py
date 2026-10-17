@@ -225,13 +225,15 @@ def resolve_ine_municipality(
             observation = "Nombre normalizado coincide de forma única."
             method = "nombre_unico"
 
+        # CAMBIO: un nombre único, aun sin conflicto aparente de clave, requiere
+        # verificación documental; nunca es evidencia suficiente de identidad.
         return {
-            "resolved": True,
+            "resolved": False,
             "municipality": municipality,
             "ine_name": ine_name,
-            "status": VALIDATED,
+            "status": PENDING,
             "method": method,
-            "confidence": "alta",
+            "confidence": "baja",
             "observation": observation,
         }
 
@@ -531,85 +533,289 @@ def print_summary(
         )
 
 
-def main() -> None:
-    """Generate all municipal mapping files."""
-    ine, name_index = load_ine()
 
-    conapo_rows, conapo_review = build_conapo_mapping(
-        ine,
-        name_index,
-    )
-
-    inegi_rows, inegi_review = build_inegi_mapping(
-        ine,
-        name_index,
-    )
-
-    review_rows = conapo_review + inegi_review
-
-    review_rows.sort(
-        key=lambda row: (
-            row["fuente"],
-            row["anio"],
-            row["cve_ent_ine"],
-            str(row["codigo_fuente"]),
-        )
-    )
-
-    write_csv(
-        OUT / "conapo_ine.csv",
-        [
-            "clave_conapo",
-            "clave_ent_conapo",
-            "cve_ent_ine",
-            "cve_mpio_ine",
-            "anio",
-            "status_match",
-            "metodo_match",
-        ],
-        conapo_rows,
-    )
-
-    write_csv(
-        OUT / "inegi_ine.csv",
-        [
-            "censo_ref",
-            "cvegeo_municipal_inegi",
-            "anio_eleccion",
-            "cve_ent_ine",
-            "cve_mpio_ine",
-            "status_match",
-            "metodo_match",
-        ],
-        inegi_rows,
-    )
-
-    write_csv(
-        OUT / "revision_mappings.csv",
-        [
-            "fuente",
-            "anio",
-            "cve_ent_ine",
-            "cve_mpio_ine_codigo",
-            "cve_mpio_ine_resuelto",
-            "nombre_ine",
-            "nombre_fuente",
-            "nombre_coincide",
-            "codigo_fuente",
-            "status_match",
-            "metodo_match",
-            "confianza",
-            "observacion",
-        ],
-        review_rows,
-    )
-
-    print_summary(
-        conapo_rows,
-        inegi_rows,
-        review_rows,
-    )
+## !GRANDE: integración de catálogo INE histórico + referencia ITER (sin matches por nombre).
+from revoto_pipeline.config import load_config, Settings
+from revoto_pipeline.model.identidad_municipal import (
+    COLUMNS as IDENTITY_COLUMNS, code5, normalize_name as stable_name,
+    load_identities, require_identities)
+from revoto_pipeline.validation.municipios import audit_municipalities
 
 
-if __name__ == "__main__":
+def historic_records(cfg: Settings) -> tuple[list[tuple[int, int, int, str]], list[tuple[int, int]]]:
+    """Usa canonical primero y staging sólo si falta una partición canónica."""
+    records = []
+    missing = []
+    for ent in range(1, 33):
+        for year in cfg.years:
+            canonical = (cfg.path('processed')/'canonical'/'hecho_participacion'/
+                         f'edo={ent:02}'/f'anio={year}'/'hechos.parquet')
+            staging = cfg.path('ine_staging')/f'edo={ent:02}'/f'anio={year}'/'conteos.parquet'
+            path = canonical if canonical.is_file() else staging
+            if not path.is_file():
+                missing.append((ent, year))
+                continue
+            data = query_parquet(path, """SELECT EDOCVE, MPIOCVE, MPIONOM FROM src
+                WHERE MPIOCVE IS NOT NULL GROUP BY 1,2,3""")
+            for e, m, name in data:
+                if int(e) != ent or name is None or not str(name).strip():
+                    raise ValueError(f'Claves/nombres municipales inválidos en {path}')
+                records.append((year, ent, int(m), str(name).strip()))
+    return records, missing
+
+
+def audit_command(cfg: Settings) -> list[dict]:
+    records, missing = historic_records(cfg)
+    report = audit_municipalities(records, cfg.years)
+    columns = ['anio_eleccion','cve_ent_ine','cve_mpio_ine','nombre_ine',
+               'categorias','historial_clave','historial_nombre','requiere_revision',
+               'dictamen','fuente_verificacion']
+    destination = cfg.root/'data'/'quality'/'municipios_conflictos.csv'
+    write_csv(destination, columns, report)
+    print(f'AUDITORÍA {len(report)} observaciones; faltan {len(missing)} particiones; {destination}')
+    return report
+
+
+def _reference_catalog(cfg: Settings) -> dict[tuple[int, str], str]:
+    """Clave municipal ITER 9 dígitos; no transforma nombres en IDs."""
+    result: dict[tuple[int, str], str] = {}
+    for census in sorted(set(cfg.reference.values())):
+        path = cfg.path('inegi_staging')/f'censo={census}'/'iter.parquet'
+        if not path.is_file():
+            raise FileNotFoundError(f'Falta referencia municipal INEGI {census}: {path}')
+        for raw, name in query_parquet(path, """SELECT cvegeo, MIN(NOM_MUN) FROM src
+                WHERE record_level='total_municipal' AND cvegeo IS NOT NULL
+                GROUP BY cvegeo"""):
+            value = str(raw).strip()
+            if len(value) != 9 or not value.isascii() or not value.isdigit() or not value.endswith('0000'):
+                raise ValueError(f'CVEGEO ITER total municipal inválido: {value!r}')
+            key = (census, code5(value))
+            if key in result:
+                raise ValueError(f'ITER municipal duplicado: {key}')
+            result[key] = str(name or '').strip()
+    return result
+
+
+def _manual(path: Path) -> dict[tuple[int, int, int], dict]:
+    if not path.is_file():
+        return {}
+    with path.open(encoding='utf-8-sig', newline='') as file:
+        reader = csv.DictReader(file)
+        if not set(IDENTITY_COLUMNS) <= set(reader.fieldnames or ()):
+            raise ValueError(f'Dictámenes municipales sin columnas obligatorias: {path}')
+        rows = {}
+        for item in reader:
+            k = tuple(int(item[n]) for n in ('anio_eleccion','cve_ent_ine','cve_mpio_ine'))
+            if k in rows:
+                raise ValueError(f'Dictamen manual duplicado: {k}')
+            if item['equivalencia_verificada'].strip().lower() != 'si':
+                raise ValueError(f'Dictamen manual sin verificación: {k}')
+            if item['tipo_equivalencia'].strip() not in {'exacta','recodificacion','renombre'}:
+                raise ValueError(f'Dictamen manual con tipo inválido: {k}')
+            rows[k] = item
+        return rows
+
+
+## !GRANDE: descubrimiento auditable de candidatos, sin aprobar equivalencias por nombre.
+CANDIDATE_COLUMNS = [
+    'anio_eleccion','cve_ent_ine','cve_mpio_ine','nombre_ine','censo_referencia',
+    'cvegeo_candidato','nombre_inegi','metodo_candidato','codigo_coincide',
+    'nombre_coincide','candidatos_mismo_nombre','codigo_en_conflicto',
+    'nombre_en_conflicto','evaluacion','equivalencia_verificada','fuente_referencia'
+]
+
+
+def discover_municipal_candidates(records: list[tuple[int,int,int,str]],
+                                  conflicts: list[dict],
+                                  catalog: dict[tuple[int,str],str],
+                                  reference: dict[int,int]) -> list[dict]:
+    """Discover possible matches from real ITER entries, never a verified identity.
+
+    A candidate is only an aid for documentary review. Names are never joined
+    to data and candidate CVEGEOS are never copied to publication mappings.
+    """
+    catalog_by_name = defaultdict(list)
+    for (census, code), official in catalog.items():
+        catalog_by_name[(census, int(code[:2]), stable_name(official))].append((code, official))
+    for values in catalog_by_name.values():
+        values.sort()
+    flags = defaultdict(set)
+    for item in conflicts:
+        try:
+            key = (int(item['anio_eleccion']), int(item['cve_ent_ine']),
+                   int(item['cve_mpio_ine']))
+        except (ValueError, TypeError, KeyError):
+            continue
+        flags[key].update(str(item.get('categorias','')).split('|'))
+    sources = defaultdict(set)
+    for year, ent, mun, name in records:
+        sources[(year, ent, mun)].add(name)
+    result = []
+    for (year, ent, mun), names in sorted(sources.items()):
+        census = reference[year]
+        name = max(names, key=lambda n: (sum(ord(c)>127 for c in n),len(n),n))
+        key = (year, ent, mun)
+        code = f'{ent:02}{mun:03}'
+        by_code = catalog.get((census,code))
+        by_name = catalog_by_name.get((census,ent,stable_name(name)),[])
+        candidates = {c:(n,'nombre_normalizado') for c,n in by_name}
+        if by_code is not None:
+            candidates[code] = (by_code,'codigo_y_nombre' if stable_name(name)==stable_name(by_code) else 'codigo_distinto_nombre')
+        conflict = flags.get(key,set())
+        territorial_alert = any(x.startswith(('A_','B_','E_','F_')) for x in conflict)
+        spelling_alert = any(x.startswith('G_') for x in conflict)
+        if not candidates:
+            result.append(dict(anio_eleccion=year,cve_ent_ine=ent,cve_mpio_ine=mun,
+                               nombre_ine=name,censo_referencia=census,cvegeo_candidato='',
+                               nombre_inegi='',metodo_candidato='sin_candidato',codigo_coincide='no',
+                               nombre_coincide='no',candidatos_mismo_nombre=0,
+                               codigo_en_conflicto='si' if territorial_alert else 'no',
+                               nombre_en_conflicto='si' if spelling_alert else 'no',
+                               evaluacion='sin_candidato_catalogo',equivalencia_verificada='no',
+                               fuente_referencia=f'INEGI ITER {census} (total_municipal)'))
+        for candidate,(official,method) in sorted(candidates.items()):
+            code_match = candidate == code
+            name_match = stable_name(name) == stable_name(official)
+            if territorial_alert:
+                evaluation='revision_territorial_obligatoria'
+            elif name_match and len(by_name)>1:
+                evaluation='nombre_duplicado_catalogo'
+            elif code_match and name_match:
+                evaluation='concordancia_codigo_nombre_sujeta_a_reglas_actuales'
+            elif name_match:
+                evaluation='candidato_unico_nombre_requiere_evidencia' if len(by_name)==1 else 'nombre_duplicado_catalogo'
+            else:
+                evaluation='codigo_no_coincide_con_nombre'
+            result.append(dict(anio_eleccion=year,cve_ent_ine=ent,cve_mpio_ine=mun,
+                               nombre_ine=name,censo_referencia=census,cvegeo_candidato=candidate,
+                               nombre_inegi=official,metodo_candidato=method,
+                               codigo_coincide='si' if code_match else 'no',
+                               nombre_coincide='si' if name_match else 'no',
+                               candidatos_mismo_nombre=len(by_name),
+                               codigo_en_conflicto='si' if territorial_alert else 'no',
+                               nombre_en_conflicto='si' if spelling_alert else 'no',
+                               evaluacion=evaluation,equivalencia_verificada='no',
+                               fuente_referencia=f'INEGI ITER {census} (total_municipal)'))
+    return result
+
+
+def build_historic_mapping(cfg: Settings, records: list[tuple[int,int,int,str]],
+                           conflicts: list[dict], catalog: dict[tuple[int,str],str]) -> list[dict]:
+    """Auto-verifica sólo concordancia código+nombres ITER sin señales A/B/E/F."""
+    manual_file = cfg.root/'data'/'mappings'/'municipios_historicos_revisados.csv'
+    manual = _manual(manual_file)
+    duplicates = defaultdict(set)
+    for y,e,m,n in records:
+        duplicates[(y,e,m)].add(stable_name(n))
+    if any(len(v)>1 for v in duplicates.values()):
+        raise ValueError('Un mismo MPIOCVE tiene dos nombres en una misma elección; auditar origen')
+    flagged = {(r['anio_eleccion'],int(r['cve_ent_ine']),int(r['cve_mpio_ine']))
+               for r in conflicts if r['cve_mpio_ine'] and
+               any(f in r['categorias'] for f in ('A_','B_','E_','F_','nombres_distintos'))}
+    mapping = []
+    record_keys = {(y,e,m) for y,e,m,_ in records}
+    if set(manual) - record_keys:
+        raise ValueError(f'Dictámenes manuales sin municipio histórico: {sorted(set(manual)-record_keys)[:5]}')
+    # CAMBIO: una misma clave con variantes de escritura del mismo año
+    # sólo produce una fila, sin esconder variantes en la auditoría.
+    sources = defaultdict(list)
+    for y,e,m,n in records:
+        sources[(y,e,m)].append(n)
+    for (year, ent, mun), names in sorted(sources.items()):
+        name = max(names, key=lambda n:(sum(ord(c)>127 for c in n),len(n),n))
+        k = (year, ent, mun)
+        census = cfg.reference[year]
+        source = f'INEGI ITER {census} (total_municipal)'
+        candidate = f'{ent:02}{mun:03}'
+        official = catalog.get((census,candidate))
+        exact = k not in flagged and official and stable_name(official) == stable_name(name)
+        row = dict(zip(IDENTITY_COLUMNS, [year,ent,mun,name,'','',
+                  'ambigua_no_verificada','no',census,source,'',
+                  'Se requiere revisión documental; nunca asumir identidad por nombre.']))
+        if exact:
+            row.update(cvegeo_canonico=candidate,nombre_canonico=official,
+                       tipo_equivalencia='exacta',equivalencia_verificada='si',
+                       evidencia=f'INE {year} / ITER {census}: código y nombre coincidentes; '
+                                 'sin señales A/B/E/F entre elecciones',observacion='')
+        if k in manual:
+            review = manual[k]
+            if stable_name(review['nombre_ine']) != stable_name(name):
+                raise ValueError(f'Dictamen manual ya no coincide con INE: {k}')
+            code = code5(review['cvegeo_canonico'])
+            # No usar fuente 2010 para demostrar una identidad 2020 ausente.
+            if int(code[:2]) != ent or (census,code) not in catalog:
+                raise ValueError(f'Dictamen municipal {k}: {code} no existe en ITER {census}')
+            if stable_name(review['nombre_canonico']) != stable_name(catalog[(census,code)]):
+                raise ValueError(f'Dictamen {k}: nombre canónico distinto al catálogo INEGI')
+            if int(review['censo_referencia']) != census:
+                raise ValueError(f'Dictamen {k}: censo_ref no coincide con configuración ({census})')
+            if not review['evidencia'].strip() or not review['fuente_referencia'].strip():
+                raise ValueError(f'Dictamen {k} carece de evidencia documental')
+            row.update(review)
+            # CAMBIO: siempre conservar nombres/claves reales y CVEGEO de 5 dígitos.
+            row.update(anio_eleccion=year,cve_ent_ine=ent,cve_mpio_ine=mun,
+                       nombre_ine=name,cvegeo_canonico=code,
+                       nombre_canonico=catalog[(census,code)],
+                       equivalencia_verificada='si',
+                       tipo_equivalencia=review['tipo_equivalencia'].strip().lower(),
+                       censo_referencia=census)
+        mapping.append(row)
+    output = cfg.path('mapping_municipal_historico')
+    write_csv(output,list(IDENTITY_COLUMNS),mapping)
+    # Relectura estricta: también detecta dos orígenes del mismo año → CVEGEO.
+    load_identities(output)
+    return mapping
+
+
+def main(cfg: Settings | None = None) -> None:
+    """Genera auditoría nacional, mapping histórico y legacy derivado de él."""
+    cfg = cfg or load_config()
+    records, missing = historic_records(cfg)
+    conflicts = audit_command(cfg)
+    if missing:
+        raise ValueError(f'Faltan {len(missing)} particiones INE para mapping nacional: {missing[:8]}; '
+                         'la auditoría CSV se guardó sin inventar municipios faltantes')
+    catalog = _reference_catalog(cfg)
+    # CAMBIO: diagnóstico separado; no modifica ni aprueba el mapping histórico.
+    candidates = discover_municipal_candidates(records, conflicts, catalog, cfg.reference)
+    candidate_path = cfg.root/'data'/'quality'/'municipios_candidatos_inegi.csv'
+    write_csv(candidate_path, CANDIDATE_COLUMNS, candidates)
+    print(f'CANDIDATOS INEGI: {len(candidates)} filas de revisión; {candidate_path}')
+    mapped = build_historic_mapping(cfg, records, conflicts, catalog)
+    verified = [r for r in mapped if r['equivalencia_verificada'] == 'si']
+    inegi_rows = [{
+        'censo_ref':r['censo_referencia'],
+        'cvegeo_municipal_inegi':r['cvegeo_canonico']+'0000',
+        'anio_eleccion':r['anio_eleccion'],'cve_ent_ine':r['cve_ent_ine'],
+        'cve_mpio_ine':r['cve_mpio_ine'],'status_match':VALIDATED,
+        'metodo_match':r['tipo_equivalencia']}
+        for r in verified]
+    write_csv(cfg.path('mapping_inegi_ine'),
+              ['censo_ref','cvegeo_municipal_inegi','anio_eleccion',
+               'cve_ent_ine','cve_mpio_ine','status_match','metodo_match'],inegi_rows)
+    conapo = cfg.path('conapo_staging')/'poblacion_anual.parquet'
+    conapo_keys = set()
+    if cfg.integration.incluir_conapo:
+        if not conapo.is_file():
+            raise FileNotFoundError(conapo)
+        conapo_keys = {(int(year), normalized_conapo_code(raw))
+                       for year, raw in query_parquet(conapo, """SELECT DISTINCT anio, clave_municipal_raw
+                           FROM src WHERE anio IS NOT NULL AND clave_municipal_raw IS NOT NULL""")}
+    conapo_rows = [{
+        'clave_conapo':r['cvegeo_canonico'],
+        'clave_ent_conapo':f"{int(r['cve_ent_ine']):02}",
+        'cve_ent_ine':r['cve_ent_ine'],'cve_mpio_ine':r['cve_mpio_ine'],
+        'anio':r['anio_eleccion'],'status_match':VALIDATED,
+        'metodo_match':r['tipo_equivalencia']}
+        for r in verified if (int(r['anio_eleccion']),r['cvegeo_canonico']) in conapo_keys]
+    write_csv(cfg.path('mapping_conapo_ine'),
+              ['clave_conapo','clave_ent_conapo','cve_ent_ine','cve_mpio_ine',
+               'anio','status_match','metodo_match'],conapo_rows)
+    write_csv(OUT/'revision_mappings.csv',list(IDENTITY_COLUMNS),
+              [r for r in mapped if r['equivalencia_verificada'] != 'si'])
+    print(f'MAPPING HISTÓRICO: {len(verified)} verificados / '
+          f'{len(mapped)-len(verified)} pendientes. Salida: {cfg.path("mapping_municipal_historico")}')
+
+
+if __name__ == '__main__':
     main()

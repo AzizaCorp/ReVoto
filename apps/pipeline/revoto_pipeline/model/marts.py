@@ -5,7 +5,12 @@ from revoto_pipeline.config import Settings, connection, sql_path
 from revoto_pipeline.sql_utils import atomic_write
 
 # Keep age unknown separately. AGE is not reconstructed from group-age averages.
-AGE_SQL = "CASE WHEN EDAD BETWEEN 18 AND 24 THEN '18-24' WHEN EDAD BETWEEN 25 AND 34 THEN '25-34' WHEN EDAD BETWEEN 35 AND 44 THEN '35-44' WHEN EDAD BETWEEN 45 AND 59 THEN '45-59' WHEN EDAD>=60 AND EDAD<=120 THEN '60+' ELSE 'no_especificada' END"
+AGE_SQL = "CASE WHEN EDAD BETWEEN 18 AND 24 THEN '18-24'" \
+        "WHEN EDAD BETWEEN 25 AND 34 THEN '25-34'" \
+        "WHEN EDAD BETWEEN 35 AND 44 THEN '35-44'" \
+        "WHEN EDAD BETWEEN 45 AND 59 THEN '45-59'" \
+        "WHEN EDAD BETWEEN 60 AND 110 THEN '60+'" \
+        "ELSE 'no_especificada' END"
 
 GRAINS = {
  'entidad': ('AELEC','EDOCVE'),
@@ -13,6 +18,8 @@ GRAINS = {
  'seccion': ('AELEC','EDOCVE','MPIOCVE','SECCION'),
  'sexo': ('AELEC','EDOCVE','SEXO'),
  'grupo_edad': ('AELEC','EDOCVE','grupo_edad'),
+ 'municipio_sexo': ('AELEC','EDOCVE','MPIOCVE','SEXO'),
+ 'municipio_edad': ('AELEC','EDOCVE','MPIOCVE','grupo_edad'),
  'seccion_sexo': ('AELEC','EDOCVE','MPIOCVE','SECCION','SEXO'),
  'seccion_edad': ('AELEC','EDOCVE','MPIOCVE','SECCION','grupo_edad'),
 }
@@ -30,8 +37,9 @@ def aggregation_sql(table: str, dims: tuple[str,...], *, rn05: int | None = None
     return (f'SELECT *, CASE WHEN LN>={rn05} AND LN>NS THEN '
             f'100.0*SV/NULLIF(LN-NS, 0) ELSE NULL END AS participacion_pct, '
             f"CASE WHEN LN IS NULL THEN 'unavailable' WHEN LN<{rn05} THEN 'suppressed' "
+            f"WHEN NS IS NULL OR SV IS NULL THEN 'unavailable' "
+            f"WHEN LN<NS THEN 'invalid_counts' WHEN LN=NS THEN 'rate_undefined' "
             f"ELSE 'available' END AS publication_status FROM ({raw}) a")
-
 
 def build_marts(cfg: Settings, estado: int) -> dict[int,dict[str,int]]:
     con = connection(cfg)
@@ -52,15 +60,29 @@ def build_marts(cfg: Settings, estado: int) -> dict[int,dict[str,int]]:
                 for old_name in ('distrito_local','distrito_local_sexo','distrito_local_edad'):
                     stale=cfg.path('processed')/'marts'/old_name/f'edo={estado:02}'/f'anio={year}'/'datos.parquet'
                     stale.unlink(missing_ok=True)  # derived output, never raw/canonical
+            # RN-06/RN-09 affect only demographic slices; unfiltered totals
+            # remain anchored to canonical observation counts.
             counts={}
             for name,dims in grains.items():
-                mart_table=table
+                predicates=[]
+                if 'SEXO' in dims:
+                    predicates.append('SEXO IN (0,1)')
+                if 'grupo_edad' in dims:
+                    predicates.append('EDAD BETWEEN 18 AND 110')
                 if name.startswith('distrito_local'):
-                    mart_table=f'(SELECT * FROM {table} WHERE DEL IS NOT NULL AND DEL>0)'
+                    predicates.append('DEL IS NOT NULL AND DEL>0')
+                mart_table=(f'(SELECT * FROM {table} WHERE ' + ' AND '.join(predicates) + ')') if predicates else table
                 statement=aggregation_sql(mart_table,dims,rn05=cfg.umbral_rn05)
                 dest=cfg.path('processed')/'marts' / name / f'edo={estado:02}' / f'anio={year}' / 'datos.parquet'
                 pending=atomic_write(con,statement,dest)
                 n=con.execute(f"SELECT COUNT(*) FROM read_parquet('{sql_path(pending)}')").fetchone()[0]
+                # Check totals and uniqueness on the pending file BEFORE promotion.
+                totals=con.execute(f'SELECT SUM(LN),SUM(SV),SUM(NV),SUM(NS) FROM {mart_table}').fetchone()
+                aggregated=con.execute(f"SELECT SUM(LN),SUM(SV),SUM(NV),SUM(NS) FROM read_parquet('{sql_path(pending)}')").fetchone()
+                d=con.execute(f"SELECT COUNT(*) FROM (SELECT {', '.join(dims)},COUNT(*) n FROM read_parquet('{sql_path(pending)}') GROUP BY {', '.join(dims)} HAVING n>1)").fetchone()[0]
+                if totals!=aggregated or d:
+                    pending.unlink(missing_ok=True)
+                    raise ValueError(f'Mart {name} {estado}/{year}: reconciliación o unicidad fallida; {totals} != {aggregated}, duplicados={d}')
                 os.replace(pending,dest)
                 counts[name]=n
             result[year]=counts

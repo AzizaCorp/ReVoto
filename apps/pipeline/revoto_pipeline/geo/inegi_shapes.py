@@ -152,19 +152,33 @@ def build_inegi_geo_layers(cfg: Settings, estado: int) -> dict:
     municipalities['cve_mun'] = municipalities['cvegeo'].str[2:]
     if not set(municipalities['cve_ent']) == {f'{estado:02}'}:
         raise ValueError('Municipios fuera del estado')
-    out_geo = cfg.path('salida') / 'geometria' / f'edo={estado:02}'
+    # L2 cartográfico interno: NO escribir directamente en public/data.
+    # export_web genera después TopoJSON validado/versionado con manifest atómico.
+    out_geo = cfg.path('geo_staging') / 'geojson' / f'edo={estado:02}'
     out_geo.mkdir(parents=True, exist_ok=True)
     tolerance = float(cfg.geo.get('geojson_simplify_degrees', 0.002))
+    if not 0 <= tolerance <= 0.05:
+        raise ValueError('Simplificacion fuera de intervalo seguro; revisar CRS/unidades')
+    budget_file=cfg.root/'budget.json'
+    budget=json.loads(budget_file.read_text(encoding='utf-8')) if budget_file.exists() else {}
+    entity_bytes=int(budget.get('entidad_kb',300))*1024
     for name, layer in [('entidades', entities), ('municipios', municipalities)]:
         features = []
         for entry in layer.itertuples(index=False):
-            geometry = entry.geometry.simplify(tolerance, preserve_topology=True)
+            # Dejar contornos originales aquí: simplificar cada municipio
+            # por separado rompería fronteras compartidas. La simplificación
+            # de cobertura se ejecuta en export/topologia.py.
+            geometry = entry.geometry
+            if geometry.is_empty or not geometry.is_valid or geometry.geom_type not in ('Polygon','MultiPolygon'):
+                raise ValueError(f'GeoJSON invalido despues de simplificar: {entry.cvegeo}')
             features.append({'type':'Feature', 'properties':{'cvegeo':entry.cvegeo},
                              'geometry':mapping(geometry)})
         out = out_geo / f'{name}.geojson'
         temp = out.with_suffix('.pending.geojson')
         temp.write_text(json.dumps({'type':'FeatureCollection','features':features},
                                   ensure_ascii=False, separators=(',', ':')),encoding='utf-8')
+        # No aplicar límite de navegador a los GeoJSON de staging. El límite
+        # contractual de 300 KB corresponde al TopoJSON *final*.
         os.replace(temp, out)
     con = connection(cfg)
     try:
@@ -181,7 +195,8 @@ def build_inegi_geo_layers(cfg: Settings, estado: int) -> dict:
               'municipios':len(municipalities), 'localidades_amanzanadas':len(localities),
               'localidades_rurales_puntuales':None if rural_points is None else len(rural_points),
               'localidades_no_cubiertas':'00l NO equivale al universo ITER',
-              'geojson_simplificacion_grados':tolerance,
+              'geojson_simplificacion_grados':0,
+              'topojson_tolerancia_inicial_grados':tolerance,
               'anio_marco_inegi':int(cfg.geo.get('inegi_marco_anio',0)) or None}
     save_report(cfg.path('reportes')/'geo'/f'edo={estado:02}_capas_inegi.json',report)
     return report
