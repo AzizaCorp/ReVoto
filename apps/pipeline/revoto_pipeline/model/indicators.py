@@ -8,6 +8,9 @@ class Indicator:
     numerator: str | None = None
     denominator: str | None = None
     weight: str | None = None
+    unit: str = 'personas'
+    family: str = 'poblacion'
+    census_comparability: str = 'verify_dictionary'
 
 
 # GRAPROES is a mean of years of schooling for people aged 15+;
@@ -25,6 +28,54 @@ INDICATOR_AGGREGATION = {
     'P15YM_AN': Indicator('sum'),
     'GRAPROES': Indicator('weighted_mean', weight='P_15YMAS'),
     'PORC_MUJERES': Indicator('ratio', numerator='POBFEM', denominator='POBTOT'),
+    # Only variables already selected by transform/inegi.py. Ratios are NOT
+    # inferred without a documented numerator + denominator in the registry.
+    'P_15YMAS': Indicator('sum', family='poblacion_edad'),
+    'P_15YMAS_F': Indicator('sum', family='poblacion_edad'),
+    'P_15YMAS_M': Indicator('sum', family='poblacion_edad'),
+    'P_18YMAS_F': Indicator('sum', family='poblacion_edad'),
+    'P_18YMAS_M': Indicator('sum', family='poblacion_edad'),
+    'P_18A24_F': Indicator('sum', family='poblacion_edad'),
+    'P_18A24_M': Indicator('sum', family='poblacion_edad'),
+    'P_60YMAS_F': Indicator('sum', family='poblacion_edad'),
+    'P_60YMAS_M': Indicator('sum', family='poblacion_edad'),
+    'P3YM_HLI': Indicator('sum', family='lengua'),
+    'P3YM_HLI_F': Indicator('sum', family='lengua'),
+    'P3YM_HLI_M': Indicator('sum', family='lengua'),
+    'PHOG_IND': Indicator('sum', family='indigena'),
+    'POB_AFRO': Indicator('sum', family='afro'),
+    'POB_AFRO_F': Indicator('sum', family='afro'),
+    'POB_AFRO_M': Indicator('sum', family='afro'),
+    'PCON_DISC': Indicator('sum', family='discapacidad'),
+    'P18YM_PB': Indicator('sum', family='escolaridad'),
+    'P18YM_PB_F': Indicator('sum', family='escolaridad'),
+    'P18YM_PB_M': Indicator('sum', family='escolaridad'),
+    'P15YM_AN_F': Indicator('sum', family='escolaridad'),
+    'P15YM_AN_M': Indicator('sum', family='escolaridad'),
+    'PRESOE15': Indicator('sum', family='educacion'),
+    'PRESOE15_F': Indicator('sum', family='educacion'),
+    'PRESOE15_M': Indicator('sum', family='educacion'),
+    'PEA_F': Indicator('sum', family='actividad'),
+    'PEA_M': Indicator('sum', family='actividad'),
+    'POCUPADA_F': Indicator('sum', family='actividad'),
+    'POCUPADA_M': Indicator('sum', family='actividad'),
+    'PDESOCUP_F': Indicator('sum', family='actividad'),
+    'PDESOCUP_M': Indicator('sum', family='actividad'),
+    'PSINDER': Indicator('sum', family='salud'),
+    'PDER_SS': Indicator('sum', family='salud'),
+    'VIVPAR_HAB': Indicator('sum', unit='viviendas', family='vivienda'),
+    'TVIVPARHAB': Indicator('sum', unit='viviendas', family='vivienda'),
+    'P_3YMAS': Indicator('sum', family='poblacion_edad'),
+    'VPH_INTER': Indicator('sum', unit='viviendas', family='vivienda'),
+    'VPH_CEL': Indicator('sum', unit='viviendas', family='vivienda'),
+    'VPH_S_ELEC': Indicator('sum', unit='viviendas', family='vivienda'),
+    'VPH_AGUADV': Indicator('sum', unit='viviendas', family='vivienda'),
+    'VPH_DRENAJ': Indicator('sum', unit='viviendas', family='vivienda'),
+    'GRAPROES_F': Indicator('weighted_mean', weight='P_15YMAS_F', unit='anios', family='educacion'),
+    'GRAPROES_M': Indicator('weighted_mean', weight='P_15YMAS_M', unit='anios', family='educacion'),
+    'P3HLINHE': Indicator('sum', family='lengua'),
+    'P3HLINHE_F': Indicator('sum', family='lengua'),
+    'P3HLINHE_M': Indicator('sum', family='lengua'),
 }
 
 
