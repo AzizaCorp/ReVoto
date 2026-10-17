@@ -1,0 +1,1 @@
+{"schema_version":2,"estado":"01","anio_eleccion":2012,"grano":"entidad","fuentes":["INE"],"referencias":{"censo":2010,"cartografia":2021,"referencia_retroactiva":true},"medidas":[{"AELEC":2012,"EDOCVE":1,"publicacion":"available","ln":781792,"sv":460524,"nv":321239,"ns":29,"participacion_pct":58.90839039453134}]}

@@ -1,0 +1,1 @@
+{"schema_version":2,"estado":"03","anio_eleccion":2018,"grano":"entidad","fuentes":["INE"],"referencias":{"censo":2020,"cartografia":2021,"referencia_retroactiva":true},"medidas":[{"AELEC":2018,"EDOCVE":3,"publicacion":"available","ln":516152,"sv":273586,"nv":213158,"ns":29408,"participacion_pct":56.20736978781454}]}

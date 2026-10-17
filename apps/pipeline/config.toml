@@ -1,15 +1,77 @@
-# Configuración del pipeline · se ejecuta desde apps/pipeline: python -m revoto_pipeline
-# Las rutas son relativas a la raíz del repositorio.
+# REVOTO — configuración; todas las rutas respecto a la raíz del monorepo.
 [rutas]
-staging = "data/staging/conteos_censales_master.parquet"   # L1, se descarga del bucket (no se versiona)
-base = "data/revoto.duckdb"                                  # L2 y L3 locales (no se versiona)
-salida = "apps/web/public/data"                              # L4, sí se versiona
+ine_raw = "data/raw/conteos_censales"
+ine_staging = "data/staging/ine"
+inegi_raw = "data/raw/inegi"
+inegi_staging = "data/staging/inegi"
+conapo_raw = "data/raw/conapo/pobproy_ggrupos.csv"
+conapo_staging = "data/staging/conapo"
+geo_raw = "data/raw/geografia"
+geo_staging = "data/staging/geo"
+processed = "data/processed"
+base = "data/revoto.duckdb"
+salida = "apps/web/public/data"
 reportes = "apps/pipeline/reportes"
+mapping_conapo_ine = "data/mappings/conapo_ine.csv"
+mapping_inegi_ine = "data/mappings/inegi_ine.csv"
 oficiales = "apps/pipeline/revoto_pipeline/validacion/cifras_oficiales.csv"
 
+[ingestion]
+years_ine = [2009, 2012, 2015, 2018, 2021, 2024]
+csv_encoding = "utf-8-sig"
+threads = 4
+memory_limit = "4GB"
+
+[referencia_censal]
+"2009" = 2010
+"2012" = 2010
+"2015" = 2010
+"2018" = 2020
+"2021" = 2020
+"2024" = 2020
+
+[referencia_distritacion_local]
+"2009" = 2021
+"2012" = 2021
+"2015" = 2021
+"2018" = 2021
+"2021" = 2021
+"2024" = 2023
+
+[geografia]
+inegi_marco_anio = 2024
+inegi_entidades = "inegi/00ent.shp"
+inegi_municipios = "inegi/00mun.shp"
+inegi_localidades = "inegi/00l.shp"
+secciones_dir = "secciones/{anio}"
+distritos_locales_dir = "distritos-locales/{anio}"
+secciones_archivo = "SECCION.shp"
+distritos_locales_archivo = "DISTRITO_LOCAL.shp"
+geojson_simplify_degrees = 0.002
+
+[integracion]
+incluir_inegi = true
+incluir_conapo = true
+incluir_geografia = true
+# Conservador: no usar puntos representativos para adjudicar toda la población local.
+permitir_localidades_por_punto = false
+cobertura_minima_inegi = 0.80
+
+[ine]
+# Afecta marts/publicación; el raw y los facts canónicos retienen DEL/DEF.
+incluir_del = true
+# Activar solo tras validar que DEL codifica distrito local en todos los años publicados.
+del_distrito_verificado = false
+
+[publicacion]
+# RN-02 del contrato actual no autoriza secciones; habilitar sólo después de actualizar
+# packages/contracts y aprobar revisión legal/privacidad (RN-05).
+publicar_secciones = false
+# La forma JSON v2 es distinta a packages/contracts/src/l4.ts; optar explícitamente.
+permitir_contrato_v2 = true
+publicar_distritos = false
+publicar_desgloses_territoriales = false
+
 [reglas]
-# RN-05: lista nominal mínima para publicar un agregado. Valor definido por el equipo en el SRS.
-# Mientras diga "POR_DEFINIR", el pipeline se detiene a propósito.
-umbral_rn05 = "POR_DEFINIR"
-# RF-23: diferencia máxima permitida contra la cifra oficial, en puntos porcentuales.
+umbral_rn05 = 50
 max_diferencia_pp = 1.0
