@@ -32,6 +32,10 @@ def test_context_four_source_combinations(tmp_path):
     (maps/'inegi_ine.csv').write_text(
         'censo_ref,cvegeo_municipal_inegi,anio_eleccion,cve_ent_ine,cve_mpio_ine,status_match\n'
         '2020,010010000,2024,1,1,validado\n')
+    
+    (maps/'municipios_historicos.csv').write_text(
+        'anio_eleccion,cve_ent_ine,cve_mpio_ine,nombre_ine,cvegeo_canonico,nombre_canonico,tipo_equivalencia,equivalencia_verificada,censo_referencia,fuente_referencia,evidencia,observacion\n'
+        '2024,1,1,AGUASCALIENTES,01001,AGUASCALIENTES,exacta,si,2020,ITER sintetico,codigo y nombre,\n')
     for include_inegi,include_conapo in ((False,False),(True,False),(False,True),(True,True)):
         ci=replace(cfg,integration=replace(cfg.integration,
                    incluir_inegi=include_inegi,incluir_conapo=include_conapo))

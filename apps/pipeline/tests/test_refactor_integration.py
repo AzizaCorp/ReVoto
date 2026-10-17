@@ -50,13 +50,13 @@ def test_fact_marts_db_export_and_del_toggle(tmp_path):
     db=duckdb.connect(str(cfg.path('base')),read_only=True)
     assert db.execute('SELECT COUNT(*) FROM analytics.dim_seccion').fetchone()[0]==1
     db.close()
-    exported=export_web(cfg,1)
-    data=json.loads((cfg.path('salida')/'ine/edo=01/anio=2024/secciones-sexo.json').read_text())
-    assert data['schema_version']==2
-    assert len(data['medidas'])==2
+    # v2 was an internal diagnostic contract; must not publish into L4.
+    with pytest.raises(ValueError,match='Desactiva permitir_contrato_v2'):
+        export_web(cfg,1)
     cfg_no_del=replace(cfg,incluir_del=False,del_distrito_verificado=False)
     build_marts(cfg_no_del,1)
-    export_web(cfg_no_del,1)
+    with pytest.raises(ValueError,match='Desactiva permitir_contrato_v2'):
+        export_web(cfg_no_del,1)
     assert not (cfg.path('salida')/'ine/edo=01/anio=2024/distritos.json').exists()
     con.close()
 

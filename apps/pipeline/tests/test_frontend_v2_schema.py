@@ -1,36 +1,17 @@
-"""Independent JSON Schema validation of the proposed frontend v2 envelope."""
-import json
-from pathlib import Path
+"""The former frontend_v2 schema must NOT be accepted by the L4 publisher."""
 import pytest
 from revoto_pipeline.export.contract import validate_payload
 
-SCHEMA=Path(__file__).resolve().parents[1]/'revoto_pipeline'/'schemas'/'frontend_v2.schema.json'
+
+def test_v2_payload_is_not_an_l4_resource():
+    legacy = {'schema_version':2,'estado':'01','anio_eleccion':2024,
+              'grano':'municipio','fuentes':['INE'],'medidas':[]}
+    with pytest.raises(ValueError):
+        validate_payload(legacy,'municipio')
 
 
-def payload():
-    return {'schema_version':2,'estado':'01','anio_eleccion':2024,'grano':'municipio',
-            'fuentes':['INE'],
-            'medidas':[{'publicacion':'suppressed','ln':None,'sv':None,
-                        'nv':None,'ns':None,'participacion_pct':None}]}
-
-
-def test_contract_and_suppression():
-    v=payload()
-    validate_payload(v)
-    jsonschema=pytest.importorskip('jsonschema')
-    jsonschema.validate(v,json.loads(SCHEMA.read_text(encoding='utf-8')))
-    assert v['medidas'][0]['sv'] is None
-
-
-def test_suppressed_cannot_expose_counts():
-    v=payload()
-    v['medidas'][0]['sv']=2
-    with pytest.raises(ValueError,match='suprimida'):
-        validate_payload(v)
-
-
-def test_more_than_one_read_model_rejected():
-    v=payload()
-    v['contexto_municipal']=[]
-    with pytest.raises(ValueError,match='único'):
-        validate_payload(v)
+def test_l4_has_no_section_level():
+    payload = {'territorio': {'nivel':'seccion','cve':1,'nombre':'Sección'},
+               'fuente':'INE','elecciones':[],'suprimido':False}
+    with pytest.raises(ValueError):
+        validate_payload(payload,'municipio')
