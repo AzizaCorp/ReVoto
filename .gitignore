@@ -6,7 +6,7 @@ coverage/
 .vite/
 
 # Datos que NUNCA se versionan (POL CM · RNF-13 · límite de 100 MB de GitHub)
-data/
+./data/
 *.parquet
 *.duckdb
 *.duckdb.wal

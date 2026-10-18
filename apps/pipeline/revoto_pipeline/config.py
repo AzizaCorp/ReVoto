@@ -25,9 +25,12 @@ class Integration:
 @dataclass(frozen=True)
 class Publication:
     permitir_contrato_v2: bool = False
+    contrato_l4_aprobado: bool = False
+    umbral_rn05_aprobado: bool = False
     publicar_secciones: bool = False
     publicar_distritos: bool = False
     publicar_desgloses_territoriales: bool = False
+    extensiones_l4_aprobadas: bool = False
 
 
 @dataclass(frozen=True)
@@ -46,6 +49,7 @@ class Settings:
     incluir_del: bool = True
     del_distrito_verificado: bool = False
     umbral_rn05: int | None = None
+    max_diferencia_pp: float = 1.0
 
     def path(self, name: str) -> Path:
         return self.paths[name]
@@ -79,13 +83,17 @@ def load_config(file: Path = CONFIG_FILE, root: Path = ROOT) -> Settings:
     threshold = None if value == 'POR_DEFINIR' else int(value)
     if threshold is not None and threshold < 1:
         raise ValueError('umbral_rn05 debe ser positivo')
+    max_diferencia_pp = float(cfg.get("reglas", {}).get("max_diferencia_pp", 1.0))
+    if not 0 <= max_diferencia_pp <= 1:
+        raise ValueError("max_diferencia_pp debe estar entre 0 y 1")
     return Settings(root=Path(root).resolve(), paths=paths, years=years,
         reference=census, district_reference=districts,
         encoding=ing['csv_encoding'], threads=int(ing['threads']),
         memory_limit=str(ing['memory_limit']), geo=cfg['geografia'],
         integration=integration, publication=publication, incluir_del=cfg.get('ine',{}).get('incluir_del',True),
-        del_distrito_verificado=cfg.get('ine',{}).get('del_distrito_verificado',False),
-        umbral_rn05=threshold)
+        del_distrito_verificado=(cfg.get('ine',{}).get('incluir_del',True) and
+                                  cfg.get('ine',{}).get('del_distrito_verificado',False)),
+        umbral_rn05=threshold, max_diferencia_pp=max_diferencia_pp)
 
 
 def sql_path(path: Path) -> str:

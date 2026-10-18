@@ -14,7 +14,10 @@ salida = "apps/web/public/data"
 reportes = "apps/pipeline/reportes"
 mapping_conapo_ine = "data/mappings/conapo_ine.csv"
 mapping_inegi_ine = "data/mappings/inegi_ine.csv"
-oficiales = "apps/pipeline/revoto_pipeline/validacion/cifras_oficiales.csv"
+mapping_municipal_historico = "data/mappings/municipios_historicos.csv"
+oficiales = "apps/pipeline/revoto_pipeline/validation/cifras_oficiales.csv"
+arquetipos_municipales = "data/analisis_arquetipos/arquetipos_municipales.csv"
+votos_esperados = "data/analisis_arquetipos/esperado_por_entidad_edad.csv"
 
 [ingestion]
 years_ine = [2009, 2012, 2015, 2018, 2021, 2024]
@@ -61,16 +64,22 @@ cobertura_minima_inegi = 0.80
 # Afecta marts/publicación; el raw y los facts canónicos retienen DEL/DEF.
 incluir_del = true
 # Activar solo tras validar que DEL codifica distrito local en todos los años publicados.
-del_distrito_verificado = false
+del_distrito_verificado = true
 
 [publicacion]
 # RN-02 del contrato actual no autoriza secciones; habilitar sólo después de actualizar
 # packages/contracts y aprobar revisión legal/privacidad (RN-05).
 publicar_secciones = false
 # La forma JSON v2 es distinta a packages/contracts/src/l4.ts; optar explícitamente.
-permitir_contrato_v2 = true
+# No publicar JSON v2 directamente: incompatibilidad con L4
+permitir_contrato_v2 = false
+# Cambiar a true solo después de revisión del equipo y RN-05.
+contrato_l4_aprobado = true
+umbral_rn05_aprobado = true
 publicar_distritos = false
 publicar_desgloses_territoriales = false
+# Activar UNICAMENTE en el mismo PR en que se actualizan types, schemas y mapeadores.
+extensiones_l4_aprobadas = false
 
 [reglas]
 umbral_rn05 = 50

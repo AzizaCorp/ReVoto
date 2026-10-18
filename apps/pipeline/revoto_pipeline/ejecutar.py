@@ -6,7 +6,8 @@ from revoto_pipeline.config import load_config, Settings
 COMMANDS = ('run','run-integrated','prepare-sources','ingest-ine','aggregate-ine',
             'build-canonical','build-marts','build-inegi','build-conapo',
             'build-geo-layers','build-crosswalk','build-inegi-secciones','build-context',
-            'build-full-context','validate','export-web','catalog','build-db','generate-mappings')
+            'build-full-context','build-indicadores','build-arquetipos','build-votos-esperados',
+            'validate','export-web','catalog','build-db','generate-mappings','audit-municipios')
 
 
 def choose_states(args: argparse.Namespace) -> list[int]:
@@ -57,12 +58,13 @@ def main(argv: list[str] | None=None):
     parser.add_argument('--anio',type=int)
     parser.add_argument('--cartografia',type=int)
     parser.add_argument('--integrado',action='store_true')
+    parser.add_argument('--dry-run',action='store_true',help='Construir L4 sin publicar manifest')
     args=parser.parse_args(argv)
     cfg=load_config()
     cmd=args.command
-    if cmd=='generate-mappings':
-        from revoto_pipeline.generar_mappings import main as generate
-        generate();return
+    if cmd in ('generate-mappings', 'audit-municipios'):
+        from revoto_pipeline.generar_mappings import main as generate, audit_command
+        (audit_command(cfg) if cmd == 'audit-municipios' else generate(cfg));return
     if cmd=='prepare-sources':
         prepare_sources(cfg);return
     if cmd=='build-inegi':
@@ -72,6 +74,12 @@ def main(argv: list[str] | None=None):
     if cmd=='build-conapo':
         from revoto_pipeline.ingest.conapo import build_conapo
         print(build_conapo(cfg));return
+    if cmd == 'build-arquetipos':
+        from revoto_pipeline.model.arquetipos import build_arquetipos
+        print('ARQUETIPOS', build_arquetipos(cfg)); return
+    if cmd == 'build-votos-esperados':
+        from revoto_pipeline.model.arquetipos import build_votos_esperados
+        print('VOTOS ESPERADOS', build_votos_esperados(cfg)); return
     if cmd in ('build-db','catalog'):
         if cmd=='catalog':print('AVISO: catalog alias de build-db')
         print(catalog(cfg));return
@@ -106,14 +114,26 @@ def main(argv: list[str] | None=None):
             years=cfg.years if cmd=='run-integrated' else (args.anio,)
             for year in years:
                 print('INEGI SECCIONES',build_contexto_inegi(cfg,estado,year))
+        if cmd == 'build-indicadores':
+            from revoto_pipeline.model.indicadores_municipales import build_indicadores_municipales
+            print('INDICADORES', build_indicadores_municipales(cfg, estado))
         if cmd in ('run-integrated','build-context','build-full-context'):
             print('CONTEXTO MUNICIPAL',build_context(cfg,estado))
         if cmd=='validate': validate(cfg,estado)
-        if cmd in ('run','run-integrated','export-web'):
-            from revoto_pipeline.export.frontend import export_web
-            print('FRONTEND',export_web(cfg,estado,integrado=(cmd=='run-integrated' or args.integrado)))
+    if cmd in ('run','run-integrated') and args.all and cfg.publication.extensiones_l4_aprobadas:
+        # L4 usa los CSV derivados de los marts de esta MISMA corrida;
+        # evita resultados obsoletos del notebook exploratorio.
+        from revoto_pipeline.model.arquetipos import build_arquetipos, build_votos_esperados
+        print('ARQUETIPOS',build_arquetipos(cfg))
+        print('VOTOS ESPERADOS',build_votos_esperados(cfg))
     if cmd in ('run','run-integrated'):
         print('DUCKDB',catalog(cfg))
+    if cmd in ('run','run-integrated','export-web'):
+        from revoto_pipeline.exportar import exportar
+        # No per-state public writes: one complete L4 build, then manifest LAST.
+        # A single-state command is always a diagnostics-only dry run.
+        print('L4',exportar(cfg,choose_states(args),
+                            dry_run=(args.dry_run or not args.all)))
 
 
 if __name__=='__main__':
