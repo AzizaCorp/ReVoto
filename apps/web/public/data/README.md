@@ -1,39 +1,23 @@
 # public/data · Contrato L4 (generado)
 
-**No edites estos archivos a mano.** Hoy los escribe `apps/pipeline/revoto_pipeline/convertir_v2.py` a partir de los JSON *frontend v2* de la rama `feat/US-06-dataset-pipeline`; cuando `exportar.py` (L3 → L4) esté listo, lo sustituye con la misma salida.
+**No edites estos archivos a mano.** Es el contenido de una carpeta de versión que publica el pipeline de US-06 (`apps/pipeline/revoto_pipeline/export/exportar_ine_exploratorio.py`). La forma de cada archivo está en `packages/contracts/schemas/` y `npm run check:data` la valida.
 
 ```text
 public/data/
-├─ manifest.json                  # sin caché: versión vigente + reporte de validación
-└─ <AAAAMMDD-hash7>/              # versión inmutable
-   ├─ nacional.json               # 6 elecciones, edad y sexo (suma de conteos de las 32 entidades)
-   ├─ catalogos/entidades.json    # 32 entidades, nombres INEGI
-   ├─ entidad/<cve>.json          # serie, votos esperados por edad (W-09b) y sus municipios (≤ 300 KB)
-   ├─ municipio/<ent>-<mun>.json  # serie, cvegeo, vecinos (W-04) y arquetipo (W-09) (≤ 20 KB)
-   ├─ calidad.json                # reglas verificadas (W-20)
-   ├─ geo/entidades.topo.json     # 32 entidades (W-02)
-   ├─ geo/<cve>.topo.json         # municipios de la entidad (W-04, ≤ 300 KB)
-   ├─ geo/municipios.topo.json    # todos los municipios del país (W-03, ≤ 650 KB, solo se pide ahí)
-   ├─ mapa/participacion.json     # cvegeo → [nombre, entidad, participación por año] (W-03)
-   └─ csv/participacion.csv       # datos abiertos con conteos (US-22)
+├─ nacional.json                              # 6 elecciones, edad y sexo
+├─ catalogos/entidades.json                   # [{cve, nombre, archivo}] de las 32 entidades
+├─ entidad/<slug>.json                        # serie, votos esperados por edad, perfil y municipios con su `archivo`
+├─ municipio/<slug-entidad>/<cvegeo>_<slug>.json  # serie con edad y sexo, vecinos (id_operativo) y arquetipo
+├─ geo/entidades.topo.json                    # 32 entidades (W-02, W-03)
+├─ geo/<slug>.topo.json                       # municipios de la entidad, por CVEGEO (W-03, W-04)
+├─ manifest.json · calidad.json               # opcionales: versión y reporte de calidad (W-16, W-20)
+└─ csv/participacion.csv                      # opcional: datos abiertos (W-16)
 ```
 
-Regenerar, desde la raíz del repositorio:
+La app encuentra todo desde `catalogos/entidades.json` y el campo `archivo`; nunca arma rutas a mano. La geometría está en WGS84 (lon, lat) y la app la proyecta al dibujarla.
 
-```bash
-mkdir -p /tmp/v2 && git archive feat/US-06-dataset-pipeline apps/web/public/data | tar -x -C /tmp/v2
-PYTHONPATH=apps/pipeline python3 -m revoto_pipeline.convertir_v2 \
-  --v2 /tmp/v2/apps/web/public/data --marco <carpeta con 00mun.shp y 00ent.shp> \
-  --salida apps/web/public/data
-npm run check:data && npm run check:budget
-```
+Estado de esta copia (18/10/2026):
 
-La geometría sale del marco geoestadístico INEGI ya proyectada (Lambert conforme cónica, EPSG:6372, metros): la app la dibuja en SVG sin librería de mapas.
-
-Limitaciones de esta versión:
-
-- Edad y sexo solo a nivel nacional y entidad: el desglose municipal se calcula desde la sección en el pipeline (pendiente).
-- RF-23 pendiente: `cifras_oficiales.csv` no tiene filas, por eso `max_diferencia_pp` es `null`.
-- 10 municipios se cruzaron con INEGI por regla de respaldo; `calidad.json` los lista para verificarlos.
-
-Esquemas: `packages/contracts/schemas/`. Validación en CI: `npm run check:data`.
+- `catalogos/entidades.json` y `geo/entidades.topo.json` se derivaron aquí con la misma forma que escribe el exportador: el catálogo desde las 32 entidades y el mapa desde `00ent.shp` del marco INEGI (mapshaper, `snap`, WGS84, simplificación 1.5 %, cuantización 100 000). Al publicar la siguiente versión completa del pipeline se reemplazan.
+- No hay `manifest.json`, `calidad.json` ni `csv/`: W-20 muestra las verificaciones como pendientes y W-16 deshabilita el CSV.
+- 52 municipios sin CVEGEO (identidad territorial sin resolver) aparecen en su entidad pero su archivo no está publicado; la app no los ofrece para elegir.
