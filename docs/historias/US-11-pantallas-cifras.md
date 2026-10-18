@@ -9,7 +9,7 @@
 | **Responsable** | Angel |
 | **Revisor (D3)** | Kira |
 | **Fecha compromiso** | 18/10/2026 |
-| **Estado** | Not started |
+| **Estado** | In progress |
 | **Ficha en Notion** | [User Story Backlog · US-11](https://app.notion.com/p/3efa4b89591481969af3c9c48f8952fc) |
 
 ## 🎯 Objetivo
@@ -29,7 +29,7 @@
 | Casos de uso | CU-02, CU-03, CU-04 |
 | Entregable | [D09 - Visualizaciones y comparativos del MVP](https://app.notion.com/p/3efa4b89591481e68928d9c13625489a) en la base de Deliverables |
 | Actividad del PVG | 4.3 Pantallas de cifras nacionales y comparativo por estado en la hoja PVG general |
-| Rama de GitHub | `feat/US-11-pantallas-cifras` |
+| Rama de GitHub | `feat/US-11-adaptadores-datos` |
 | Pull request | [liga] |
 | Diseño en Figma | [liga a frames W-02, W-04 a W-07] |
 | Depende de | [US-06 Generar el dataset homologado y agregado del MVP](./US-06-dataset-homologado.md)<br/>[US-09 Construir el motor de secuencia de pantallas](./US-09-motor-secuencia.md) |
@@ -84,8 +84,16 @@ flowchart LR
 - HU-29 es *Should* en el SRS; si se degrada (SRS §10.3), CA de sexo sale de esta historia sin afectar el resto.
 - Texto de apoyo sin juicio sobre grupos de edad (HU-01 CA-03, RNF-15).
 
+### Avance al 18/10/2026
+
+- Contrato L4 extendido y publicado (versión `20261013-0e071d3`, generada con `convertir_v2.py`). Ver DIS v0.4 §5 y ADR-0005.
+- Adaptadores `infrastructure/static-json` (`JsonTurnoutRepository`, `JsonGeographyRepository`, `JsonQualityRepository`, `JsonOpenDataRepository`) y casos de uso `getTerritoryStory`, `compareTerritory`, `municipalityInsights`, `getQualityReport`.
+- Todas las pantallas leen datos reales; verificado en navegador y con pruebas `realData` (204 pruebas en verde).
+- W-04 usa los vecinos del mismo estado calculados de la geometría INEGI; la vista nacional de W-04 muestra un aviso en lugar de mapa (pendiente).
+
 ---
 
 | # | Autor | Modificación | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel | Creación del archivo a partir del User Story Backlog de Notion y SRS-01 | 06/10/2026 |
+| 2 | Angel | Avance de implementación, rama y pendientes | 18/10/2026 |

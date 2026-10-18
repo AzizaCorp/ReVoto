@@ -9,7 +9,7 @@
 | **Responsable** | Angel |
 | **Revisor (D3)** | Kira |
 | **Fecha compromiso** | 19/10/2026 |
-| **Estado** | Not started |
+| **Estado** | In progress |
 | **Ficha en Notion** | [User Story Backlog · US-12](https://app.notion.com/p/3efa4b89591481219636dc0d83087dc3) |
 
 ## 🎯 Objetivo
@@ -29,7 +29,7 @@
 | Casos de uso | CU-05 |
 | Entregable | [D09 - Visualizaciones y comparativos del MVP](https://app.notion.com/p/3efa4b89591481e68928d9c13625489a) en la base de Deliverables |
 | Actividad del PVG | 4.4 Arquetipo cívico por zona y sección de fuentes en la hoja PVG general |
-| Rama de GitHub | `feat/US-12-arquetipo-ficha-fuente` |
+| Rama de GitHub | `feat/US-11-adaptadores-datos` |
 | Pull request | [liga] |
 | Diseño en Figma | [liga a frames W-09 y W-11] |
 | Depende de | [US-07 Publicar el diccionario de datos y las fuentes citadas](./US-07-diccionario-datos.md)<br/>[US-11 Implementar las pantallas de cifras y comparativos](./US-11-pantallas-cifras.md) |
@@ -82,8 +82,15 @@ flowchart LR
 - AP-05 (catálogo de arquetipos y umbrales, 17/10) es dependencia DoR R4.
 - Por SRS, HU-18 pertenece a la épica E-08 Transparencia; aquí está en E-03.
 
+### Avance al 18/10/2026
+
+- El arquetipo de cada municipio sale de `apps/pipeline/insumos/arquetipos_municipales.csv` y viaja en `municipio/<ent>-<mun>.json`; es `null` con menos de 5 elecciones o si el municipio está suprimido (RN-05).
+- Solo usa participación y variación histórica (RN-07).
+- Pendiente: revisar el texto de W-11 (ficha de fuente) contra RN-10.
+
 ---
 
 | # | Autor | Modificación | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel | Creación del archivo a partir del User Story Backlog de Notion y SRS-01 | 06/10/2026 |
+| 2 | Angel | Avance de implementación, rama y pendientes | 18/10/2026 |

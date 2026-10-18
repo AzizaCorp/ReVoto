@@ -9,7 +9,7 @@
 | **Responsable** | Kira |
 | **Revisor (D3)** | Angel |
 | **Fecha compromiso** | 21/10/2026 |
-| **Estado** | Not started |
+| **Estado** | In progress |
 | **Ficha en Notion** | [User Story Backlog · US-15](https://app.notion.com/p/3efa4b8959148161aff9d52c709d0972) |
 
 ## 🎯 Objetivo
@@ -29,7 +29,7 @@
 | Casos de uso | CU-08 |
 | Entregable | [D11 - Accesibilidad y lectura sencilla](https://app.notion.com/p/3efa4b895914818785cdc574887505af) en la base de Deliverables |
 | Actividad del PVG | 4.6 Modo lectura fácil, accesibilidad y versión ligera en la hoja PVG general |
-| Rama de GitHub | `feat/US-15-accesibilidad-version-ligera` |
+| Rama de GitHub | `feat/US-09-motor-secuencia` y `feat/US-11-adaptadores-datos` |
 | Pull request | [liga] |
 | Diseño en Figma | [liga a frames W-13, W-14, W-15] |
 | Depende de | [US-09 Construir el motor de secuencia de pantallas](./US-09-motor-secuencia.md)<br/>[US-13 Definir el sistema visual y las plantillas compartibles](./US-13-sistema-visual.md) |
@@ -83,8 +83,16 @@ flowchart LR
 - HU-14 CA-03 (anuncio del cambio de pantalla con región viva) no está en la lista de CA de esta US: agregarlo o probarlo en US-16.
 - HU-11 es *Should* en el SRS y aquí queda dentro de una US *Must* (CA-06).
 
+### Avance al 18/10/2026
+
+- Versión ligera W-15 completa por pantalla (commit `0eebab6`).
+- Mapas de W-02, W-03 y W-04 dibujados en SVG desde TopoJSON proyectado; el tooltip es `aria-hidden` y la cifra va en texto accesible. Ver ADR-0004.
+- Peso inicial medido en build: 398.3 KB de 500 KB (CA-05, por confirmar en DevTools con 3G rápido). El mapa municipal nacional (559 KB, 152 KB con gzip) solo se pide en W-03 y no entra en la versión ligera.
+- CA-01 a CA-04 y CA-06 pendientes de verificar en US-16.
+
 ---
 
 | # | Autor | Modificación | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel | Creación del archivo a partir del User Story Backlog de Notion y SRS-01 | 06/10/2026 |
+| 2 | Angel | Avance de implementación, rama y pendientes | 18/10/2026 |
