@@ -3,12 +3,7 @@
   "$id": "geo.schema.json",
   "title": "Geometría TopoJSON proyectada (Lambert conforme cónica, metros): geo/entidades, geo/<cve> y geo/municipios",
   "type": "object",
-  "required": [
-    "type",
-    "arcs",
-    "objects",
-    "transform"
-  ],
+  "required": ["type", "arcs", "objects", "transform"],
   "properties": {
     "type": {
       "const": "Topology"
@@ -18,10 +13,7 @@
     },
     "transform": {
       "type": "object",
-      "required": [
-        "scale",
-        "translate"
-      ],
+      "required": ["scale", "translate"],
       "properties": {
         "scale": {
           "type": "array",
@@ -44,18 +36,13 @@
       "maxProperties": 1,
       "additionalProperties": {
         "type": "object",
-        "required": [
-          "type",
-          "geometries"
-        ],
+        "required": ["type", "geometries"],
         "properties": {
           "geometries": {
             "type": "array",
             "items": {
               "type": "object",
-              "required": [
-                "properties"
-              ],
+              "required": ["properties"],
               "properties": {
                 "properties": {
                   "type": "object",

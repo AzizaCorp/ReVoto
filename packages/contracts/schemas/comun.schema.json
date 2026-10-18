@@ -9,28 +9,14 @@
       "maximum": 1
     },
     "anio": {
-      "enum": [
-        2009,
-        2012,
-        2015,
-        2018,
-        2021,
-        2024
-      ]
+      "enum": [2009, 2012, 2015, 2018, 2021, 2024]
     },
     "territorio": {
       "type": "object",
-      "required": [
-        "nivel",
-        "nombre"
-      ],
+      "required": ["nivel", "nombre"],
       "properties": {
         "nivel": {
-          "enum": [
-            "nacional",
-            "entidad",
-            "municipio"
-          ]
+          "enum": ["nacional", "entidad", "municipio"]
         },
         "cve": {
           "type": "integer",
@@ -55,23 +41,13 @@
     },
     "cifrasEleccion": {
       "type": "object",
-      "required": [
-        "anio",
-        "tipo",
-        "participacion",
-        "lista_nominal",
-        "por_edad",
-        "por_sexo"
-      ],
+      "required": ["anio", "tipo", "participacion", "lista_nominal", "por_edad", "por_sexo"],
       "properties": {
         "anio": {
           "$ref": "#/$defs/anio"
         },
         "tipo": {
-          "enum": [
-            "presidencial",
-            "intermedia"
-          ]
+          "enum": ["presidencial", "intermedia"]
         },
         "participacion": {
           "$ref": "#/$defs/proporcion"
@@ -83,13 +59,7 @@
         "por_edad": {
           "type": "object",
           "propertyNames": {
-            "enum": [
-              "18-24",
-              "25-34",
-              "35-44",
-              "45-59",
-              "60+"
-            ]
+            "enum": ["18-24", "25-34", "35-44", "45-59", "60+"]
           },
           "additionalProperties": {
             "$ref": "#/$defs/proporcion"
@@ -98,10 +68,7 @@
         "por_sexo": {
           "type": "object",
           "propertyNames": {
-            "enum": [
-              "H",
-              "M"
-            ]
+            "enum": ["H", "M"]
           },
           "additionalProperties": {
             "$ref": "#/$defs/proporcion"
@@ -116,13 +83,7 @@
       "description": "Clave geoestadística INEGI del municipio. No coincide siempre con la clave INE."
     },
     "grupoEdad": {
-      "enum": [
-        "18-24",
-        "25-34",
-        "35-44",
-        "45-59",
-        "60+"
-      ]
+      "enum": ["18-24", "25-34", "35-44", "45-59", "60+"]
     }
   }
 }

@@ -3,11 +3,7 @@
   "$id": "mapa.schema.json",
   "title": "W-03: participación de cada municipio del país (mapa/participacion.json)",
   "type": "object",
-  "required": [
-    "fuente",
-    "anios",
-    "municipios"
-  ],
+  "required": ["fuente", "anios", "municipios"],
   "properties": {
     "fuente": {
       "type": "string",

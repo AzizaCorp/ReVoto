@@ -40,10 +40,10 @@ for (const archivo of listar(datos).filter((f) => f.endsWith('.json'))) {
   const limite = rel.endsWith('/geo/municipios.topo.json')
     ? presupuesto.mapa_nacional_kb
     : rel.includes('/entidad/') || rel.includes('/geo/') || rel.includes('/mapa/')
-    ? presupuesto.entidad_kb
-    : rel.includes('/municipio/')
-      ? presupuesto.municipio_kb
-      : null;
+      ? presupuesto.entidad_kb
+      : rel.includes('/municipio/')
+        ? presupuesto.municipio_kb
+        : null;
   if (limite !== null && tam > limite * KB) {
     errores.push(`${rel}: ${(tam / KB).toFixed(1)} KB excede ${limite} KB (RNF-04)`);
   }

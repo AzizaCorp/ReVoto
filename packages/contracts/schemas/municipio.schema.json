@@ -2,12 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "municipio.schema.json",
   "type": "object",
-  "required": [
-    "territorio",
-    "fuente",
-    "suprimido",
-    "elecciones"
-  ],
+  "required": ["territorio", "fuente", "suprimido", "elecciones"],
   "properties": {
     "territorio": {
       "$ref": "comun.schema.json#/$defs/territorio"
@@ -52,13 +47,7 @@
       ],
       "properties": {
         "id": {
-          "enum": [
-            "A1",
-            "A2",
-            "A3",
-            "A4",
-            "A5"
-          ]
+          "enum": ["A1", "A2", "A3", "A4", "A5"]
         },
         "nombre": {
           "type": "string",
@@ -83,12 +72,7 @@
           "maximum": 1
         },
         "rasgo": {
-          "enum": [
-            "nivel",
-            "efp",
-            "tend",
-            "vol"
-          ]
+          "enum": ["nivel", "efp", "tend", "vol"]
         }
       },
       "additionalProperties": false
