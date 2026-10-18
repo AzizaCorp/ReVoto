@@ -1,6 +1,6 @@
 # ADR-0004 · Mapas proyectados en el pipeline y dibujados en SVG sin librería
 
-- **Estado:** Propuesta (resuelve D-04 de DIS-REVOTO-ARQUITECTURA-DESPLIEGUE)
+- **Estado:** Reemplazada parcialmente (ver «Actualización»)
 - **Fecha:** 18/10/2026
 - **Decisores:** Angel (Architecture owner)
 
@@ -28,3 +28,7 @@ W-02 (entidades), W-03 (país por municipio) y W-04 (municipios de la entidad) n
 - La app inicial queda en 398.3 KB de 500 KB.
 - Cambiar la proyección o la simplificación es un cambio del pipeline, no de la app.
 - Los mapas son decorativos para lectores de pantalla: la cifra siempre aparece en texto (RNF-07, RN-10).
+
+## Actualización (18/10/2026)
+
+Al adoptar el contrato de US-06, la geometría llega en **WGS84 (lon, lat)**, un TopoJSON por entidad (`geo/<slug>.topo.json`, áreas por CVEGEO) y `geo/entidades.topo.json`. La app la proyecta al dibujarla (equirrectangular con x · cos 23.5°, `infrastructure/static-json/topology.ts`) y sigue sin librería de mapas. No hay mapa municipal nacional: W-03 muestra las 32 entidades y, al tocar una, sus municipios. `mapa_nacional_kb` deja de usarse.

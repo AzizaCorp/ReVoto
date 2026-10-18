@@ -22,7 +22,7 @@ Lee antes `docs/adr/0003-ddd-en-la-app-web.md` y `apps/web/AGENTS.md`. Trabaja *
 ## 3. Adaptador · `apps/web/src/infrastructure/static-json/`
 
 - Implementa el método nuevo del puerto en el `Json*Repository` correspondiente.
-- Si el JSON cambia, actualiza **en el mismo PR**: `packages/contracts/src/l4.ts`, `packages/contracts/schemas/`, `mappers.ts` y el productor del L4 (hoy `apps/pipeline/revoto_pipeline/convertir_v2.py`, ADR-0005; después `exportar.py`).
+- Si el JSON cambia, actualiza **en el mismo PR**: `packages/contracts/src/l4.ts`, `packages/contracts/schemas/`, `mappers.ts` y el exportador del pipeline (`apps/pipeline/revoto_pipeline/export/`).
 - Los DTO se traducen a dominio en `mappers.ts` y no salen de esta capa.
 - Prueba con un `fetch` falso (ver `JsonTurnoutRepository.test.ts`).
 

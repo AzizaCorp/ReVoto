@@ -1,6 +1,6 @@
 # ADR-0005 · Puente transitorio v2 → L4 y CVEGEO como clave de cruce INE/INEGI
 
-- **Estado:** Propuesta (transitoria hasta que `exportar.py` produzca el L4)
+- **Estado:** Reemplazada (18/10/2026, contrato de US-06)
 - **Fecha:** 18/10/2026
 - **Decisores:** Angel (Architecture owner), Kira (Responsable de datos)
 
@@ -29,3 +29,7 @@ Además, las claves municipales del INE y del INEGI **no coinciden en 1 372 de 2
 - Desglose de edad y sexo solo a nivel nacional y entidad hasta que el pipeline lo calcule por municipio.
 - Los 10 cruces de respaldo son un riesgo de dato equivocado en el mapa; se verifican antes de promover a `staging`.
 - Pruebas: `apps/pipeline/tests/test_convertir_v2.py`; validación con `npm run check:data` y `npm run check:budget`.
+
+## Actualización (18/10/2026) · Reemplazada
+
+El contrato L4 oficial es el del pipeline de US-06 (`packages/contracts/schemas`, commit `af22fc1`). `convertir_v2.py`, sus insumos y su prueba se retiraron. La identidad de un municipio es su `id_operativo` (en la app, `Territory.key`); `cvegeo` solo sirve para unir con la geometría y los vecinos se expresan como `id_operativo`.

@@ -329,6 +329,8 @@ La corrida completa sobre 54.8 M filas debe tardar minutos en una laptop con 16 
 
 ### 4.7 Puente transitorio v2 → L4 (ADR-0005)
 
+> ⚠️ **Retirado el 18/10/2026.** El contrato L4 oficial es el que publica el pipeline de US-06 (`packages/contracts/AGENTS.md`); esta sección queda como registro histórico.
+
 Mientras `exportar.py` no esté listo, el L4 lo escribe `revoto_pipeline/convertir_v2.py` a partir de los JSON *frontend v2* de la rama `feat/US-06-dataset-pipeline`.
 
 ```mermaid
