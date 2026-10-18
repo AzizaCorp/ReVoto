@@ -3,6 +3,9 @@ import type { ManifiestoDto } from '@revoto/contracts';
 
 type Fetch = typeof fetch;
 
+const isAppShell = (response: Response) =>
+  (response.headers.get('content-type') ?? '').includes('text/html');
+
 /**
  * Reads the static JSON files of the L4 contract published under /data (packages/contracts).
  * /data holds the contents of one pipeline version folder, so every path is relative to it and
@@ -50,7 +53,7 @@ export class JsonClient {
   async exists(path: string): Promise<boolean> {
     try {
       const response = await this.fetcher(this.url(path), { method: 'HEAD', cache: 'no-cache' });
-      return response.ok;
+      return response.ok && !isAppShell(response);
     } catch {
       return false;
     }
@@ -72,7 +75,9 @@ export class JsonClient {
     } catch {
       throw new DataUnavailable(url, 'network');
     }
-    if (!response.ok) throw new DataUnavailable(url, 'not-found');
+    // A missing file can come back as the app's index.html with 200: the Vite dev server and the
+    // Vercel rewrite of «/(.*)» both fall back to the SPA. That is a missing file, not bad data.
+    if (!response.ok || isAppShell(response)) throw new DataUnavailable(url, 'not-found');
     try {
       return (await response.json()) as T;
     } catch {

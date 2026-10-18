@@ -107,4 +107,16 @@ describe('JsonTurnoutRepository', () => {
     );
     await expect(empty.states()).rejects.toBeInstanceOf(DataUnavailable);
   });
+
+  it('treats the SPA fallback (index.html with 200) as a missing optional file', async () => {
+    const spa = new JsonClient(
+      '/data',
+      (async () =>
+        new Response('<!doctype html>', {
+          headers: { 'content-type': 'text/html' },
+        })) as typeof fetch,
+    );
+    await expect(spa.currentVersion()).resolves.toBeNull();
+    await expect(spa.exists('csv/participacion.csv')).resolves.toBe(false);
+  });
 });
