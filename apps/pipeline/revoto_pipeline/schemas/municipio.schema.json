@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "municipio.schema.json",
+  "type": "object", "required": ["territorio", "fuente", "suprimido", "elecciones"],
+  "properties": {
+    "territorio": { "$ref": "comun.schema.json#/$defs/territorio" },
+    "fuente": { "type": "string", "minLength": 1 },
+    "suprimido": { "type": "boolean" },
+    "identidad_verificada": { "type": "boolean" },
+    "advertencia": { "type": "string" },
+    "elecciones": { "type": "array", "items": { "$ref": "comun.schema.json#/$defs/cifrasEleccion" } },
+    "vecinos": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "arquetipo": { "$ref": "comun.schema.json#/$defs/arquetipo" }
+  },
+  "allOf": [{
+    "if": { "properties": { "suprimido": { "const": true } }, "required": ["suprimido"] },
+    "then": { "properties": { "elecciones": { "items": { "not": { "required": ["participacion"] } } } } }
+  }],
+  "additionalProperties": false
+}
