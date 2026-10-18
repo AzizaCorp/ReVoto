@@ -57,51 +57,19 @@ def _unique(rows: list[dict], keys: tuple[str, ...], label: str) -> None:
         seen.add(key)
 
 
+from revoto_pipeline.export.metricas import status as _status_l4, fraction as _fraction_l4, election as _election_l4
+
 def _rate(row: dict, threshold: int) -> float | None:
-    ln, sv, ns = (row.get(col) for col in ('LN', 'SV', 'NS'))
-    if ln is None or sv is None or ns is None:
-        return None
-    if ln < threshold or ln <= ns:
-        return None
-    rate = sv / (ln - ns)
-    if not 0 <= rate <= 1:
-        raise ValueError(f'Tasa electoral fuera de rango en {row}: {rate}')
-    return round(rate, 3)
+    try:
+        return _fraction_l4(row, threshold)
+    except ValueError as exc:
+        raise ValueError(f'Tasa fuera de rango o conteos inválidos: {exc}') from exc
 
-
-
-# CAMBIO: clasificación POR AÑO sin convertir 0/0 en 0% ni suprimir otras elecciones.
 def _period_status(row: dict | None, threshold: int) -> str:
-    if row is None or row.get('LN') is None:
-        return 'no_data'
-    if row.get('NS') is not None and row['LN'] < row['NS']:
-        raise ValueError(f'Conteo inválido LN < NS en elección municipal: {row}')
-    if (row.get('SV') is not None and row.get('NS') is not None
-            and row['SV'] > row['LN']-row['NS']):
-        raise ValueError(f'Conteo electoral imposible SV > LN-NS: {row}')
-    if row['LN'] < threshold:
-        return 'suppressed'
-    if row.get('NS') is None or row.get('SV') is None:
-        return 'unavailable'
-    if row['LN'] == row['NS']:
-        return 'rate_undefined'
-    return 'available'
+    return _status_l4(row, threshold)
 
-
-def _election(row: dict, year: int, threshold: int,
-              ages: dict, sexes: dict) -> dict:
-    participacion = _rate(row, threshold)
-    if participacion is None:
-        raise ValueError(f'Elección no publicable L4: {year} {row}')
-    return {
-        'anio': year,
-        'tipo': 'presidencial' if year in YEARS_PRESIDENCIALES else 'intermedia',
-        'participacion': participacion,
-        'lista_nominal': int(row['LN']),
-        'por_edad': {k: r for k, v in ages.items() if (r := _rate(v, threshold)) is not None},
-        'por_sexo': {k: r for k, v in sexes.items() if (r := _rate(v, threshold)) is not None},
-    }
-
+def _election(row: dict, year: int, threshold: int, ages: dict, sexes: dict) -> dict:
+    return _election_l4(year, row, threshold, ages, sexes, include_unavailable=False)
 
 def _aggregated_demographics(con, cfg: Settings, edo: int, year: int):
     """Generate municipality-level demographic metrics from canonical WITHOUT new Parquets.
@@ -145,8 +113,6 @@ def _normalize_name(value: object) -> str:
                    if not unicodedata.combining(char)).casefold()
 
 
-# CAMBIO: equivalencia legal versionada de la entidad 09, sin alterar EDONOM en canonical.
-# Reforma constitucional publicada en DOF el 29-01-2016.
 _STATE_NAMES = {9: {'distrito federal': 'Ciudad de México',
                     'ciudad de mexico': 'Ciudad de México'}}
 
@@ -240,7 +206,6 @@ def _named_geojson(payload: dict, edo: int, nivel: str, state_name: str,
                         'uso':'ubicacion_cartografica; no equivale a limites historicos electorales'}}
 
 
-## !GRANDE: reducir GeoJSON L4 con simplificación conjunta de cobertura, sin relajar RNF-04.
 def _geojson_within_budget(payload: dict, limit_bytes: int, initial_tolerance: float = 0.002) -> bytes:
     """Fit a FeatureCollection within the existing per-state geometry budget.
 
@@ -269,8 +234,6 @@ def _geojson_within_budget(payload: dict, limit_bytes: int, initial_tolerance: f
            for g in original):
         raise ValueError('GeoJSON de origen contiene geometrías inválidas')
 
-    # CAMBIO: se permite únicamente la tolerancia publicada en la configuración
-    # y valores crecientes dentro del tope geográfico existente (0.05 grados).
     tolerances = sorted({initial_tolerance, .003, .005, .008, .012, .02, .035, .05})
     for tolerance in tolerances:
         if tolerance < initial_tolerance or tolerance == 0:
@@ -316,7 +279,6 @@ def _budget(stage: Path, cfg: Settings) -> None:
             raise ValueError(f'RNF-04 excedido: {resource}: {resource.stat().st_size} bytes')
 
 
-## !GRANDE: hashing portable para fuentes de datos y código fuera del root temporal.
 def _version(cfg: Settings, sources: list[Path]) -> str:
     root = cfg.root.resolve()
 
@@ -324,8 +286,6 @@ def _version(cfg: Settings, sources: list[Path]) -> str:
         resolved = path.resolve()
         if resolved.is_relative_to(root):
             return resolved.relative_to(root).as_posix()
-        # CAMBIO: código y schemas pueden estar fuera de cfg.root en pruebas aisladas.
-        # Conservamos la ruta lógica del repositorio, no la ruta absoluta del equipo.
         parts = resolved.parts
         for anchor in ('revoto_pipeline', 'packages'):
             if anchor in parts:
@@ -433,9 +393,8 @@ def export_web(cfg: Settings, estados: int | list[int] | tuple[int, ...],
         municipality_series = defaultdict(list)
         municipality_status = defaultdict(dict)
         municipality_summary = defaultdict(dict)
-        trace_rows = []  # CAMBIO: lineage reproducible por año y clave INE original.
+        trace_rows = [] 
         names = {}
-        # CAMBIO: toda equivalencia usada para publicar debe estar revisada.
         mapping_path = cfg.path('mapping_municipal_historico')
         inputs.append(mapping_path)
         national_elections = {}
@@ -465,8 +424,6 @@ def export_web(cfg: Settings, estados: int | list[int] | tuple[int, ...],
                 state_name = _canonical_state_name(edo, historical_state_name)
                 if edo in names and _normalize_name(names[edo][0]) != _normalize_name(state_name):
                     raise ValueError(f'Nombre estatal incompatible entre años para {edo:02}; revisar equivalencia')
-                ## !GRANDE: resolver claves INE sólo EN SU ELECCIÓN; construir nombres
-                # públicos con CVEGEO canónico, nunca con MPIOCVE histórico.
                 origin = {(year,edo,m):n for m,n in mnames.items()}
                 identity = require_identities(mapping_path, origin)
                 public_names = {int(i.cvegeo[2:]):i.name for i in identity.values()}
@@ -512,7 +469,6 @@ def export_web(cfg: Settings, estados: int | list[int] | tuple[int, ...],
                     mun = int(mr['MPIOCVE'])
                     if mun not in mnames:
                         raise ValueError(f'Mart municipal sin nombre INE: {edo:02}-{mun:03}/{year}')
-                    # CAMBIO: los marts siguen usando MPIOCVE; sólo la serie usa identidad estable.
                     stable = int(identity[(year,edo,mun)].cvegeo[2:])
                     key = (edo, stable)
                     status = _period_status(mr, cfg.umbral_rn05)
@@ -568,8 +524,6 @@ def export_web(cfg: Settings, estados: int | list[int] | tuple[int, ...],
                 _write(staged, 'nacional.json', national, 'nacional')
                 catalog = [{'cve':s,'nombre':names[s][0]} for s in states]
                 _write(staged, 'catalogos/entidades.json', catalog, 'catalogo_entidades')
-            # CAMBIO: trazabilidad auditable de cada municipio publicado a sus
-            # claves originales, sin añadir campos incompatibles al DTO municipal.
             trace = staged/'validacion'/'trazabilidad_municipios.csv'
             trace.parent.mkdir(parents=True, exist_ok=True)
             with trace.open('w', encoding='utf-8-sig', newline='') as handle:
@@ -579,8 +533,6 @@ def export_web(cfg: Settings, estados: int | list[int] | tuple[int, ...],
                     'referencia'])
                 writer.writeheader()
                 writer.writerows(sorted(trace_rows, key=lambda r:(r['cvegeo_canonico'],r['anio_eleccion'])))
-            # CAMBIO: recurso adicional compatible con DTO actuales; el frontend
-            # debe consumirlo expresamente para diferenciar ausencia, RN-05 y 0/0.
             status_dest = staged/'catalogos'/'estatus-periodos-municipales.json'
             status_dest.parent.mkdir(parents=True, exist_ok=True)
             status_dest.write_text(json.dumps({
@@ -603,8 +555,6 @@ def export_web(cfg: Settings, estados: int | list[int] | tuple[int, ...],
                         relative = Path('geometria')/geo_dest/f'{geo_state:02}.geojson'
                         target = staged/relative
                         target.parent.mkdir(parents=True,exist_ok=True)
-                        # CAMBIO: conservar RNF-04 y simplificar cobertura municipal conjunta
-                        # en la publicación; nunca modificar cartografía staging.
                         budget_cfg = json.loads((cfg.root/'budget.json').read_text(encoding='utf-8'))
                         limit_bytes = int(budget_cfg['entidad_kb']) * 1024
                         tolerance = float(cfg.geo.get('geojson_simplify_degrees', 0.002))

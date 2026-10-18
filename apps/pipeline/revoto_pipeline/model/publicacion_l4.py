@@ -65,7 +65,6 @@ def _municipal_inegi_five(value: object, label: str) -> str:
     return code
 
 
-## !GRANDE: antiguo accessor L4 consulta ahora la tabla histórica versionada.
 def municipal_cvegeo(cfg: Settings, states: tuple[int, ...], *,
                      include_years: bool = False, by_year: bool = False):
     """Retiene API previa pero NO consulta mappings INEGI→INE inseguros."""

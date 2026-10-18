@@ -21,13 +21,10 @@ def save(path, obj):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(obj,ensure_ascii=False,allow_nan=False,separators=(',',':')),encoding='utf-8')
 
+# CAMBIO: alias legacy conservado, sin segunda implementación matemática.
 def election(year, vals, threshold):
-    ln,sv,nv,ns=map(int,vals)
-    if ln < threshold:
-        return {'anio':year,'publication_status':'suppressed','participacion_pct':None}
-    if ln <= ns:
-        return {'anio':year,'publication_status':'rate_undefined','LN':ln,'SV':sv,'NV':nv,'NS':ns,'participacion_pct':None}
-    return {'anio':year,'publication_status':'available','LN':ln,'SV':sv,'NV':nv,'NS':ns,'participacion_pct':round(100*sv/(ln-ns),7)}
+    from revoto_pipeline.export.metricas import election as shared
+    return shared(year, vals, threshold)
 
 def standard_name(value):
     """Comparison only; never replaces historic source names."""
@@ -75,46 +72,24 @@ def validate_identity_label(record, year, state, municipality):
     return name
 
 
-# !GRANDE: contrato electoral L4 exploratorio. No modifica el L4 estricto.
 import hashlib
 import shutil
 from datetime import datetime, timezone
 
-SOURCE = 'INE · Conteos Censales de Participación Ciudadana'
+SOURCE = 'INE · CCPC'
 AGES = ('18-24', '25-34', '35-44', '45-59', '60+')
 PRESIDENTIAL = {2012, 2018, 2024}
 
 
-def rate(values, threshold):
-    ln, sv, nv, ns = (int(x) for x in values)
-    if any(x < 0 for x in (ln, sv, nv, ns)) or ns > ln or sv > ln - ns:
-        raise ValueError(f'Conteos electorales incompatibles: {values}')
-    if ln < threshold:
-        return 'suppressed', None
-    if ln == ns:
-        return 'rate_undefined', None
-    return 'available', round(sv / (ln - ns), 3)
+## !GRANDE: reutilizar la aritmética única L4 sin derivar tasas desde porcentajes.
+from revoto_pipeline.export.metricas import status as _status, fraction as _fraction, election as _election_shared
 
+
+def rate(values, threshold):
+    return _status(values, threshold), _fraction(values, threshold)
 
 def election_l4(year, vals, threshold, ages=None, sexes=None):
-    status, fraction = rate(vals, threshold)
-    result = {'anio': year, 'tipo': 'presidencial' if year in PRESIDENTIAL else 'intermedia'}
-    if status == 'suppressed':
-        result['suprimido'] = True
-        return result
-    result['suprimido'] = False
-    result['lista_nominal'] = int(vals[0])
-    if status != 'available':
-        result['estado_tasa'] = status
-        return result
-    result['participacion'] = fraction
-    if ages is not None:
-        result['por_edad'] = {k: r for k in AGES if k in ages
-                              if (r := rate(ages[k], threshold)[1]) is not None}
-    if sexes is not None:
-        result['por_sexo'] = {k: r for k in ('H', 'M') if k in sexes
-                              if (r := rate(sexes[k], threshold)[1]) is not None}
-    return result
+    return _election_shared(year, vals, threshold, ages, sexes)
 
 
 def read_groups(con, root, grain, state, year, threshold):
@@ -166,7 +141,6 @@ def unique_municipal_path(dirname, stem, uid, occupied):
         raise ValueError(f'Colisión de nombre incluso con identificador: {candidate}')
     return candidate
 
-# !GRANDE: enriquecimiento opcional desde salidas verificadas del pipeline.
 ARCHETYPES = {'Siempre presente':'A1','En ascenso':'A2','Bajando el ritmo':'A3','De elección grande':'A4','Montaña rusa':'A5'}
 
 def find_input(root, explicit, configured):
@@ -251,13 +225,41 @@ def write_named_alias(staged, path, obj):
 def main():
     parser = argparse.ArgumentParser(description='Exportador nacional exploratorio INE-prioritario')
     parser.add_argument('--root', type=Path, default=None)
+    
+    parser.add_argument('--log-file', type=Path, default=None,
+                        help='Archivo de log independiente del staging temporal')
     parser.add_argument('--umbral', type=int, default=50)
     parser.add_argument('--permitir-particiones-faltantes', action='store_true')
     parser.add_argument('--arquetipos', type=Path, default=None, help='CSV arquetipos_municipales.csv')
     parser.add_argument('--esperados', type=Path, default=None, help='CSV esperado_por_entidad_edad.csv')
+    parser.add_argument('--topo-quantization',type=int,default=100000)
+    parser.add_argument('--topo-max-error-m',type=float,default=6500.0)
+    parser.add_argument('--topo-budget-kb',type=int,default=300)
+    parser.add_argument('--aceptar-candidatos',  action='store_true', help=(
+        'Promueve candidatos CVEGEO inequívocos a identidad territorial '
+        'aceptada para esta publicación exploratoria.'))
     args = parser.parse_args()
     import duckdb
     root = (args.root or Path(__file__).resolve().parents[4]).resolve()
+    import time
+    from datetime import datetime, timezone
+    log_path = (args.log_file or (root/'data/logs'/'exportar_ine_exploratorio.log')).resolve()
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    run_started = time.monotonic()
+    geo_started = None
+    def log(stage, message, done=None, total=None):
+        elapsed = time.monotonic() - run_started
+        estimate = ''
+        if done is not None and total and done > 0 and geo_started is not None:
+            elapsed_geo = time.monotonic() - geo_started
+            # ETA orientativa: los estados son heterogéneos (Oaxaca no cuesta igual que otros).
+            remaining = elapsed_geo / done * (total - done)
+            estimate = f' | {done}/{total} | ETA orientativa: {remaining/60:.1f} min'
+        line = f'[{datetime.now().astimezone().isoformat(timespec="seconds")}] [{stage}] {message} | elapsed={elapsed/60:.1f} min{estimate}'
+        print(line, flush=True)
+        with log_path.open('a', encoding='utf-8') as handle:
+            handle.write(line + '\n')
+    log('INICIO', f'Exportador exploratorio; log={log_path}')
     mp = root / 'data/mappings/municipios_operativo_ine_primero.csv'
     if not mp.is_file():
         raise FileNotFoundError(f'Falta el mapping exploratorio: {mp}')
@@ -285,6 +287,7 @@ def main():
     total_national = defaultdict(lambda: [0, 0, 0, 0])
     national_age = defaultdict(lambda: defaultdict(lambda: [0, 0, 0, 0]))
     national_sex = defaultdict(lambda: defaultdict(lambda: [0, 0, 0, 0]))
+    observed_states = defaultdict(set)
     states = {}; traces = []; missing = []
     filenames = {}
     path_collisions = []
@@ -293,6 +296,7 @@ def main():
         for j, v in enumerate(values):
             dst[j] += int(v)
     try:
+        log('INE', 'Procesando las 192 particiones municipales del INE')
         with duckdb.connect(':memory:') as con:
             for state in range(1, 33):
                 for year in YEARS:
@@ -335,6 +339,7 @@ def main():
                             'MPIONOM_original':name, 'identificador_operativo':uid,
                             'cvegeo_candidato':identity.get('cvegeo_candidato', ''),
                             'confianza':identity.get('confianza', '')})
+                    observed_states[year].add(state)
                     state_elections[state].append(election_l4(year, state_total, args.umbral,
                                                              age_s.get(None, {}), sex_s.get(None, {})))
                     sum_into(total_national[year], state_total)
@@ -352,20 +357,42 @@ def main():
                 slug = filename_slug(name)
                 origin = data['origin_codes'][max(data['origin_codes'])]
                 mapping = data['mapping'][max(data['mapping'])]
-                verified = all(r.get('equivalencia_verificada', '').lower() == 'si' for r in data['mapping'].values())
-                candidate = str(mapping.get('cvegeo_candidato', '')).strip()
-                # Numeric CVEGEO only when verified, never from an inferred candidate.
-                cvegeo = candidate if verified and len(candidate) == 5 and candidate.isdigit() else None
+                verified = all(r.get('equivalencia_verificada', '').strip().lower() == 'si'
+                               for r in data['mapping'].values())
+                resolution_states = {str(r.get('estado_resolucion', '')).strip() for r in data['mapping'].values()} - {''}
+                if len(resolution_states) == 1:
+                    resolution = next(iter(resolution_states))
+                elif 'ambiguo' in resolution_states:
+                    resolution = 'ambiguo'
+                elif 'sin_resolver' in resolution_states:
+                    resolution = 'sin_resolver'
+                else:
+                    resolution = 'candidato_inequivoco'
+                proposed_codes = {str(r.get('cvegeo_candidato', '')).strip()
+                                  for r in data['mapping'].values() if str(r.get('cvegeo_candidato', '')).strip()}
+                if len(proposed_codes) > 1:
+                    raise ValueError(f'Identidad operativa con candidatos CVEGEO inconsistentes: {state}/{uid}: {sorted(proposed_codes)}')
+                candidate_cvegeo = next(iter(proposed_codes), None)
+                if candidate_cvegeo and (len(candidate_cvegeo) != 5 or not candidate_cvegeo.isascii()
+                        or not candidate_cvegeo.isdigit() or int(candidate_cvegeo[:2]) != state):
+                    raise ValueError(f'CVEGEO candidato inválido: {state}/{uid}/{candidate_cvegeo}')
+                candidate_accepted = (
+                    args.aceptar_candidatos
+                    and resolution == 'candidato_inequivoco'
+                    and candidate_cvegeo is not None
+                )
+                publication_verified = verified or candidate_accepted
+                cvegeo = candidate_cvegeo if publication_verified else None
                 if cvegeo:
                     stem = f'{cvegeo}_{slug}'
+                elif resolution == 'candidato_inequivoco' and candidate_cvegeo:
+                    stem = f'candidato_{candidate_cvegeo}_{slug}'
                 elif uid.startswith('candidato_'):
                     stem = f'{uid}_{slug}'
                 else:
                     stem = f'ine_{state:02}_{origin:03}_{slug}'
                 stem = re.sub(r'[^a-zA-Z0-9_-]+', '_', stem)
-                dirname = f'{state:02}_{filename_slug(stable_display_name(state_names[state]))}'
-                # !GRANDE: distinguir identidades históricas diferentes aunque
-                # compartan código reciente y nombre (sin fusionar sus elecciones).
+                dirname = filename_slug(stable_display_name(state_names[state]))
                 original_path = f'municipio/{dirname}/{stem}.json'
                 path = unique_municipal_path(dirname, stem, uid, filenames)
                 if path != original_path:
@@ -380,28 +407,32 @@ def main():
                              'id_operativo':uid}
                 if cvegeo is not None:
                     territory['cvegeo'] = cvegeo
+                elif resolution == 'candidato_inequivoco' and candidate_cvegeo:
+                    territory['cvegeo_candidato'] = candidate_cvegeo
+                aliases = sorted({str(r.get('nombre_ine') or '').strip() for r in data['mapping'].values() if str(r.get('nombre_ine') or '').strip()})
                 payload = {'territorio':territory, 'fuente':SOURCE,
                            'suprimido':all(statuses) if statuses else False,
-                           'identidad_verificada':verified, 'elecciones':elections}
-                if not verified:
-                    payload['advertencia'] = 'Identidad inferida o histórica sin equivalencia territorial verificada'
-                # CAMBIO: arquetipo sólo con correspondencia CVEGEO verificada y existente en CSV.
-                if cvegeo and cvegeo in archetypes:
-                    payload['arquetipo'] = archetypes[cvegeo]
+                           'identidad_verificada': publication_verified,
+                           'estado_resolucion':resolution,
+                           'aliases_ine':aliases,
+                           'elecciones':elections}
+                if not publication_verified:
+                    payload['advertencia'] = ('Identidad operativa exploratoria; la equivalencia territorial '
+                                              'no está verificada documentalmente')
+                archetype_code = cvegeo or (candidate_cvegeo if resolution == 'candidato_inequivoco' else None)
+                if archetype_code and archetype_code in archetypes:
+                    payload['arquetipo'] = archetypes[archetype_code]
                 save(staged/path, payload)
-                # El contrato numérico municipal sólo es seguro para un identificador
-                # que no se reutiliza en años distintos. Se genera después de revisar colisiones.
-
-                # A summary is keyed by the operative identity to avoid mixing recoded INE keys.
                 item = {'cve':origin,'nombre':name,'id_operativo':uid,
                         'suprimido':payload['suprimido'],
                         'participacion':{str(e['anio']):e['participacion'] for e in elections if 'participacion' in e},
-                        'archivo':path, 'identidad_verificada':verified}
+                        'archivo':path, 'identidad_verificada':publication_verified,
+                        'estado_resolucion':resolution}
                 if cvegeo is not None: item['cvegeo'] = cvegeo
+                elif resolution == 'candidato_inequivoco' and candidate_cvegeo:
+                    item['cvegeo_candidato'] = candidate_cvegeo
                 state_municipal[state].append(item)
                 file_refs.append(path)
-            # !GRANDE: aliases numéricos del contrato sólo para claves únicas.
-            # Si una clave histórica corresponde a dos identidades, no se asigna una ruta ambigua.
             by_numeric = defaultdict(list)
             for state, municipal_rows in state_municipal.items():
                 for item in municipal_rows:
@@ -416,34 +447,44 @@ def main():
                 else:
                     ambiguous_numeric.append({'estado':state,'municipio':mun,
                                               'ids':[i['id_operativo'] for i in items]})
+            friendly_aliases = set()
             for state, years in sorted(state_names.items()):
                 name = stable_display_name(years)
+
                 slug = f'{state:02}_{filename_slug(name)}'
-                path = f'entidad/{slug}.json'
-                states[state] = {'territorio':{'nivel':'entidad','cve':state,'cveEntidad':state,'nombre':name},
-                                 'fuente':SOURCE,
-                                 'elecciones':sorted(state_elections[state], key=lambda e:e['anio']),
-                                 'municipios':sorted(state_municipal[state],key=lambda e:(e['nombre'],e['id_operativo']))}
+                clean_slug = filename_slug(name)
+                if clean_slug in friendly_aliases:
+                    raise ValueError(f'Colisión de alias estatal: {clean_slug}')
+                friendly_aliases.add(clean_slug)
+                path = f'entidad/{clean_slug}.json'
+                states[state] = {
+                    'territorio': {'nivel': 'entidad', 'cve': state,
+                                'cveEntidad': state, 'nombre': name},
+                    'fuente': SOURCE,
+                    'elecciones': sorted(state_elections[state], key=lambda e: e['anio']),
+                    'municipios': sorted(state_municipal[state],
+                                        key=lambda e: (e['nombre'], e['id_operativo']))}
+
                 if state in expected:
                     states[state]['votos_esperados_por_edad'] = expected[state]
                 save(staged/path, states[state])
-                save(staged/f'entidad/{state:02}.json', states[state])
                 file_refs.append(path)
-                save(staged/f'catalogos/municipios/{slug}.json',states[state]['municipios'])
+                save(staged/f'catalogos/municipios/{clean_slug}.json',
+                     states[state]['municipios'])
             save(staged/'catalogos/entidades.json',
                  [{'cve':state,'nombre':data['territorio']['nombre'],
-                   'archivo':f"entidad/{state:02}_{filename_slug(data['territorio']['nombre'])}.json"}
-                  for state,data in sorted(states.items())])
+                   'archivo':f"entidad/{filename_slug(data['territorio']['nombre'])}.json"}
+                   for state,data in sorted(states.items())])
             save(staged/'catalogos/archivos-entidades.json',
                  [{'cveEntidad':state,'nombre':data['territorio']['nombre'],
-                   'archivo':f"entidad/{state:02}_{filename_slug(data['territorio']['nombre'])}.json"}
-                  for state,data in sorted(states.items())])
-            years_exported = [y for y in YEARS if any(y == e['anio'] for v in state_elections.values() for e in v)]
-            save(staged/'nacional.json',{'territorio':{'nivel':'nacional','nombre':'México'},'fuente':SOURCE,
-                 'elecciones':[election_l4(y, total_national[y], args.umbral,
-                               national_age[y], national_sex[y]) for y in years_exported]})
+                   'archivo':f"entidad/{filename_slug(data['territorio']['nombre'])}.json"}
+                   for state,data in sorted(states.items())])
+            years_exported = [y for y in YEARS if observed_states[y] == set(range(1,33))]
+            if years_exported:
+                save(staged/'nacional.json',{'territorio':{'nivel':'nacional','nombre':'Nacional'},
+                     'fuente':SOURCE, 'elecciones':[election_l4(y, total_national[y], args.umbral,
+                                   national_age[y], national_sex[y]) for y in years_exported]})
             save(staged/'validacion/claves_ine_ambiguas.json', ambiguous_numeric)
-            # CAMBIO: registrar rutas de identidades históricas que comparten slug.
             collision_file = staged/'validacion/colisiones_nombres_archivo.csv'
             collision_file.parent.mkdir(parents=True, exist_ok=True)
             with collision_file.open('w', encoding='utf-8-sig', newline='') as stream:
@@ -457,42 +498,59 @@ def main():
                 writer = csv.DictWriter(stream, fieldnames=['anio','estado','MPIOCVE_original','MPIONOM_original',
                               'identificador_operativo','cvegeo_candidato','confianza'])
                 writer.writeheader(); writer.writerows(traces)
-            hasher = hashlib.sha256()
-            for source in sorted(source_files, key=str):
-                hasher.update(source.name.encode('utf-8'))
-                with source.open('rb') as stream:
-                    for chunk in iter(lambda: stream.read(1<<20), b''):
-                        hasher.update(chunk)
-            version = datetime.now(timezone.utc).strftime('%Y%m%d') + '-' + hasher.hexdigest()[:7]
-            # Explicit capability report: no fake topology, archetypes, neighbors, or expected votes.
+            from revoto_pipeline.export.enriquecer import enriquecer_staged
+            geo_started = time.monotonic()
+            log('GEO', 'Inicio de enriquecimiento territorial: 32 entidades')
+            enrichment = enriquecer_staged(staged, root, years=tuple(YEARS),
+                        quantization=args.topo_quantization, max_error_m=args.topo_max_error_m,
+                        geometry_budget_bytes=args.topo_budget_kb * 1024, progress=log)
+            log('GEO', 'Enriquecimiento concluido')
+            source_files.extend(enrichment['fuentes'])
             quality = {'modalidad':'exploratoria_ine_primero',
-                       'equivalencia_territorial':'verificada o inferida, diferenciada por municipio',
-                       'cobertura_entidades':len(states),'particiones_faltantes':missing,
-                       'recursos_municipales':len(grouped),
-                       'colisiones_nombres_archivo_resueltas':len(path_collisions),
-                       'no_generados':['vecinos','arquetipo','votos_esperados_por_edad',
-                                        'TopoJSON','contexto_inegi_conapo'],
-                       'advertencias':['No corresponde al contrato L4 aprobado',
-                          'Suprimido por elección: se omiten cifras, no se exportan tasas indefinidas',
-                          'Identificadores históricos sin equivalencia no deben usarse para joins geográficos']}
-            save(staged/'calidad.json', quality)
-            save(staged/'manifest.json',{'version_datos':version,
+                'particiones_faltantes':missing, 'recursos_municipales':len(grouped),
+                'colisiones_nombres_archivo_resueltas':len(path_collisions),
+                'cobertura_nacional_anual':{str(y):len(observed_states[y]) for y in YEARS},
+                **enrichment['calidad'],
+                'advertencias':['No corresponde al contrato L4 aprobado',
+                    'No se publican tasas con denominador cero ni datos suprimidos']}
+            from jsonschema import Draft7Validator
+            schema_path = Path(__file__).resolve().parents[4]/'packages/contracts/schemas/calidad.schema.json'
+            schema = json.loads(schema_path.read_text(encoding='utf-8'))
+            errors = list(Draft7Validator(schema).iter_errors(quality))
+            if errors:
+                raise ValueError(f'calidad.json inválido: {errors[0].message}')
+            save(staged/'calidad.json',quality)
+            from revoto_pipeline.export.versionado import fingerprint
+            version = datetime.now(timezone.utc).strftime('%Y%m%d') + '-' + fingerprint(staged, root, source_files)
+            topo_registry = {str(k):v['archivo'] for k,v in quality.get('topologia',{}).items()
+                             if k != 'entidades' and isinstance(v,dict) and 'archivo' in v}
+            geo_manifest = {'por_entidad':topo_registry}
+            if isinstance(quality.get('topologia',{}).get('entidades'),dict):
+                geo_manifest['entidades'] = quality['topologia']['entidades']['archivo']
+            manifest = {'version_datos':version,
                  'estado_publicacion':'exploratorio_no_aprobado',
                  'generado':datetime.now(timezone.utc).isoformat(),
                  'fuente':SOURCE,'entidades':len(states),'anios':years_exported,
-                 'umbral_rn05':args.umbral,'max_diferencia_pp':None,
+                 'umbral_rn05':args.umbral,'max_diferencia_pp':quality.get('oficial',{}).get('max_diferencia_pp'),
                  'reporte':'calidad.json',
                  'catalogo_entidades':'catalogos/entidades.json',
-                 'nacional':'nacional.json',
+                 **({'nacional':'nacional.json'} if years_exported else {}),
                  'particiones_faltantes':missing,
-                 'limitaciones':quality['no_generados']})
+                 'topologia':geo_manifest,
+                 'limitaciones':sorted(quality.get('geometria',{}).get('errores',{}))}
+            from revoto_pipeline.export.contract import validate_payload
+            validate_payload(manifest,'manifest')
+            save(staged/'manifest.json',manifest)
             output = output_base / version
             output.parent.mkdir(parents=True, exist_ok=True)
-            if output.exists(): shutil.rmtree(output)
+            if output.exists():
+                raise FileExistsError(f'Versión inmutable ya existe: {output}')
             staged.rename(output)
+            log('FIN', f'Publicación terminada: {output}')
             print(f'INE EXPLORATORIO: {len(states)} entidades, {len(grouped)} series municipales; '
                   f'versión {version}. Salida: {output}')
-    except Exception:
+    except Exception as exc:
+        log('ERROR', f'{type(exc).__name__}: {exc}')
         if staged.exists(): shutil.rmtree(staged)
         raise
 
