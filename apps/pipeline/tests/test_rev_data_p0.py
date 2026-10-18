@@ -42,7 +42,6 @@ def test_rn05_rate_and_percentage_scale():
 
 
 def test_publication_approval_denies_partial_and_section(tmp_path):
-    # CAMBIO: este caso prueba falta de aprobación, sin depender de config.toml local.
     base = load_config(CONFIG_FILE, tmp_path)
     cfg = replace(base, umbral_rn05=50, publication=replace(base.publication,
                   contrato_l4_aprobado=False, umbral_rn05_aprobado=False))
@@ -97,7 +96,6 @@ def test_local_l4_dry_run_is_never_published(tmp_path):
               1 MPIOCVE, 'Aguascalientes' MPIONOM, 0 SEXO, 20 EDAD,
               100::BIGINT LN, 60::BIGINT SV, 40::BIGINT NV, 0::BIGINT NS
               UNION ALL SELECT 2024,1,'Aguascalientes',1,'Aguascalientes',1,65,100,40,60,0""")
-        # CAMBIO: exportación L4 estricta exige correspondencia por año.
         identity = cfg.path('mapping_municipal_historico')
         identity.parent.mkdir(parents=True, exist_ok=True)
         identity.write_text(

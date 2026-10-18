@@ -23,7 +23,6 @@ def test_demographic_marts_do_not_fanout(tmp_path):
     cfg=replace(cfg,years=(2024,),reference={2024:2020},district_reference={2024:2023},umbral_rn05=5)
     target=cfg.path('processed')/'canonical'/'hecho_participacion'/'edo=30'/'anio=2024'/'hechos.parquet'
     con=duckdb.connect(':memory:')
-    # CAMBIO: el fixture incluye DEL porque la configuración habilita distritos locales.
     copy_parquet(con,'''SELECT * FROM (VALUES
       (2024,30,1,101,0,20,10,8,2,0,1),
       (2024,30,1,101,1,60,20,10,10,0,1),
@@ -59,7 +58,6 @@ def test_municipal_context_inegi_extra_indicators(tmp_path):
     copy_parquet(con,"SELECT '300010000' cvegeo,'total_municipal' record_level,150::BIGINT POBTOT,80::BIGINT POBFEM,35::BIGINT PEA,25::BIGINT POCUPADA,20::BIGINT VPH_INTER",census)
     mapping=cfg.path('mapping_inegi_ine');mapping.parent.mkdir(parents=True,exist_ok=True)
     mapping.write_text('censo_ref,cvegeo_municipal_inegi,anio_eleccion,cve_ent_ine,cve_mpio_ine,status_match\n2020,300010000,2024,30,1,validado\n',encoding='utf-8')
-    # CAMBIO: full_context requiere una identidad municipal explícita y verificada.
     cfg.path('mapping_municipal_historico').write_text(
         'anio_eleccion,cve_ent_ine,cve_mpio_ine,nombre_ine,cvegeo_canonico,nombre_canonico,tipo_equivalencia,equivalencia_verificada,censo_referencia,fuente_referencia,evidencia,observacion\n'
         '2024,30,1,MUNICIPIO SINTETICO,30001,MUNICIPIO SINTETICO,exacta,si,2020,ITER sintetico,codigo y nombre,\n')
