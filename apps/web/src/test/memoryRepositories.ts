@@ -67,7 +67,7 @@ export function memoryTurnoutRepository(
       })),
       expectedVotes: { '18-24': 1.7 },
     }),
-    municipalityProfile: async () => ({ neighbours: [2, 3], archetype: null }),
+    municipalityProfile: async () => ({ neighbours: ['9-2', '9-3'], archetype: null }),
     ...overrides,
   };
 }
@@ -115,16 +115,12 @@ const layer = (areas: ReturnType<typeof square>[]): MapLayer => ({
 
 export const memoryGeographyRepository = (): GeographyRepository => ({
   states: async () => layer([square('9', 'Ciudad de México', 0), square('14', 'Jalisco', 1)]),
-  municipalities: async () => layer(towns.map(([c, n], i) => square(String(c), n, i))),
-  country: async () =>
-    layer(towns.map(([c, n], i) => square(`090${String(c).padStart(2, '0')}`, n, i))),
-  countryTurnout: async () =>
-    new Map(
-      towns.map(([c, n, v]) => [
-        `090${String(c).padStart(2, '0')}`,
-        { name: n, stateCode: 9, turnout: { 2024: proportion(v) } },
-      ]),
-    ),
+  municipalities: async () => layer(towns.map(([c, n], i) => square(`9-${c}`, n, i))),
+  statesTurnout: async () =>
+    new Map([
+      [9, { name: 'Ciudad de México', turnout: { 2024: proportion(0.693) } }],
+      [14, { name: 'Jalisco', turnout: { 2024: proportion(0.6) } }],
+    ]),
 });
 
 export const memoryDependencies = () => ({

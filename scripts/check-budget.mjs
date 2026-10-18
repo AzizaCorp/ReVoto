@@ -35,7 +35,7 @@ if (!existsSync(dist)) {
 // 2 · Datos
 const datos = join(raiz, 'apps', 'web', 'public', 'data');
 for (const archivo of listar(datos).filter((f) => f.endsWith('.json'))) {
-  const rel = relative(datos, archivo).split(sep).join('/');
+  const rel = '/' + relative(datos, archivo).split(sep).join('/');
   const tam = statSync(archivo).size;
   const limite = rel.endsWith('/geo/municipios.topo.json')
     ? presupuesto.mapa_nacional_kb

@@ -4,13 +4,13 @@ import type { ManifiestoDto } from '@revoto/contracts';
 type Fetch = typeof fetch;
 
 /**
- * Reads the static JSON files published under /data (DIS §5.1):
- * 1. Requests manifest.json without cache once per visit to pin the data version.
- * 2. Requests each file inside /data/<version_datos>/, which is immutable and cached for a year.
+ * Reads the static JSON files of the L4 contract published under /data (packages/contracts).
+ * /data holds the contents of one pipeline version folder, so every path is relative to it and
+ * comes from the files themselves (catalog `archivo`, manifest paths), never built by hand.
  * Translates any failure into DataUnavailable, the error the application understands.
  */
 export class JsonClient {
-  private manifest?: Promise<ManifiestoDto>;
+  private manifest?: Promise<ManifiestoDto | null>;
   private readonly cache = new Map<string, Promise<unknown>>();
 
   constructor(
@@ -18,9 +18,13 @@ export class JsonClient {
     private readonly fetcher: Fetch = (...args) => fetch(...args),
   ) {}
 
-  async read<T>(path: string): Promise<T> {
-    const { version_datos } = await this.currentVersion();
-    const url = `${this.base}/${version_datos}/${path}`;
+  /** Public URL of a path inside the data folder. */
+  url(path: string): string {
+    return `${this.base}/${path}`;
+  }
+
+  read<T>(path: string): Promise<T> {
+    const url = this.url(path);
     let promise = this.cache.get(url) as Promise<T> | undefined;
     if (!promise) {
       promise = this.fetchJson<T>(url).catch((error: unknown) => {
@@ -32,21 +36,39 @@ export class JsonClient {
     return promise;
   }
 
-  /** Manifest of the current data version (requested once per visit, without cache). */
-  currentVersion(): Promise<ManifiestoDto> {
-    this.manifest ??= this.fetchJson<ManifiestoDto>(`${this.base}/manifest.json`, {
-      cache: 'no-cache',
-    }).catch((error: unknown) => {
+  /** Reads an optional file: null if it is not published (any other failure still throws). */
+  async readOptional<T>(path: string): Promise<T | null> {
+    try {
+      return await this.read<T>(path);
+    } catch (error) {
+      if (error instanceof DataUnavailable && error.cause === 'not-found') return null;
+      throw error;
+    }
+  }
+
+  /** Whether a non-JSON file (e.g. the open-data CSV) is published. */
+  async exists(path: string): Promise<boolean> {
+    try {
+      const response = await this.fetcher(this.url(path), { method: 'HEAD', cache: 'no-cache' });
+      return response.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  /** manifest.json of the published version, or null if the folder was published without it. */
+  currentVersion(): Promise<ManifiestoDto | null> {
+    this.manifest ??= this.readOptional<ManifiestoDto>('manifest.json').catch((error: unknown) => {
       this.manifest = undefined;
       throw error;
     });
     return this.manifest;
   }
 
-  private async fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
+  private async fetchJson<T>(url: string): Promise<T> {
     let response: Response;
     try {
-      response = await this.fetcher(url, init);
+      response = await this.fetcher(url, { cache: 'no-cache' });
     } catch {
       throw new DataUnavailable(url, 'network');
     }

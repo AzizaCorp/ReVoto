@@ -21,7 +21,7 @@ const DATASETS: readonly [string, IconName, BubbleTone, Link, Link, string][] = 
     'brand',
     'csv',
     'folder',
-    'csv/participacion.csv · entidad/ y municipio/',
+    'entidad/<entidad>.json y municipio/<entidad>/<municipio>.json',
   ],
   [
     'Participación por edad y sexo',
@@ -29,7 +29,7 @@ const DATASETS: readonly [string, IconName, BubbleTone, Link, Link, string][] = 
     'violet',
     'csv',
     'national',
-    'columnas grupo_edad y sexo · nacional.json',
+    'por_edad y por_sexo en nacional.json, entidad/ y municipio/',
   ],
   [
     'Arquetipos municipales',
@@ -37,7 +37,7 @@ const DATASETS: readonly [string, IconName, BubbleTone, Link, Link, string][] = 
     'indigo',
     null,
     'folder',
-    'campo «arquetipo» de municipio/<ent>-<mun>.json',
+    'campo «arquetipo» de municipio/<entidad>/<municipio>.json',
   ],
 ];
 
@@ -51,11 +51,13 @@ export function W16OpenData() {
     !l || !k
       ? undefined
       : k === 'csv'
-        ? l.turnoutCsv
+        ? (l.turnoutCsv ?? undefined)
         : k === 'national'
           ? l.nationalJson
           : l.baseUrl;
-  const date = l ? new Date(l.generatedAt).toLocaleDateString('es-MX') : '[dd/mm/aaaa]';
+  const date = l?.generatedAt
+    ? new Date(l.generatedAt).toLocaleDateString('es-MX')
+    : '[dd/mm/aaaa]';
   return (
     <UtilityScreen
       top={
@@ -69,7 +71,7 @@ export function W16OpenData() {
       lead="Los mismos agregados que usa este sitio. Úsalos, verifícalos y cítalos."
     >
       {l ? (
-        <Pill number="Versión">{l.version}</Pill>
+        <Pill number="Versión">{l.version ?? 'Sin versión publicada'}</Pill>
       ) : (
         <Pill tone="pending">{links.status === 'error' ? 'No disponible' : 'Cargando'}</Pill>
       )}

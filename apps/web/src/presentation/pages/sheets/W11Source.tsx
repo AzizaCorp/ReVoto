@@ -7,6 +7,8 @@ import { useStoryData } from '@/presentation/providers/Story';
 import { YEAR } from '../shared/storyFigures';
 
 /** W-11 · Source sheet (RF-12, RN-10): territory, election and version of the figures shown. */
+const date = (iso: string) => new Date(iso).toLocaleDateString('es-MX');
+
 export function W11Source() {
   const nav = useNavigation();
   const story = useStoryData();
@@ -58,7 +60,9 @@ export function W11Source() {
           {
             term: 'Versión de datos',
             value: l
-              ? `${l.version} · ${new Date(l.generatedAt).toLocaleDateString('es-MX')}`
+              ? [l.version ?? 'Sin versión publicada', l.generatedAt && date(l.generatedAt)]
+                  .filter(Boolean)
+                  .join(' · ')
               : '[AAAAMMDD-hash]',
             icon: 'calendar',
             tone: 'neutral',

@@ -22,12 +22,12 @@ export interface PlaceInState {
 /** W-08 · Place of a municipality among those of its state, from an overview already read. */
 export function placeInState(
   overview: StateOverview,
-  municipalityCode: number,
+  municipalityKey: string,
   year: ElectionYear = 2024,
 ): PlaceInState {
   const list = municipalTurnoutIn(overview.municipalities, year);
   return {
-    rank: rankInState(list, municipalityCode),
+    rank: rankInState(list, municipalityKey),
     top: rankMunicipalities(list).slice(0, 5),
   };
 }
@@ -38,11 +38,7 @@ export async function getPlaceInState(
   municipality: Municipality,
   year: ElectionYear = 2024,
 ): Promise<PlaceInState> {
-  return placeInState(
-    await repo.stateOverview(municipality.stateCode),
-    municipality.municipalityCode,
-    year,
-  );
+  return placeInState(await repo.stateOverview(municipality.stateCode), municipality.key, year);
 }
 
 /** W-09 · Archetype of the municipality; null with a short history or when suppressed. */

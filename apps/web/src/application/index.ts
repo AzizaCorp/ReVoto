@@ -24,5 +24,5 @@ export type {
   GeographyRepository,
   MapArea,
   MapLayer,
-  MunicipalTurnoutPoint,
+  StateTurnoutPoint,
 } from './ports/GeographyRepository';

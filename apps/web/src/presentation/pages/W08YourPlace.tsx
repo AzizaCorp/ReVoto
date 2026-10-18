@@ -16,7 +16,7 @@ export function W08YourPlace() {
   const stateName =
     t.level === 'national' ? '[Entidad]' : t.level === 'state' ? t.name : t.stateName;
   const mine =
-    p && t.level === 'municipality' && !p.top.some((m) => m.code === t.municipalityCode)
+    p && t.level === 'municipality' && !p.top.some((m) => m.code === t.key)
       ? { name: t.name, value: story?.own.elections.at(-1)?.total.value ?? null }
       : null;
 

@@ -165,8 +165,6 @@ export interface PerfilEstatalDto {
 
 export interface DatosEntidadDto extends ArchivoBaseDto {
   elecciones: CifrasEleccionDto[];
-  /** W-09b: elecciones con voto esperadas (de 3: 2018, 2021 y 2024) por grupo de edad. */
-  votos_esperados_por_edad?: Partial<Record<GrupoEdad, number>>;
   municipios: ResumenMunicipioDto[];
   /** W-09b: elecciones con voto esperado de 3 (2018, 2021, 2024) por grupo de edad. */
   votos_esperados_por_edad?: Record<GrupoEdad, number>;
@@ -197,4 +195,21 @@ export interface CalidadDto {
   integridad: Record<string, unknown>;
   advertencias?: string[];
   [k: string]: unknown;
+}
+
+/** Geometría de `geo/*.topo.json`. `cvegeo`: 2 dígitos en entidades, 5 en municipios. */
+export interface GeometriaTopoDto {
+  type: 'Polygon' | 'MultiPolygon' | null;
+  arcs?: number[][] | number[][][];
+  id?: string;
+  properties: { cvegeo?: string; nombre?: string; cve?: number };
+}
+
+/** `geo/entidades.topo.json` y `geo/<slug>.topo.json`: TopoJSON cuantizado en WGS84 (lon, lat). */
+export interface TopologiaDto {
+  type: 'Topology';
+  bbox?: [number, number, number, number];
+  transform: { scale: [number, number]; translate: [number, number] };
+  arcs: [number, number][][];
+  objects: Record<string, { type: 'GeometryCollection'; geometries: GeometriaTopoDto[] }>;
 }

@@ -65,7 +65,7 @@ export function ageGroupOfAnswer(answer: string | null): AgeGroup | null {
 export function placeOf(story: TerritoryStory): PlaceInState | null {
   const t = story.territory;
   return t.level === 'municipality' && story.overview
-    ? placeInState(story.overview, t.municipalityCode, YEAR)
+    ? placeInState(story.overview, t.key, YEAR)
     : null;
 }
 

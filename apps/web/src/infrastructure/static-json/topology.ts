@@ -1,20 +1,26 @@
 // TopoJSON (contract L4, geo/*.topo.json) → projected rings. The only place that knows the format:
 // arcs are quantized and delta-encoded; a negative index (~i) walks arc i backwards.
+// The pipeline publishes WGS84 (lon, lat). They are drawn with an equirectangular projection
+// whose x is scaled by cos(23.5°), the middle latitude of Mexico, so shapes keep their proportions.
 import type { MapArea, MapLayer } from '@/application';
 import type { TopologiaDto } from '@revoto/contracts';
 
 type Point = [number, number];
 
+const X_SCALE = Math.cos((23.5 * Math.PI) / 180);
+
 function decodeArcs(t: TopologiaDto): Point[][] {
   const [sx, sy] = t.transform.scale;
   const [tx, ty] = t.transform.translate;
+  // Degrees if the origin is a longitude; metres (already projected) otherwise.
+  const kx = Math.abs(tx) <= 180 && Math.abs(ty) <= 90 ? X_SCALE : 1;
   return t.arcs.map((arc) => {
     let x = 0;
     let y = 0;
     return arc.map(([dx, dy]) => {
       x += dx;
       y += dy;
-      return [x * sx + tx, y * sy + ty] as Point;
+      return [(x * sx + tx) * kx, y * sy + ty] as Point;
     });
   });
 }
@@ -28,10 +34,12 @@ function ring(indexes: readonly number[], arcs: readonly Point[][]): Point[] {
   return points;
 }
 
-/** Areas of the topology's single object; `idOf` picks the id from each area's properties. */
+type Props = { cvegeo?: string; cve?: number; nombre?: string };
+
+/** Areas of the topology's single object; `areaOf` picks id and name from each area's properties. */
 export function toLayer(
   t: TopologiaDto,
-  idOf: (p: { cvegeo?: string; cve?: number; nombre?: string }) => string,
+  areaOf: (p: Props) => { id: string; name: string },
 ): MapLayer {
   const arcs = decodeArcs(t);
   const object = Object.values(t.objects)[0];
@@ -49,7 +57,7 @@ export function toLayer(
         if (y > maxY) maxY = y;
       }
     }
-    areas.push({ id: idOf(g.properties), name: g.properties.nombre ?? '', rings });
+    areas.push({ ...areaOf(g.properties), rings });
   }
   return { areas, bounds: [minX, minY, maxX, maxY] };
 }

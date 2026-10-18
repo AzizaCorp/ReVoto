@@ -26,8 +26,8 @@ export interface StateOverview {
 
 export interface MunicipalityProfile {
   readonly inegiCode?: string;
-  /** INE keys of the bordering municipalities in the same state (W-04). */
-  readonly neighbours: readonly number[];
+  /** Keys (Territory.key) of the bordering municipalities in the same state (W-04). */
+  readonly neighbours: readonly string[];
   /** W-09 · Null with fewer than 5 elections or when suppressed. */
   readonly archetype: ArchetypeProfile | null;
 }

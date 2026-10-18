@@ -42,7 +42,7 @@ export const municipalTurnoutIn = (
   year: ElectionYear,
 ): MunicipalityTurnout[] =>
   municipalities.map((m) => ({
-    code: m.municipality.municipalityCode,
+    code: m.municipality.key,
     name: m.municipality.name,
     turnout: m.suppressed ? null : (m.turnout[year] ?? null),
   }));

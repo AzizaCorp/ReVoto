@@ -10,7 +10,10 @@ export type Territory =
   | {
       readonly level: 'municipality';
       readonly stateCode: number;
+      /** INE municipality key. Not unique: a few keys were reused across elections. */
       readonly municipalityCode: number;
+      /** Unique identity of the municipality (the pipeline's `id_operativo`). */
+      readonly key: string;
       readonly name: string;
       readonly stateName: string;
     };
@@ -30,12 +33,13 @@ export function municipality(
   municipalityCode: number,
   name: string,
   stateName: string,
+  key = `${stateCode}-${municipalityCode}`,
 ): Territory {
   state(stateCode, stateName);
   if (!Number.isInteger(municipalityCode) || municipalityCode < 1) {
     throw new RangeError(`Invalid municipality code: ${municipalityCode}`);
   }
-  return { level: 'municipality', stateCode, municipalityCode, name, stateName };
+  return { level: 'municipality', stateCode, municipalityCode, key, name, stateName };
 }
 
 /** Text that goes with every figure (RN-10): «Zapopan, Jalisco», «Jalisco», «Nacional». */

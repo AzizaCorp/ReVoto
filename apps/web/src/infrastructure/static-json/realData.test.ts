@@ -9,7 +9,7 @@ import { JsonTurnoutRepository } from './JsonTurnoutRepository';
 
 const client = new JsonClient('/data', fetchFromDisk);
 const repo = new JsonTurnoutRepository(client);
-const iztacalco = municipality(9, 6, 'Iztacalco', 'Ciudad de México') as Extract<
+const iztacalco = municipality(9, 6, 'Iztacalco', 'Ciudad de México', 'cvegeo:09006') as Extract<
   Territory,
   { level: 'municipality' }
 >;
@@ -36,7 +36,7 @@ describe.runIf(available)('L4 data published in public/data', () => {
   it('reads the profile of a municipality: INEGI key, neighbours and archetype', async () => {
     const p = await repo.municipalityProfile(iztacalco);
     expect(p.inegiCode).toBe('09006');
-    expect(p.neighbours).toEqual([7, 14, 15, 17]);
+    expect(p.neighbours).toEqual(['cvegeo:09007', 'cvegeo:09014', 'cvegeo:09015', 'cvegeo:09017']);
     expect(p.archetype?.archetype).toMatch(/^A[1-5]$/);
   });
 
@@ -50,24 +50,43 @@ describe.runIf(available)('L4 data published in public/data', () => {
     expect(place.top).toHaveLength(5);
   });
 
-  it('reads the quality report of the current version', async () => {
+  it('reads the quality report even without manifest or calidad.json', async () => {
     const r = await new JsonQualityRepository(client).report();
-    expect(r.version).toMatch(/^\d{8}-[0-9a-f]{7}$/);
-    expect(r.checks.find((c) => c.id === 'RF-23')?.result).toBe('pending');
-    expect(r.checks.some((c) => c.result === 'failed')).toBe(false);
+    expect(r.source).toBe('INE · CCPC');
+    expect(r.maxDifferencePoints).toBeNull();
   });
 
-  it('reads the projected maps: states, a state by INE key and the country by CVEGEO', async () => {
+  it('leaves out of the series the elections without a rate (RN-05 per election)', async () => {
+    const chiapas = await repo.municipalities(7);
+    const oxchuc = chiapas.find((t) => t.name === 'Oxchuc') as Extract<
+      Territory,
+      { level: 'municipality' }
+    >;
+    expect(oxchuc.key).toBe('cvegeo:07064');
+    const s = await repo.series(oxchuc);
+    expect(s.status).toBe('published');
+    if (s.status === 'published') {
+      expect(s.elections.map((e) => e.election.year)).toEqual([2009, 2012, 2015, 2018, 2024]);
+    }
+  });
+
+  it('does not offer municipalities whose territorial identity is unresolved', async () => {
+    const chiapas = await repo.municipalities(7);
+    expect(chiapas.some((t) => t.name === 'El Parral')).toBe(false);
+  });
+
+  it('reads the maps: states and a state keyed by municipality key, and turnout by state', async () => {
     const geo = new JsonGeographyRepository(client);
     const states = await geo.states();
     expect(states.areas).toHaveLength(32);
-    const cdmx = await geo.municipalities(9);
-    expect(cdmx.areas.map((a) => a.id).sort((a, b) => Number(a) - Number(b))).toHaveLength(16);
-    expect(cdmx.areas.find((a) => a.id === '6')?.name).toBe('Iztacalco');
-    const [minX, minY, maxX, maxY] = (await geo.country()).bounds;
+    expect(states.areas.find((a) => a.id === '22')?.name).toBe('Querétaro');
+    const [minX, minY, maxX, maxY] = states.bounds;
     expect(maxX - minX).toBeGreaterThan(maxY - minY); // Mexico is wider than tall
-    const turnout = await geo.countryTurnout();
-    expect(turnout.size).toBe(2477);
-    expect(turnout.get('09006')?.turnout[2024]).toBe(0.694);
+    const cdmx = await geo.municipalities(9);
+    expect(cdmx.areas).toHaveLength(16);
+    expect(cdmx.areas.find((a) => a.id === 'cvegeo:09006')?.name).toBe('Iztacalco');
+    const turnout = await geo.statesTurnout();
+    expect(turnout.size).toBe(32);
+    expect(turnout.get(9)?.turnout[2024]).toBe(0.693);
   });
 });

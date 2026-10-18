@@ -53,7 +53,7 @@ function Harness({ Page }: { Page: () => React.JSX.Element }) {
 const deps = () => ({
   ...memoryDependencies(),
   turnout: memoryTurnoutRepository({
-    municipalityProfile: async () => ({ neighbours: [2, 3], archetype: A4 }),
+    municipalityProfile: async () => ({ neighbours: ['9-2', '9-3'], archetype: A4 }),
   }),
 });
 const open = async (Page: () => React.JSX.Element, button: RegExp) => {

@@ -86,11 +86,7 @@ function TerritoryForm({ onDone }: { onDone: (t: Territory) => void }) {
   const stateList = states.status === 'ready' ? states.data : [];
   const townList = towns.status === 'ready' ? towns.data : [];
   const code = (t: Territory) =>
-    t.level === 'municipality'
-      ? String(t.municipalityCode)
-      : t.level === 'state'
-        ? String(t.stateCode)
-        : '';
+    t.level === 'municipality' ? t.key : t.level === 'state' ? String(t.stateCode) : '';
   const chosen =
     townList.find((t) => code(t) === town) ??
     stateList.find((t) => code(t) === stateCode) ??
@@ -269,7 +265,7 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
         s?.overview && s.profile
           ? averageTurnout(
               s.overview.municipalities.map((m) => ({
-                code: m.municipality.municipalityCode,
+                code: m.municipality.key,
                 name: m.municipality.name,
                 turnout: m.suppressed ? null : (m.turnout[YEAR] ?? null),
               })),

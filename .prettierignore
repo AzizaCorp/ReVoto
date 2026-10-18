@@ -7,3 +7,4 @@ design/wireframes
 design/tarjetas
 docs
 *.md
+apps/pipeline/tests/fixtures_geo

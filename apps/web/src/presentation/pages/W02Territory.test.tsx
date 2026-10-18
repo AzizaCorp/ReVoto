@@ -31,7 +31,7 @@ describe('W-02 · Choose your territory', () => {
     fireEvent.click(await screen.findByRole('radio', { name: /Ciudad de México/ }));
     await waitFor(() => expect(select).toBeEnabled());
     expect(screen.getByRole('option', { name: 'Iztacalco' })).toBeInTheDocument();
-    fireEvent.change(select, { target: { value: '6' } });
+    fireEvent.change(select, { target: { value: '9-6' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
     expect(screen.getByRole('status')).toHaveTextContent('Ciudad de México · Iztacalco');
   });

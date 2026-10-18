@@ -26,13 +26,16 @@ export function W03MexicoVoted() {
         <CountryMap
           year={e?.election.year ?? (type === 'presidential' ? 2024 : 2021)}
           typeName={type === 'presidential' ? 'presidencial' : 'intermedia'}
-          highlight={story?.profile?.inegiCode ?? null}
+          highlight={
+            story && story.territory.level !== 'national' ? story.territory.stateCode : null
+          }
         />
       }
     >
       <Text variant="h1">Así vota México</Text>
       <Text variant="lead">
-        Cada municipio, coloreado según su participación en la elección federal {year}.
+        Cada entidad, coloreada según su participación en la elección federal {year}. Toca una para
+        ver sus municipios.
       </Text>
       <SegmentedControl
         label="Tipo de elección"

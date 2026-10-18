@@ -53,7 +53,7 @@ describe('App · sequence engine', () => {
     fireEvent.click(await screen.findByRole('radio', { name: /Ciudad de México/ }));
     const select = screen.getByRole('combobox', { name: /Municipio/ });
     await waitFor(() => expect(select).toBeEnabled());
-    fireEvent.change(select, { target: { value: '6' } });
+    fireEvent.change(select, { target: { value: '9-6' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
     expect(title()).toHaveTextContent('Iztacalco, Ciudad de México');
     expect(await screen.findAllByText('69.4 %')).toHaveLength(2); // stat card + comparison bar

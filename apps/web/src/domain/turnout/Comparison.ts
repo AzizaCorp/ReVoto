@@ -2,7 +2,8 @@ import { proportion, type Proportion } from './Proportion';
 
 /** Turnout of one municipality in one election; null when suppressed (RN-05) or without data. */
 export interface MunicipalityTurnout {
-  readonly code: number;
+  /** Unique municipality key (Territory.key). */
+  readonly code: string;
   readonly name: string;
   readonly turnout: Proportion | null;
 }
@@ -25,7 +26,7 @@ export function rankMunicipalities(list: readonly MunicipalityTurnout[]): Munici
 }
 
 /** W-08 · Place of a municipality in its state. Null if it has no published figure. */
-export function rankInState(list: readonly MunicipalityTurnout[], code: number): StateRank | null {
+export function rankInState(list: readonly MunicipalityTurnout[], code: string): StateRank | null {
   const ranked = rankMunicipalities(list);
   const index = ranked.findIndex((m) => m.code === code);
   if (index < 0) return null;
@@ -40,7 +41,7 @@ export function rankInState(list: readonly MunicipalityTurnout[], code: number):
  */
 export function averageTurnout(
   list: readonly MunicipalityTurnout[],
-  codes: readonly number[],
+  codes: readonly string[],
 ): Proportion | null {
   const values = list
     .filter((m) => codes.includes(m.code) && m.turnout !== null)

@@ -1,16 +1,20 @@
-import { listStates } from '@/application';
+import { useState } from 'react';
 import { NATIONAL, type ElectionYear, type Territory } from '@/domain';
-import { ChoroplethMap, Slot } from '@/presentation/components';
+import { Button, ChoroplethMap, Slot } from '@/presentation/components';
 import { percent } from '@/presentation/format';
 import { useAsync } from '@/presentation/hooks/useAsync';
 import { useDependencies } from '@/presentation/providers/Dependencies';
 import type { TerritoryStory } from '@/application';
+import styles from './maps.module.css';
 
 const CREDIT = 'Geometría: marco geoestadístico INEGI';
 const pct = (v: number | null | undefined) =>
   v === null || v === undefined ? 'sin dato' : percent(v);
 
-/** W-03 · Every municipality of the country colored by turnout in one election. */
+/**
+ * W-03 · The 32 states colored by turnout in one election. Touching a state opens the map of its
+ * municipalities, so the national view stays light (one file) and the detail loads on demand.
+ */
 export function CountryMap({
   year,
   typeName,
@@ -18,12 +22,13 @@ export function CountryMap({
 }: {
   year: ElectionYear;
   typeName: string;
-  highlight: string | null;
+  highlight: number | null;
 }) {
-  const { geography, turnout } = useDependencies();
+  const { geography } = useDependencies();
+  const [open, setOpen] = useState<number | null>(null);
   const data = useAsync(
-    () => Promise.all([geography.country(), geography.countryTurnout(), listStates(turnout)]),
-    [geography, turnout],
+    () => Promise.all([geography.states(), geography.statesTurnout()]),
+    [geography],
   );
   if (data.status !== 'ready') {
     return (
@@ -31,36 +36,98 @@ export function CountryMap({
         label={
           data.status === 'error'
             ? 'No pudimos cargar el mapa'
-            : 'Cargando el mapa de participación por municipio…'
+            : 'Cargando el mapa de participación por entidad…'
         }
         height="fill"
       />
     );
   }
-  const [layer, points, states] = data.data;
-  const stateName = new Map(
-    states.map((s) => [s.level === 'state' ? s.stateCode : 0, s.name] as const),
-  );
+  const [layer, points] = data.data;
+  if (open !== null) {
+    return (
+      <MunicipalitiesOf
+        stateCode={open}
+        stateName={points.get(open)?.name ?? ''}
+        year={year}
+        onBack={() => setOpen(null)}
+      />
+    );
+  }
   return (
     <ChoroplethMap
       layer={layer}
-      valueOf={(id) => points.get(id)?.turnout[year] ?? null}
-      label={`Mapa de México: participación por municipio en la elección ${typeName} ${year}`}
+      valueOf={(id) => points.get(Number(id))?.turnout[year] ?? null}
+      label={`Mapa de México: participación por entidad en la elección ${typeName} ${year}`}
       legendTitle={`Participación · ${typeName} ${year}`}
       format={percent}
       tooltip={(id) => {
-        const p = points.get(id);
+        const p = points.get(Number(id));
         return p
           ? {
-              title: `${p.name}, ${stateName.get(p.stateCode) ?? ''}`,
-              detail: `Participación ${pct(p.turnout[year])}`,
+              title: p.name,
+              detail: `Participación ${pct(p.turnout[year])} · toca para ver sus municipios`,
             }
           : null;
       }}
-      highlight={highlight}
-      zoomable
+      highlight={highlight === null ? null : String(highlight)}
+      onSelect={(id) => setOpen(Number(id))}
       credit={CREDIT}
     />
+  );
+}
+
+/** W-03 · Municipalities of the state touched on the national map. */
+function MunicipalitiesOf({
+  stateCode,
+  stateName,
+  year,
+  onBack,
+}: {
+  stateCode: number;
+  stateName: string;
+  year: ElectionYear;
+  onBack: () => void;
+}) {
+  const { geography, turnout } = useDependencies();
+  const data = useAsync(
+    () => Promise.all([geography.municipalities(stateCode), turnout.stateOverview(stateCode)]),
+    [geography, turnout, stateCode],
+  );
+  if (data.status !== 'ready') {
+    return (
+      <Slot
+        label={data.status === 'error' ? 'No pudimos cargar el mapa' : `Cargando ${stateName}…`}
+        height="fill"
+      />
+    );
+  }
+  const [layer, overview] = data.data;
+  const byKey = new Map(overview.municipalities.map((m) => [m.municipality.key, m]));
+  return (
+    <div className={styles.drill}>
+      <Button size="small" icon="back" onClick={onBack}>
+        Volver a México
+      </Button>
+      <ChoroplethMap
+        layer={layer}
+        valueOf={(id) => {
+          const m = byKey.get(id);
+          return m && !m.suppressed ? (m.turnout[year] ?? null) : null;
+        }}
+        label={`Mapa de ${stateName}: participación por municipio en ${year}`}
+        legendTitle={`Participación en ${stateName} · ${year}`}
+        format={percent}
+        tooltip={(id) => {
+          const m = byKey.get(id);
+          return m
+            ? { title: m.municipality.name, detail: `Participación ${pct(m.turnout[year])}` }
+            : null;
+        }}
+        highlight={null}
+        zoomable
+        credit={CREDIT}
+      />
+    </div>
   );
 }
 
@@ -95,12 +162,9 @@ export function StateMap({
     );
   }
   const byCode = new Map(
-    (story?.overview?.municipalities ?? []).map((m) => [
-      String(m.municipality.municipalityCode),
-      m,
-    ]),
+    (story?.overview?.municipalities ?? []).map((m) => [m.municipality.key, m]),
   );
-  const own = territory.level === 'municipality' ? String(territory.municipalityCode) : null;
+  const own = territory.level === 'municipality' ? territory.key : null;
   const stateName = territory.level === 'municipality' ? territory.stateName : territory.name;
   return (
     <ChoroplethMap
@@ -124,7 +188,7 @@ export function StateMap({
           : null;
       }}
       highlight={own}
-      outlined={(story?.profile?.neighbours ?? []).map(String)}
+      outlined={story?.profile?.neighbours ?? []}
       zoomable
       size="compact"
       credit={CREDIT}

@@ -14,7 +14,7 @@ async function chooseIztacalco() {
   fireEvent.click(await screen.findByRole('radio', { name: /Ciudad de México/ }));
   const select = screen.getByRole('combobox', { name: /Municipio/ });
   await waitFor(() => expect(select).toBeEnabled());
-  fireEvent.change(select, { target: { value: '6' } });
+  fireEvent.change(select, { target: { value: 'cvegeo:09006' } });
   fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
 }
 
@@ -46,14 +46,14 @@ describe.runIf(hasRealData)('The story with the published data (Iztacalco, CDMX)
     expect(screen.getByText('69.3 %')).toBeInTheDocument();
     expect(screen.getByText('−1.8 pts')).toBeInTheDocument();
 
-    forward(); // W-06: the age breakdown is published by state
+    forward(); // W-06: the pipeline now publishes the age breakdown by municipality
     expect(title()).toHaveTextContent(
-      'Quienes tienen 60 + votan 16.1 pts más que quienes tienen 18–24',
+      'Quienes tienen 60 + votan 14.5 pts más que quienes tienen 18–24',
     );
-    expect(screen.getByText(/mostramos Ciudad de México/)).toBeInTheDocument();
+    expect(screen.queryByText(/mostramos Ciudad de México/)).not.toBeInTheDocument();
 
     forward(); // W-07
-    expect(title()).toHaveTextContent('Las mujeres votan 8.4 pts más que los hombres');
+    expect(title()).toHaveTextContent('Las mujeres votan 8.1 pts más que los hombres');
 
     forward(); // W-08
     expect(title()).toHaveTextContent('Tu lugar en Ciudad de México');
@@ -70,7 +70,7 @@ describe.runIf(hasRealData)('The story with the published data (Iztacalco, CDMX)
     forward(); // W-09c
     forward(); // W-10
     expect(title()).toHaveTextContent('Lo esencial, en cinco cifras');
-    for (const value of ['59.7 %', '69.4 %', '#10 de 16', '−16.1 pts', '+8.4 pts']) {
+    for (const value of ['59.7 %', '69.4 %', '#10 de 16', '−14.5 pts', '+8.1 pts']) {
       expect(screen.getAllByText(value).length).toBeGreaterThan(0);
     }
     expect(
@@ -87,7 +87,7 @@ describe.runIf(hasRealData)('The story with the published data (Iztacalco, CDMX)
     await waitFor(() => expect(within(stateSelect!).getAllByRole('option')).toHaveLength(33));
     fireEvent.change(stateSelect!, { target: { value: '9' } });
     await waitFor(() => expect(townSelect).toBeEnabled());
-    fireEvent.change(townSelect!, { target: { value: '6' } });
+    fireEvent.change(townSelect!, { target: { value: 'cvegeo:09006' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
     expect(title()).toHaveTextContent('Cuéntanos de ti');
     const pick = (group: RegExp, option: string) =>

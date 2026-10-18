@@ -38,7 +38,7 @@ export function W02Territory() {
   const [query, setQuery] = useState('');
   const [stateCode, setStateCode] = useState<number | null>(stateCodeOf(nav.selected));
   const [municipality, setMunicipality] = useState(
-    nav.selected.level === 'municipality' ? String(nav.selected.municipalityCode) : '',
+    nav.selected.level === 'municipality' ? nav.selected.key : '',
   );
   const states = useAsync(() => listStates(turnout), [turnout]);
   const towns = useAsync(
@@ -58,9 +58,7 @@ export function W02Territory() {
     nav.confirmTerritory();
   };
   const chosen =
-    townList.find(
-      (t) => t.level === 'municipality' && String(t.municipalityCode) === municipality,
-    ) ??
+    townList.find((t) => t.level === 'municipality' && t.key === municipality) ??
     chosenState ??
     NATIONAL;
 
@@ -137,7 +135,7 @@ export function W02Territory() {
       <SelectField
         label="Municipio"
         options={townList.map((t) => ({
-          value: t.level === 'municipality' ? String(t.municipalityCode) : '',
+          value: t.level === 'municipality' ? t.key : '',
           text: t.name,
         }))}
         value={municipality}

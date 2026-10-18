@@ -11,7 +11,7 @@ import {
 
 /** Vitest runs from apps/web. */
 export const DATA_DIR = `${resolve(process.cwd(), 'public/data')}/`;
-export const hasRealData = existsSync(`${DATA_DIR}manifest.json`);
+export const hasRealData = existsSync(`${DATA_DIR}catalogos/entidades.json`);
 
 /** fetch over the files on disk: «/data/x» → public/data/x. */
 export const fetchFromDisk = (async (url: RequestInfo | URL) => {
