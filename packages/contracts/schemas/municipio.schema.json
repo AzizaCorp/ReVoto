@@ -14,83 +14,64 @@
     "suprimido": {
       "type": "boolean"
     },
+    "identidad_verificada": {
+      "type": "boolean"
+    },
+    "estado_resolucion": {
+      "$ref": "comun.schema.json#/$defs/estadoResolucion"
+    },
+    "aliases_ine": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "advertencia": {
+      "type": "string"
+    },
     "elecciones": {
       "type": "array",
       "items": {
         "$ref": "comun.schema.json#/$defs/cifrasEleccion"
       }
     },
-    "cvegeo": {
-      "$ref": "comun.schema.json#/$defs/cvegeo"
-    },
     "vecinos": {
       "type": "array",
-      "description": "Claves INE de los municipios colindantes de la misma entidad (W-04).",
+      "uniqueItems": true,
       "items": {
-        "type": "integer",
-        "minimum": 1
+        "type": "string",
+        "minLength": 1
       },
-      "uniqueItems": true
+      "description": "Identificadores operativos (id_operativo) de los municipios colindantes de la misma entidad."
     },
     "arquetipo": {
-      "type": "object",
-      "description": "W-09: arquetipo del municipio (k-medias, k = 5). Ausente con menos de 5 elecciones.",
-      "required": [
-        "id",
-        "nombre",
-        "nivel",
-        "efecto_presidencial",
-        "tendencia",
-        "volatilidad",
-        "tipicidad",
-        "rasgo"
-      ],
-      "properties": {
-        "id": {
-          "enum": ["A1", "A2", "A3", "A4", "A5"]
+      "$ref": "comun.schema.json#/$defs/arquetipo"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "suprimido": {
+            "const": true
+          }
         },
-        "nombre": {
-          "type": "string",
-          "minLength": 1
-        },
-        "nivel": {
-          "type": "number"
-        },
-        "efecto_presidencial": {
-          "type": "number"
-        },
-        "tendencia": {
-          "type": "number"
-        },
-        "volatilidad": {
-          "type": "number",
-          "minimum": 0
-        },
-        "tipicidad": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
-        },
-        "rasgo": {
-          "enum": ["nivel", "efp", "tend", "vol"]
-        }
+        "required": ["suprimido"]
       },
-      "additionalProperties": false
-    }
-  },
-  "if": {
-    "properties": {
-      "suprimido": {
-        "const": true
+      "then": {
+        "properties": {
+          "elecciones": {
+            "items": {
+              "not": {
+                "required": ["participacion"]
+              }
+            }
+          }
+        }
       }
     }
-  },
-  "then": {
-    "properties": {
-      "elecciones": {
-        "maxItems": 0
-      }
-    }
-  },
+  ],
   "additionalProperties": false
 }
