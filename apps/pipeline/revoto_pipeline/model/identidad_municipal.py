@@ -11,7 +11,6 @@ import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 
-## !GRANDE: contrato de correspondencias versionadas y validación fail-closed.
 COLUMNS = ('anio_eleccion', 'cve_ent_ine', 'cve_mpio_ine', 'nombre_ine',
            'cvegeo_canonico', 'nombre_canonico', 'tipo_equivalencia',
            'equivalencia_verificada', 'censo_referencia', 'fuente_referencia',
@@ -129,3 +128,4 @@ def require_identities(path: Path, origins: dict[tuple[int, int, int], str]) -> 
             raise ValueError(f'MPIONOM histórico cambió respecto al mapping {key}: '
                              f'{original_name!r} != {identities[key].historic_name!r}')
     return {key: identities[key] for key in origins}
+

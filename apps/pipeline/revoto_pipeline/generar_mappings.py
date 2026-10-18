@@ -224,9 +224,6 @@ def resolve_ine_municipality(
         else:
             observation = "Nombre normalizado coincide de forma única."
             method = "nombre_unico"
-
-        # CAMBIO: un nombre único, aun sin conflicto aparente de clave, requiere
-        # verificación documental; nunca es evidencia suficiente de identidad.
         return {
             "resolved": False,
             "municipality": municipality,
@@ -534,7 +531,6 @@ def print_summary(
 
 
 
-## !GRANDE: integración de catálogo INE histórico + referencia ITER (sin matches por nombre).
 from revoto_pipeline.config import load_config, Settings
 from revoto_pipeline.model.identidad_municipal import (
     COLUMNS as IDENTITY_COLUMNS, code5, normalize_name as stable_name,
@@ -616,7 +612,6 @@ def _manual(path: Path) -> dict[tuple[int, int, int], dict]:
         return rows
 
 
-## !GRANDE: descubrimiento auditable de candidatos, sin aprobar equivalencias por nombre.
 CANDIDATE_COLUMNS = [
     'anio_eleccion','cve_ent_ine','cve_mpio_ine','nombre_ine','censo_referencia',
     'cvegeo_candidato','nombre_inegi','metodo_candidato','codigo_coincide',
@@ -716,8 +711,6 @@ def build_historic_mapping(cfg: Settings, records: list[tuple[int,int,int,str]],
     record_keys = {(y,e,m) for y,e,m,_ in records}
     if set(manual) - record_keys:
         raise ValueError(f'Dictámenes manuales sin municipio histórico: {sorted(set(manual)-record_keys)[:5]}')
-    # CAMBIO: una misma clave con variantes de escritura del mismo año
-    # sólo produce una fila, sin esconder variantes en la auditoría.
     sources = defaultdict(list)
     for y,e,m,n in records:
         sources[(y,e,m)].append(n)
@@ -752,7 +745,6 @@ def build_historic_mapping(cfg: Settings, records: list[tuple[int,int,int,str]],
             if not review['evidencia'].strip() or not review['fuente_referencia'].strip():
                 raise ValueError(f'Dictamen {k} carece de evidencia documental')
             row.update(review)
-            # CAMBIO: siempre conservar nombres/claves reales y CVEGEO de 5 dígitos.
             row.update(anio_eleccion=year,cve_ent_ine=ent,cve_mpio_ine=mun,
                        nombre_ine=name,cvegeo_canonico=code,
                        nombre_canonico=catalog[(census,code)],
@@ -767,6 +759,59 @@ def build_historic_mapping(cfg: Settings, records: list[tuple[int,int,int,str]],
     return mapping
 
 
+
+OPERATIONAL_COLUMNS = [
+    'anio_eleccion','cve_ent_ine','cve_mpio_ine','nombre_ine',
+    'identificador_operativo','cvegeo_candidato','nombre_canonico_candidato',
+    'origen_identidad','confianza','equivalencia_verificada','censo_referencia',
+    'advertencia','estado_resolucion','aliases_ine','tipo_equivalencia'
+]
+
+
+## !GRANDE: generar identidad operativa exploratoria a partir de evidencia, no por año aislado.
+def build_operational_mapping(mapped: list[dict], candidates: list[dict]) -> list[dict]:
+    from revoto_pipeline.model.identidad_operativa import reconcile_operational_rows
+    candidate_index = defaultdict(list)
+    for row in candidates:
+        key = tuple(int(row[k]) for k in ('anio_eleccion','cve_ent_ine','cve_mpio_ine'))
+        if str(row.get('cvegeo_candidato','')).strip():
+            candidate_index[key].append(row)
+    base = []
+    for row in mapped:
+        key = tuple(int(row[k]) for k in ('anio_eleccion','cve_ent_ine','cve_mpio_ine'))
+        verified = str(row.get('equivalencia_verificada','')).strip().lower() == 'si'
+        code = str(row.get('cvegeo_canonico','')).strip() if verified else ''
+        canonical = str(row.get('nombre_canonico','')).strip() if verified else ''
+        origin = 'mapping_historico_verificado' if verified else 'INE_historico'
+        confidence = 'verificada_existente' if verified else 'sin_equivalencia'
+        warning = '' if verified else 'Se requiere revisión documental; identidad electoral no implica equivalencia territorial.'
+        if not code:
+            options = {str(x.get('cvegeo_candidato','')).strip(): x for x in candidate_index.get(key, [])
+                       if str(x.get('cvegeo_candidato','')).strip()}
+            # CAMBIO: sólo candidato único dentro de entidad/año; sigue NO verificado.
+            if len(options) == 1:
+                code, candidate = next(iter(options.items()))
+                canonical = str(candidate.get('nombre_inegi','')).strip()
+                origin = 'INE_historico+INEGI_ITER_candidato'
+                confidence = 'inferida_no_verificada'
+                warning = 'PROPUESTA: candidato territorial único; requiere comprobación histórica.'
+        base.append({
+            'anio_eleccion': row['anio_eleccion'],
+            'cve_ent_ine': row['cve_ent_ine'],
+            'cve_mpio_ine': row['cve_mpio_ine'],
+            'nombre_ine': row['nombre_ine'],
+            'identificador_operativo': f"ine_historico:{row['anio_eleccion']}:{int(row['cve_ent_ine']):02}:{int(row['cve_mpio_ine']):03}",
+            'cvegeo_candidato': code,
+            'nombre_canonico_candidato': canonical,
+            'origen_identidad': origin,
+            'confianza': confidence,
+            'equivalencia_verificada': 'si' if verified else 'no',
+            'censo_referencia': row['censo_referencia'],
+            'advertencia': warning,
+            'tipo_equivalencia': row.get('tipo_equivalencia',''),
+        })
+    return reconcile_operational_rows(base)
+
 def main(cfg: Settings | None = None) -> None:
     """Genera auditoría nacional, mapping histórico y legacy derivado de él."""
     cfg = cfg or load_config()
@@ -776,13 +821,17 @@ def main(cfg: Settings | None = None) -> None:
         raise ValueError(f'Faltan {len(missing)} particiones INE para mapping nacional: {missing[:8]}; '
                          'la auditoría CSV se guardó sin inventar municipios faltantes')
     catalog = _reference_catalog(cfg)
-    # CAMBIO: diagnóstico separado; no modifica ni aprueba el mapping histórico.
     candidates = discover_municipal_candidates(records, conflicts, catalog, cfg.reference)
     candidate_path = cfg.root/'data'/'quality'/'municipios_candidatos_inegi.csv'
     write_csv(candidate_path, CANDIDATE_COLUMNS, candidates)
     print(f'CANDIDATOS INEGI: {len(candidates)} filas de revisión; {candidate_path}')
     mapped = build_historic_mapping(cfg, records, conflicts, catalog)
     verified = [r for r in mapped if r['equivalencia_verificada'] == 'si']
+    # CAMBIO: el exportador exploratorio consume una serie operativa estable por municipio.
+    operational = build_operational_mapping(mapped, candidates)
+    operational_path = OUT/'municipios_operativo_ine_primero.csv'
+    write_csv(operational_path, OPERATIONAL_COLUMNS, operational)
+    print(f'IDENTIDAD OPERATIVA: {len({r["identificador_operativo"] for r in operational})} series; {operational_path}')
     inegi_rows = [{
         'censo_ref':r['censo_referencia'],
         'cvegeo_municipal_inegi':r['cvegeo_canonico']+'0000',
