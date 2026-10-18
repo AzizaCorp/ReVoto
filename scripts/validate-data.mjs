@@ -15,14 +15,27 @@ for (const f of readdirSync(dirEsquemas).filter((n) => n.endsWith('.schema.json'
   ajv.addSchema(JSON.parse(readFileSync(join(dirEsquemas, f), 'utf8')));
 }
 
+// Estructura que publica apps/pipeline (export/exportar_ine_exploratorio.py). Las rutas pueden ir
+// dentro de una carpeta de versión (AAAAMMDD-hash7/…) o directamente en public/data.
+const sinVersion = (rel) => rel.replace(/^\d{8}-[0-9a-f]{7}\//, '');
 const esquemaPara = (rel) => {
-  if (rel === 'manifest.json') return 'manifest.schema.json';
-  if (rel.endsWith('/nacional.json')) return 'nacional.schema.json';
-  if (rel.endsWith('/catalogos/entidades.json')) return 'entidades.schema.json';
-  if (/\/entidad\/\d+\.json$/.test(rel)) return 'entidad.schema.json';
-  if (/\/municipio\/\d+-\d{3}\.json$/.test(rel)) return 'municipio.schema.json';
+  const r = sinVersion(rel);
+  if (r === 'manifest.json') return 'manifest.schema.json';
+  if (r === 'nacional.json') return 'nacional.schema.json';
+  if (r === 'calidad.json') return 'calidad.schema.json';
+  if (r === 'catalogos/entidades.json') return 'entidades.schema.json';
+  if (/^entidad\/[a-z0-9_-]+\.json$/.test(r)) return 'entidad.schema.json';
+  if (/^municipio\/(\d{2}-\d{3}|[a-z0-9-]+\/[A-Za-z0-9_-]+)\.json$/.test(r))
+    return 'municipio.schema.json';
   return null;
 };
+
+// Archivos del L4 que no tienen JSON Schema propio: geometría TopoJSON, catálogos auxiliares
+// y evidencia de validación del pipeline.
+const sinEsquema = (rel) =>
+  /^(geo\/[a-z0-9_-]+\.topo\.json|catalogos\/archivos-entidades\.json|catalogos\/municipios\/[a-z0-9-]+\.json|validacion\/.+)$/.test(
+    sinVersion(rel),
+  );
 
 const listar = (dir) =>
   existsSync(dir)
@@ -42,6 +55,7 @@ const errores = [];
 for (const archivo of archivos) {
   const rel = relative(dirDatos, archivo).split(sep).join('/');
   const id = esquemaPara(rel);
+  if (!id && sinEsquema(rel)) continue;
   if (!id) {
     errores.push(`${rel}: no corresponde a ningún archivo del contrato L4`);
     continue;

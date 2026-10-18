@@ -4,11 +4,18 @@
   "type": "object",
   "required": ["territorio", "fuente", "elecciones", "municipios"],
   "properties": {
-    "territorio": { "$ref": "comun.schema.json#/$defs/territorio" },
-    "fuente": { "type": "string", "minLength": 1 },
+    "territorio": {
+      "$ref": "comun.schema.json#/$defs/territorio"
+    },
+    "fuente": {
+      "type": "string",
+      "minLength": 1
+    },
     "elecciones": {
       "type": "array",
-      "items": { "$ref": "comun.schema.json#/$defs/cifrasEleccion" }
+      "items": {
+        "$ref": "comun.schema.json#/$defs/cifrasEleccion"
+      }
     },
     "municipios": {
       "type": "array",
@@ -16,17 +23,77 @@
         "type": "object",
         "required": ["cve", "nombre"],
         "properties": {
-          "cve": { "type": "integer", "minimum": 1 },
-          "nombre": { "type": "string" },
-          "suprimido": { "type": "boolean" },
+          "cve": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 1
+          },
+          "id_operativo": {
+            "type": "string",
+            "minLength": 1
+          },
+          "archivo": {
+            "type": "string",
+            "pattern": "^municipio/[a-z0-9_/-]+\\.json$"
+          },
+          "cvegeo": {
+            "type": "string",
+            "pattern": "^[0-9]{5}$"
+          },
+          "cvegeo_candidato": {
+            "type": "string",
+            "pattern": "^[0-9]{5}$"
+          },
+          "identidad_verificada": {
+            "type": "boolean"
+          },
+          "estado_resolucion": {
+            "$ref": "comun.schema.json#/$defs/estadoResolucion"
+          },
+          "aliases_ine": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "suprimido": {
+            "type": "boolean"
+          },
           "participacion": {
             "type": "object",
-            "propertyNames": { "enum": ["2009", "2012", "2015", "2018", "2021", "2024"] },
-            "additionalProperties": { "$ref": "comun.schema.json#/$defs/proporcion" }
+            "propertyNames": {
+              "enum": ["2009", "2012", "2015", "2018", "2021", "2024"]
+            },
+            "additionalProperties": {
+              "$ref": "comun.schema.json#/$defs/proporcion"
+            }
           }
         },
         "additionalProperties": false
       }
+    },
+    "votos_esperados_por_edad": {
+      "type": "object",
+      "required": ["18-24", "25-34", "35-44", "45-59", "60+"],
+      "propertyNames": {
+        "enum": ["18-24", "25-34", "35-44", "45-59", "60+"]
+      },
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 3
+      }
+    },
+    "arquetipo": {
+      "$ref": "comun.schema.json#/$defs/arquetipo"
+    },
+    "perfil_estatal": {
+      "$ref": "comun.schema.json#/$defs/perfilEstatal"
     }
   },
   "additionalProperties": false
