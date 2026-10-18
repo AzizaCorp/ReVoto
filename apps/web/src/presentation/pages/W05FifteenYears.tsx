@@ -30,6 +30,14 @@ export function W05FifteenYears() {
     <StoryFrame
       pending={!story}
       label="15 años"
+      after={
+        <Averages
+          presidential={presidential}
+          midterm={midterm}
+          change={change}
+          onTable={() => nav.goTo('W-15')}
+        />
+      }
       visual={
         <BarChart
           title="Participación por elección"
@@ -56,6 +64,23 @@ export function W05FifteenYears() {
         {story ? place(story.own.territory) : '[Territorio]'} · Elecciones federales 2009–2024
       </Text>
       <DataStatus />
+    </StoryFrame>
+  );
+}
+
+function Averages({
+  presidential,
+  midterm,
+  change,
+  onTable,
+}: {
+  presidential: number | null;
+  midterm: number | null;
+  change: number | null;
+  onTable: () => void;
+}) {
+  return (
+    <>
       <div className={[layout.grid3, layout.wideTwo].join(' ')}>
         <StatCard
           label="Promedio presidencial"
@@ -74,9 +99,9 @@ export function W05FifteenYears() {
           pending={change === null}
         />
       </div>
-      <Button variant="text" onClick={() => nav.goTo('W-15')}>
+      <Button variant="text" onClick={onTable}>
         Ver como tabla
       </Button>
-    </StoryFrame>
+    </>
   );
 }

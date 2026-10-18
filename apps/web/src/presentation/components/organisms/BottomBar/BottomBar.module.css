@@ -33,7 +33,19 @@
   color: var(--rv-color-on-ink);
 }
 
+/* Cover: on mobile the bar disappears (the button lives in the content); from tablet up it only
+   carries the source note. */
+.onlyNote {
+  display: none;
+}
+
 @media (min-width: 768px) {
+  .onlyNote {
+    display: flex;
+  }
+  .onlyNote .note {
+    display: block;
+  }
   .bottomBar {
     gap: var(--rv-space-15);
     border-top: var(--rv-border-thin) solid var(--rv-color-border);

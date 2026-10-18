@@ -8,7 +8,7 @@
  * (SRS 10.3). Screen names are shown to people, so they stay in Spanish.
  */
 export const SCREENS = [
-  { id: 'W-01', step: 1, name: 'Portada', priority: 'must' },
+  { id: 'W-01', step: 1, name: 'Inicio', priority: 'must' },
   { id: 'W-02', step: 2, name: 'Elige tu territorio', priority: 'must' },
   { id: 'W-02b', step: 2, name: 'Sobre ti', priority: 'could' },
   { id: 'W-03', step: 3, name: 'México votó', priority: 'must' },

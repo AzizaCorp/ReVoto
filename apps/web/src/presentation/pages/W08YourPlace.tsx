@@ -1,11 +1,43 @@
-import { Button, ComparisonBar, Slot, StatCard, Text } from '@/presentation/components';
+import { useState } from 'react';
+import type { MunicipalityTurnout } from '@/domain';
+import { Button, Slot, StatCard, Text } from '@/presentation/components';
 import { percent } from '@/presentation/format';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import { useStoryData } from '@/presentation/providers/Story';
 import { DataStatus } from './shared/DataStatus';
-import layout from './shared/Layout.module.css';
 import { placeOf, YEAR } from './shared/storyFigures';
 import { StoryFrame } from './shared/StoryFrame';
+import styles from './W08YourPlace.module.css';
+
+interface RankRow {
+  position: number;
+  name: string;
+  turnout: number | null;
+  mine: boolean;
+}
+
+function Rows({ rows }: { rows: readonly (RankRow | 'gap')[] }) {
+  return (
+    <ol className={styles.list}>
+      {rows.map((r, i) =>
+        r === 'gap' ? (
+          <li key={`gap-${i}`} className={styles.gap} aria-hidden="true">
+            ⋮
+          </li>
+        ) : (
+          <li
+            key={`${r.position}-${r.name}`}
+            className={[styles.row, r.mine ? styles.mine : ''].join(' ')}
+          >
+            <span className={styles.badge}>{r.mine ? `#${r.position}` : r.position}</span>
+            <span className={styles.name}>{r.name}</span>
+            <span className={styles.value}>{r.turnout === null ? '—' : percent(r.turnout)}</span>
+          </li>
+        ),
+      )}
+    </ol>
+  );
+}
 
 /** W-08 · Your place in your state. Position of the municipality among those of its state. */
 export function W08YourPlace() {
@@ -15,10 +47,29 @@ export function W08YourPlace() {
   const p = story ? placeOf(story) : null;
   const stateName =
     t.level === 'national' ? '[Entidad]' : t.level === 'state' ? t.name : t.stateName;
-  const mine =
-    p && t.level === 'municipality' && !p.top.some((m) => m.code === t.key)
-      ? { name: t.name, value: story?.own.elections.at(-1)?.total.value ?? null }
-      : null;
+  const [full, setFull] = useState(false);
+  const own = story?.own.elections.find((e) => e.election.year === YEAR)?.total.value ?? null;
+  const row = (m: MunicipalityTurnout, position: number): RankRow => ({
+    position,
+    name: m.name,
+    turnout: m.turnout,
+    mine: t.level === 'municipality' && m.code === t.key,
+  });
+  // Board W-08: the two highest, yours and the lowest; «Ver el Top 5» opens the five highest.
+  const rows: (RankRow | 'gap')[] = [];
+  if (p?.rank && t.level === 'municipality') {
+    const head = p.top.slice(0, full ? 5 : 2).map((m, i) => row(m, i + 1));
+    rows.push(...head);
+    const position = p.rank.position;
+    if (position > head.length) {
+      if (position > head.length + 1) rows.push('gap');
+      rows.push({ position, name: t.name, turnout: own, mine: true });
+    }
+    if (!full && p.lowest && position < p.rank.total) {
+      if (position < p.rank.total - 1) rows.push('gap');
+      rows.push(row(p.lowest, p.rank.total));
+    }
+  }
 
   if (t.level !== 'municipality') {
     return (
@@ -39,26 +90,16 @@ export function W08YourPlace() {
       pending={!p?.rank}
       label="Tu lugar"
       visual={
-        p ? (
-          <section className={layout.panel}>
-            <h2 className={layout.panelTitle}>
-              Mayor participación en {stateName} · {YEAR}
+        p?.rank ? (
+          <section className={styles.scale} aria-label={`Ranking de ${stateName}`}>
+            <h2 className={styles.title}>
+              {full ? `Las 5 con mayor participación en ${stateName}` : `Ranking de ${stateName}`} ·{' '}
+              {YEAR}
             </h2>
-            {p.top.map((m, i) => (
-              <ComparisonBar
-                key={m.code}
-                label={`${i + 1}. ${m.name}`}
-                value={m.turnout === null ? '—' : percent(m.turnout)}
-                ratio={m.turnout}
-              />
-            ))}
-            {mine && p.rank && (
-              <ComparisonBar
-                label={`${p.rank.position}. ${mine.name}`}
-                value={mine.value === null ? '—' : percent(mine.value)}
-                ratio={mine.value}
-              />
-            )}
+            <Rows rows={rows} />
+            <Button variant="text" onClick={() => setFull((f) => !f)}>
+              {full ? 'Ver tu lugar' : `Ver el Top 5 de ${stateName}`}
+            </Button>
           </section>
         ) : (
           <Slot label="Ranking: mayor participación → tu municipio → menor" height="fill" />
@@ -84,6 +125,22 @@ export function W08YourPlace() {
             : `Vota más que el —— % de los municipios de ${stateName}.`}
         </Text>
       </StatCard>
+      {p?.rank && (
+        <div className={styles.scale} aria-hidden="true">
+          <div className={styles.bar}>
+            <span
+              className={styles.marker}
+              style={{
+                left: `${Math.round((1 - (p.rank.position - 1) / Math.max(p.rank.total - 1, 1)) * 100)}%`,
+              }}
+            />
+          </div>
+          <div className={styles.ends}>
+            <span>Menor participación</span>
+            <span>Mayor participación</span>
+          </div>
+        </div>
+      )}
     </StoryFrame>
   );
 }

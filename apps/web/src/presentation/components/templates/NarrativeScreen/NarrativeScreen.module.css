@@ -21,7 +21,8 @@
   padding: var(--rv-space-2) var(--rv-side-margin);
 }
 .text,
-.visual {
+.visual,
+.after {
   display: flex;
   flex-direction: column;
   gap: var(--rv-space-15);
@@ -80,10 +81,12 @@
   flex: 1;
 }
 /* Buttons keep their natural width; slots and texts take the whole column. */
-.text {
+.text,
+.after {
   align-items: flex-start;
 }
-.text > * {
+.text > *,
+.after > * {
   max-width: 100%;
 }
 
@@ -147,5 +150,54 @@
   .withVisual {
     grid-template-columns: 5fr 7fr;
     gap: var(--rv-space-8);
+  }
+}
+/* Cover (D01): text and illustration share the width in halves. */
+@media (min-width: 1200px) {
+  .dark .withVisual {
+    grid-template-columns: 6fr 6fr;
+  }
+}
+
+/* «after» block: under the visual on mobile; under the text from tablet up, beside the visual. */
+.after {
+  animation: rv-rise var(--rv-duration-enter) var(--rv-easing) 420ms backwards;
+}
+@media (min-width: 768px) {
+  .withAfter {
+    grid-template-areas:
+      'text visual'
+      'after visual';
+    grid-template-rows: auto auto;
+    align-content: center;
+    row-gap: var(--rv-space-2);
+  }
+  .withAfter .text {
+    grid-area: text;
+  }
+  .withAfter .visual {
+    grid-area: visual;
+  }
+  .withAfter .after {
+    grid-area: after;
+  }
+  .visualLeft {
+    grid-template-areas: 'visual text';
+  }
+  .visualLeft.withAfter {
+    grid-template-areas:
+      'visual text'
+      'visual after';
+  }
+  .visualLeft .text {
+    grid-area: text;
+  }
+  .visualLeft .visual {
+    grid-area: visual;
+  }
+}
+@media (min-width: 1200px) {
+  .visualLeft {
+    grid-template-columns: 7fr 5fr;
   }
 }

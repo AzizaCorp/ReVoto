@@ -14,6 +14,8 @@ export interface StoryFrameProps {
   visual?: ReactNode;
   /** Section pill («MÉXICO»). The «N/9» number comes from the engine. */
   label?: string;
+  /** Prefix of the cover pill («ELECCIONES FEDERALES» before «2009–2024»). */
+  labelPrefix?: string;
   /** Shows the skeleton's «Datos pendientes» pill. */
   pending?: boolean;
   /**
@@ -29,6 +31,10 @@ export interface StoryFrameProps {
   secondaryAction?: BottomAction;
   /** On mobile the visual goes above the text. */
   visualFirst?: boolean;
+  /** Supporting block: after the visual on mobile, under the text from tablet up. */
+  after?: ReactNode;
+  /** Tablet and desktop: the visual on the left (W-09). */
+  visualLeft?: boolean;
 }
 
 /** Number of the section pill: the cover does not count, so W-03 is «2/9». */
@@ -44,12 +50,15 @@ export function StoryFrame({
   children,
   visual,
   label,
+  labelPrefix,
   pending,
   hasSource = true,
   shareable = true,
   cover,
   secondaryAction,
   visualFirst,
+  after,
+  visualLeft,
 }: StoryFrameProps) {
   const nav = useNavigation();
   const number = useStepNumber();
@@ -60,6 +69,8 @@ export function StoryFrame({
       dark={cover}
       visual={visual}
       visualFirst={visualFirst}
+      after={after}
+      visualLeft={visualLeft}
       top={
         <TopBar
           dark={cover}
@@ -79,12 +90,13 @@ export function StoryFrame({
           onPrevious={nav.previous}
           onNext={nav.next}
           hideNavigation={cover}
+          note={cover}
         />
       }
     >
       {(label || pending) && (
         <div className={styles.pillRow}>
-          {label && <Pill number={cover ? undefined : number}>{label}</Pill>}
+          {label && <Pill number={cover ? labelPrefix : number}>{label}</Pill>}
           {pending && <Pill tone="pending">Datos pendientes</Pill>}
         </div>
       )}

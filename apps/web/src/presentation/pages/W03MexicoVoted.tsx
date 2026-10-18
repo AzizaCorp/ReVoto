@@ -22,6 +22,17 @@ export function W03MexicoVoted() {
     <StoryFrame
       pending={!e}
       label="México"
+      after={
+        <StatCard
+          icon="chart"
+          label={`Participación nacional · ${year}`}
+          value={e ? percent(e.total.value) : `${PENDING} %`}
+          pending={!e}
+          hero
+        >
+          {e && <Text variant="meta">Lista nominal: {count(e.registeredVoters)} personas</Text>}
+        </StatCard>
+      }
       visual={
         <CountryMap
           year={e?.election.year ?? (type === 'presidential' ? 2024 : 2021)}
@@ -44,15 +55,6 @@ export function W03MexicoVoted() {
         onChange={(v) => setType(v as ElectionType)}
       />
       <DataStatus />
-      <StatCard
-        icon="chart"
-        label={`Participación nacional · ${year}`}
-        value={e ? percent(e.total.value) : `${PENDING} %`}
-        pending={!e}
-        hero
-      >
-        {e && <Text variant="meta">Lista nominal: {count(e.registeredVoters)} personas</Text>}
-      </StatCard>
     </StoryFrame>
   );
 }

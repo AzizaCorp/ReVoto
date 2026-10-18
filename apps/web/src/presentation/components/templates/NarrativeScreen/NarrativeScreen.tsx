@@ -12,8 +12,15 @@ export interface NarrativeScreenProps {
   visual?: ReactNode;
   /** Dark background with brand gradients (W-01). */
   dark?: boolean;
-  /** On mobile the visual goes above the text (share cards W-09, W-09b, W-09c). */
+  /** On mobile the visual goes above the text (share cards W-09b, W-09c). */
   visualFirst?: boolean;
+  /**
+   * Supporting figures that go after the visual on mobile and under the text on tablet and
+   * desktop (W-03 national figure, W-05 averages, canvas «Secuencia»).
+   */
+  after?: ReactNode;
+  /** Tablet and desktop: the visual on the left and the text on the right (W-09). */
+  visualLeft?: boolean;
 }
 
 /**
@@ -29,6 +36,8 @@ export function NarrativeScreen({
   visual,
   dark,
   visualFirst,
+  after,
+  visualLeft,
 }: NarrativeScreenProps) {
   return (
     <div className={[styles.narrativeScreen, dark ? styles.dark : ''].join(' ')}>
@@ -39,10 +48,13 @@ export function NarrativeScreen({
             styles.content,
             visual ? styles.withVisual : '',
             visualFirst ? styles.visualFirst : '',
+            after ? styles.withAfter : '',
+            visualLeft ? styles.visualLeft : '',
           ].join(' ')}
         >
           <div className={styles.text}>{children}</div>
           {visual && <div className={styles.visual}>{visual}</div>}
+          {after && <div className={styles.after}>{after}</div>}
         </div>
       </div>
       {bottom}

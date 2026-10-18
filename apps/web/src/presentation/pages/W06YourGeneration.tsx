@@ -34,6 +34,13 @@ export function W06YourGeneration() {
     <StoryFrame
       pending={!b?.figures}
       label="Tu generación"
+      after={
+        <Text variant="lead">
+          {b
+            ? `Diferencia entre el grupo más joven y el mayor en ${place(b.territory)}, elección federal ${YEAR}. La cifra describe cuánto votó cada grupo, no por qué.`
+            : '[Texto descriptivo de la brecha entre el grupo más joven y el mayor, sin juicios.]'}
+        </Text>
+      }
       visual={
         <>
           <SegmentedControl
@@ -77,11 +84,6 @@ export function W06YourGeneration() {
         highlight
         hero
       />
-      <Text variant="lead">
-        {b
-          ? `Diferencia entre el grupo más joven y el mayor en ${place(b.territory)}, elección federal ${YEAR}. La cifra describe cuánto votó cada grupo, no por qué.`
-          : '[Texto descriptivo de la brecha entre el grupo más joven y el mayor, sin juicios.]'}
-      </Text>
     </StoryFrame>
   );
 }

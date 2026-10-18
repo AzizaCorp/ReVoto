@@ -24,6 +24,8 @@ export interface BottomBarProps {
   dark?: boolean;
   /** No ‹ › and no «Fin»: the screen already has its own action to move on (cover). */
   hideNavigation?: boolean;
+  /** Shows the source note even without «Fuente» (cover, from tablet up). */
+  note?: boolean;
 }
 
 /** Story navigation; one shape per breakpoint (board C-03 «BottomBar»). */
@@ -36,10 +38,14 @@ export function BottomBar({
   nextLabel = 'Siguiente',
   dark,
   hideNavigation,
+  note,
 }: BottomBarProps) {
+  const onlyNote = note && hideNavigation && !onSource && !onShare && !secondaryAction;
   return (
     <nav
-      className={[styles.bottomBar, dark ? styles.dark : ''].join(' ')}
+      className={[styles.bottomBar, dark ? styles.dark : '', onlyNote ? styles.onlyNote : ''].join(
+        ' ',
+      )}
       aria-label="Navegación de la historia"
     >
       <div className={[styles.left, secondaryAction ? styles.keep : ''].join(' ')}>
@@ -62,7 +68,7 @@ export function BottomBar({
           </>
         )}
       </div>
-      {!secondaryAction && (onSource || onShare) && (
+      {!secondaryAction && (onSource || onShare || note) && (
         <span className={styles.note}>
           Fuente: conteos censales INE 2009–2024 · Sin datos personales
         </span>

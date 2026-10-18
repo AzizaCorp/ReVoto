@@ -17,6 +17,8 @@ export interface PlaceInState {
   readonly rank: StateRank | null;
   /** The five municipalities with the highest turnout (W-08 table). */
   readonly top: readonly MunicipalityTurnout[];
+  /** Municipality with the lowest published turnout (last row of the W-08 ranking). */
+  readonly lowest: MunicipalityTurnout | null;
 }
 
 /** W-08 · Place of a municipality among those of its state, from an overview already read. */
@@ -29,6 +31,7 @@ export function placeInState(
   return {
     rank: rankInState(list, municipalityKey),
     top: rankMunicipalities(list).slice(0, 5),
+    lowest: rankMunicipalities(list).at(-1) ?? null,
   };
 }
 

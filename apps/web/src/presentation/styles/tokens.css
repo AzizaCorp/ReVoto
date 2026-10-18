@@ -18,6 +18,8 @@
   --rv-color-pending: #e0a3c4;
   --rv-color-fill-3: #f8f3f6; /* stage, disabled field */
   --rv-color-brand-on-dark: #ff8cc6;
+  /* Second line of the cover headline, on ink. */
+  --rv-color-brand-accent-on-dark: #ff4fa6;
   --rv-color-paper: #ffffff;
   --rv-color-background: #fdf9fa;
   --rv-color-brand: #ff2d94;
@@ -73,6 +75,9 @@
   --rv-text-figure: 32px;
   --rv-text-figure-small: 19px;
   --rv-text-h1: 30px;
+  /* Cover (W-01): bigger headline and lead than the rest of the story. */
+  --rv-text-display: 38px;
+  --rv-text-display-lead: 15px;
   --rv-text-h2: 22px;
   --rv-text-lead: 14px;
   --rv-text-body: 14px;
@@ -179,6 +184,8 @@
    as literals only inside @media: 768 px (tablet) and 1200 px (desktop). */
 @media (min-width: 768px) {
   :root {
+    --rv-text-display: 48px;
+    --rv-text-display-lead: 16px;
     --rv-text-h1: 40px;
     --rv-text-h2: 26px;
     --rv-text-figure: 40px;
@@ -193,6 +200,8 @@
 }
 @media (min-width: 1200px) {
   :root {
+    --rv-text-display: 64px;
+    --rv-text-display-lead: 18px;
     --rv-text-h1: 52px;
     --rv-text-lead: 17px;
     --rv-side-margin: 64px;

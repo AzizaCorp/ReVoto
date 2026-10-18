@@ -1,0 +1,62 @@
+/* W-07 · Two rings, one per sex (canvas W07/T07/D07 · Mujeres y hombres). */
+.ring {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rv-space-15);
+  padding: var(--rv-space-2) var(--rv-space-15);
+  border: var(--rv-border-thin) solid var(--rv-color-border);
+  border-radius: var(--rv-radius-card);
+  background: var(--rv-color-paper);
+}
+.svg {
+  display: block;
+  width: 100%;
+  max-width: 128px;
+  height: auto;
+}
+.track {
+  fill: none;
+  stroke: var(--rv-color-border);
+  stroke-width: 10;
+}
+.track.pending {
+  stroke: var(--rv-color-brand-soft);
+  stroke-dasharray: 6 5;
+}
+.arc {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 60px 60px;
+}
+.women {
+  stroke: var(--rv-color-brand);
+}
+.men {
+  stroke: var(--rv-tone-violet-fg);
+}
+.value {
+  font-family: var(--rv-font-title);
+  font-size: 20px;
+  font-weight: var(--rv-weight-title);
+  fill: var(--rv-color-ink);
+}
+.value.pending {
+  fill: var(--rv-color-muted);
+}
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rv-space-1);
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-body);
+  font-weight: var(--rv-weight-bold);
+}
+@media (min-width: 1200px) {
+  .svg {
+    max-width: 160px;
+  }
+}

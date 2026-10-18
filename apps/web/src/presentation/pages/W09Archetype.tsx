@@ -25,7 +25,60 @@ export function W09Archetype() {
       pending={!profile}
       label="Tu arquetipo"
       shareable={false}
-      visualFirst
+      visualLeft
+      after={
+        <>
+          {profile ? (
+            <section className={layout.panel}>
+              <h2 className={layout.panelTitle}>¿Por qué?</h2>
+              <Text variant="meta">{traitSentence(profile)}</Text>
+              <Text variant="meta">
+                Nivel {points(profile.level)} · efecto presidencial{' '}
+                {points(profile.presidentialEffect)} · tendencia {points(profile.trend)} por década
+                · volatilidad {pointsAbs(profile.volatility)}
+              </Text>
+              <ComparisonBar
+                label="Qué tan típico"
+                value={profile.typicality.toFixed(2)}
+                ratio={profile.typicality}
+              />
+            </section>
+          ) : (
+            <>
+              <Text variant="meta">
+                {t.level === 'municipality'
+                  ? `${t.name} tiene menos de 5 elecciones para calcular su arquetipo. Mira los cinco:`
+                  : 'Elige un municipio para conocer su arquetipo. Mientras, mira los cinco:'}
+              </Text>
+              <div
+                className={layout.row}
+                role="radiogroup"
+                aria-label="Vista previa de los arquetipos"
+              >
+                {ARCHETYPE_IDS.map((id) => (
+                  <Chip
+                    key={id}
+                    kind="filter"
+                    role="radio"
+                    pressed={id === preview}
+                    onClick={() => setPreview(id)}
+                  >
+                    {ARCHETYPES[id]}
+                  </Chip>
+                ))}
+              </div>
+            </>
+          )}
+          <Button
+            variant="primary"
+            icon="share"
+            fullWidth="mobile"
+            onClick={() => nav.openSheet('W-12', { share: 'archetype' })}
+          >
+            Compartir mi arquetipo
+          </Button>
+        </>
+      }
       visual={
         <ArchetypeCard
           archetype={archetype}
@@ -45,51 +98,6 @@ export function W09Archetype() {
         cuánto suben en presidenciales y qué tan predecibles son.
       </Text>
       <DataStatus />
-      {profile ? (
-        <section className={layout.panel}>
-          <h2 className={layout.panelTitle}>¿Por qué?</h2>
-          <Text variant="meta">{traitSentence(profile)}</Text>
-          <Text variant="meta">
-            Nivel {points(profile.level)} · efecto presidencial {points(profile.presidentialEffect)}{' '}
-            · tendencia {points(profile.trend)} por década · volatilidad{' '}
-            {pointsAbs(profile.volatility)}
-          </Text>
-          <ComparisonBar
-            label="Qué tan típico"
-            value={profile.typicality.toFixed(2)}
-            ratio={profile.typicality}
-          />
-        </section>
-      ) : (
-        <>
-          <Text variant="meta">
-            {t.level === 'municipality'
-              ? `${t.name} tiene menos de 5 elecciones para calcular su arquetipo. Mira los cinco:`
-              : 'Elige un municipio para conocer su arquetipo. Mientras, mira los cinco:'}
-          </Text>
-          <div className={layout.row} role="radiogroup" aria-label="Vista previa de los arquetipos">
-            {ARCHETYPE_IDS.map((id) => (
-              <Chip
-                key={id}
-                kind="filter"
-                role="radio"
-                pressed={id === preview}
-                onClick={() => setPreview(id)}
-              >
-                {ARCHETYPES[id]}
-              </Chip>
-            ))}
-          </div>
-        </>
-      )}
-      <Button
-        variant="primary"
-        icon="share"
-        fullWidth="mobile"
-        onClick={() => nav.openSheet('W-12', { share: 'archetype' })}
-      >
-        Compartir mi arquetipo
-      </Button>
     </StoryFrame>
   );
 }
