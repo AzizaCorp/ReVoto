@@ -4,74 +4,15 @@
   "type": "object",
   "required": ["territorio", "fuente", "suprimido", "elecciones"],
   "properties": {
-    "territorio": {
-      "$ref": "comun.schema.json#/$defs/territorio"
-    },
-    "fuente": {
-      "type": "string",
-      "minLength": 1
-    },
-    "suprimido": {
-      "type": "boolean"
-    },
-    "identidad_verificada": {
-      "type": "boolean"
-    },
-    "estado_resolucion": {
-      "$ref": "comun.schema.json#/$defs/estadoResolucion"
-    },
-    "aliases_ine": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "advertencia": {
-      "type": "string"
-    },
+    "territorio": { "$ref": "comun.schema.json#/$defs/territorio" },
+    "fuente": { "type": "string", "minLength": 1 },
+    "suprimido": { "type": "boolean" },
     "elecciones": {
       "type": "array",
-      "items": {
-        "$ref": "comun.schema.json#/$defs/cifrasEleccion"
-      }
-    },
-    "vecinos": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
-      "description": "Identificadores operativos (id_operativo) de los municipios colindantes de la misma entidad."
-    },
-    "arquetipo": {
-      "$ref": "comun.schema.json#/$defs/arquetipo"
+      "items": { "$ref": "comun.schema.json#/$defs/cifrasEleccion" }
     }
   },
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "suprimido": {
-            "const": true
-          }
-        },
-        "required": ["suprimido"]
-      },
-      "then": {
-        "properties": {
-          "elecciones": {
-            "items": {
-              "not": {
-                "required": ["participacion"]
-              }
-            }
-          }
-        }
-      }
-    }
-  ],
+  "if": { "properties": { "suprimido": { "const": true } } },
+  "then": { "properties": { "elecciones": { "maxItems": 0 } } },
   "additionalProperties": false
 }

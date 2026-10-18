@@ -2,117 +2,19 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "manifest.schema.json",
   "type": "object",
-  "required": ["version_datos", "generado", "fuente"],
+  "required": ["version_datos", "generado", "fuente", "validacion"],
   "properties": {
-    "version_datos": {
-      "type": "string",
-      "pattern": "^[0-9]{8}-[0-9a-f]{7}$"
-    },
-    "generado": {
-      "type": "string"
-    },
-    "fuente": {
-      "type": "string",
-      "minLength": 1
-    },
+    "version_datos": { "type": "string", "pattern": "^[0-9]{8}-[0-9a-f]{7}$" },
+    "generado": { "type": "string" },
+    "fuente": { "type": "string", "minLength": 1 },
     "validacion": {
       "type": "object",
       "required": ["max_diferencia_pp", "reporte"],
       "properties": {
-        "max_diferencia_pp": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
-        },
-        "reporte": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false
-    },
-    "estado_publicacion": {
-      "enum": ["exploratorio_no_aprobado", "diagnostico", "aprobado"]
-    },
-    "entidades": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 32
-    },
-    "anios": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "enum": [2009, 2012, 2015, 2018, 2021, 2024]
+        "max_diferencia_pp": { "type": "number", "minimum": 0, "maximum": 1 },
+        "reporte": { "type": "string" }
       }
-    },
-    "umbral_rn05": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "max_diferencia_pp": {
-      "type": ["number", "null"],
-      "minimum": 0
-    },
-    "reporte": {
-      "type": "string"
-    },
-    "catalogo_entidades": {
-      "type": "string"
-    },
-    "nacional": {
-      "type": "string"
-    },
-    "particiones_faltantes": {
-      "type": "array",
-      "items": {
-        "type": "array",
-        "minItems": 2,
-        "maxItems": 2,
-        "items": {
-          "type": "integer"
-        }
-      }
-    },
-    "limitaciones": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "topologia": {
-      "type": "object",
-      "required": ["por_entidad"],
-      "properties": {
-        "entidades": {
-          "type": "string",
-          "pattern": "^geo/entidades\\.topo\\.json$"
-        },
-        "por_entidad": {
-          "type": "object",
-          "patternProperties": {
-            "^(0[1-9]|[12][0-9]|3[0-2])$": {
-              "type": "string",
-              "pattern": "^geo/[a-z0-9-]+\\.topo\\.json$"
-            }
-          },
-          "additionalProperties": false
-        }
-      },
-      "additionalProperties": false
     }
   },
-  "anyOf": [
-    {
-      "required": ["validacion"]
-    },
-    {
-      "required": ["estado_publicacion", "reporte"],
-      "properties": {
-        "estado_publicacion": {
-          "const": "exploratorio_no_aprobado"
-        }
-      }
-    }
-  ],
   "additionalProperties": false
 }

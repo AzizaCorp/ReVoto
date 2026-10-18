@@ -11,10 +11,10 @@ Los archivos deben validar contra packages/contracts/schemas (npm run check:data
 
 from __future__ import annotations
 
-from revoto_pipeline.config import Settings
-from revoto_pipeline.export.frontend import export_web
+from pathlib import Path
+
+import duckdb
 
 
-def exportar(cfg: Settings, estados: int | list[int] | tuple[int, ...], *,
-             dry_run: bool = False) -> dict:
-    return export_web(cfg, estados, integrado=False, dry_run=dry_run)
+def exportar(con: duckdb.DuckDBPyConnection, salida: Path, reportes: Path) -> None:
+    raise NotImplementedError("Exportación L4 pendiente de US-06")

@@ -10,14 +10,12 @@ import {
   type Sexo,
   type Territorio,
 } from '@/domain';
-import type { CifrasEleccionDto, CifrasPublicadasDto } from '@revoto/contracts';
+import type { CifrasEleccionDto } from '@revoto/contracts';
 
 const aProporciones = <K extends string>(r: Partial<Record<K, number>>) =>
   Object.fromEntries(Object.entries(r).map(([k, v]) => [k, proporcion(v as number)])) as Partial<
     Record<K, Proporcion>
   >;
-
-const publicada = (e: CifrasEleccionDto): e is CifrasPublicadasDto => 'participacion' in e;
 
 export function aSerie(
   territorio: Territorio,
@@ -28,9 +26,7 @@ export function aSerie(
     estado: 'publicada',
     territorio,
     fuente: { nombre: fuente },
-    // Una elección sin `participacion` (RN-05 o sin denominador) no entra a la serie: la UI la
-    // muestra como «sin dato» en lugar de inventar una cifra.
-    elecciones: elecciones.filter(publicada).map((e): ParticipacionEnEleccion => {
+    elecciones: elecciones.map((e): ParticipacionEnEleccion => {
       const el = eleccion(e.anio);
       return {
         eleccion: el,

@@ -9,8 +9,7 @@
     "required": ["cve", "nombre"],
     "properties": {
       "cve": { "type": "integer", "minimum": 1, "maximum": 32 },
-      "nombre": { "type": "string", "minLength": 1 },
-      "archivo": { "type": "string", "pattern": "^entidad/[a-z0-9_/-]+\\.json$" }
+      "nombre": { "type": "string", "minLength": 1 }
     },
     "additionalProperties": false
   }

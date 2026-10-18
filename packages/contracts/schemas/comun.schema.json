@@ -1,231 +1,41 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "comun.schema.json",
+  "title": "Definiciones comunes del contrato L4",
   "$defs": {
-    "proporcion": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
-    },
-    "anio": {
-      "enum": [2009, 2012, 2015, 2018, 2021, 2024]
-    },
+    "proporcion": { "type": "number", "minimum": 0, "maximum": 1 },
+    "anio": { "enum": [2009, 2012, 2015, 2018, 2021, 2024] },
     "territorio": {
       "type": "object",
       "required": ["nivel", "nombre"],
       "properties": {
-        "nivel": {
-          "enum": ["nacional", "entidad", "municipio"]
-        },
-        "cve": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "cveEntidad": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 32
-        },
-        "nombre": {
-          "type": "string",
-          "minLength": 1
-        },
-        "id_operativo": {
-          "type": "string",
-          "minLength": 1
-        },
-        "cvegeo": {
-          "type": "string",
-          "pattern": "^[0-9]{5}$"
-        },
-        "cvegeo_candidato": {
-          "type": "string",
-          "pattern": "^[0-9]{5}$",
-          "description": "CVEGEO candidato cuando la equivalencia INE → INEGI es inequívoca pero no está verificada documentalmente."
-        }
+        "nivel": { "enum": ["nacional", "entidad", "municipio"] },
+        "cve": { "type": "integer", "minimum": 1 },
+        "cveEntidad": { "type": "integer", "minimum": 1, "maximum": 32 },
+        "nombre": { "type": "string", "minLength": 1 }
       },
       "additionalProperties": false
     },
     "cifrasEleccion": {
       "type": "object",
-      "required": ["anio", "tipo"],
+      "required": ["anio", "tipo", "participacion", "lista_nominal", "por_edad", "por_sexo"],
       "properties": {
-        "anio": {
-          "$ref": "#/$defs/anio"
-        },
-        "tipo": {
-          "enum": ["presidencial", "intermedia"]
-        },
-        "participacion": {
-          "$ref": "#/$defs/proporcion"
-        },
-        "lista_nominal": {
-          "type": "integer",
-          "minimum": 0
-        },
+        "anio": { "$ref": "#/$defs/anio" },
+        "tipo": { "enum": ["presidencial", "intermedia"] },
+        "participacion": { "$ref": "#/$defs/proporcion" },
+        "lista_nominal": { "type": "integer", "minimum": 0 },
         "por_edad": {
           "type": "object",
-          "propertyNames": {
-            "enum": ["18-24", "25-34", "35-44", "45-59", "60+"]
-          },
-          "additionalProperties": {
-            "$ref": "#/$defs/proporcion"
-          }
+          "propertyNames": { "enum": ["18-24", "25-34", "35-44", "45-59", "60+"] },
+          "additionalProperties": { "$ref": "#/$defs/proporcion" }
         },
         "por_sexo": {
           "type": "object",
-          "propertyNames": {
-            "enum": ["H", "M"]
-          },
-          "additionalProperties": {
-            "$ref": "#/$defs/proporcion"
-          }
-        },
-        "suprimido": {
-          "type": "boolean"
-        },
-        "estado_tasa": {
-          "enum": ["available", "suppressed", "rate_undefined", "unavailable", "no_data"]
-        }
-      },
-      "oneOf": [
-        {
-          "required": ["participacion", "lista_nominal", "por_edad", "por_sexo"],
-          "not": {
-            "properties": {
-              "suprimido": {
-                "const": true
-              }
-            },
-            "required": ["suprimido"]
-          }
-        },
-        {
-          "required": ["estado_tasa"],
-          "not": {
-            "required": ["participacion"]
-          }
-        }
-      ],
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "estado_tasa": {
-                "const": "suppressed"
-              }
-            },
-            "required": ["estado_tasa"]
-          },
-          "then": {
-            "not": {
-              "anyOf": [
-                {
-                  "required": ["lista_nominal"]
-                },
-                {
-                  "required": ["participacion"]
-                }
-              ]
-            }
-          }
-        }
-      ],
-      "additionalProperties": false
-    },
-    "arquetipo": {
-      "type": "object",
-      "required": [
-        "id",
-        "nombre",
-        "nivel",
-        "efecto_presidencial",
-        "tendencia",
-        "volatilidad",
-        "tipicidad",
-        "rasgo"
-      ],
-      "properties": {
-        "id": {
-          "enum": ["A1", "A2", "A3", "A4", "A5"]
-        },
-        "nombre": {
-          "type": "string",
-          "minLength": 1
-        },
-        "nivel": {
-          "type": "number"
-        },
-        "efecto_presidencial": {
-          "type": "number"
-        },
-        "tendencia": {
-          "type": "number"
-        },
-        "volatilidad": {
-          "type": "number",
-          "minimum": 0
-        },
-        "tipicidad": {
-          "$ref": "#/$defs/proporcion"
-        },
-        "rasgo": {
-          "enum": ["nivel", "efp", "tend", "vol"]
+          "propertyNames": { "enum": ["H", "M"] },
+          "additionalProperties": { "$ref": "#/$defs/proporcion" }
         }
       },
       "additionalProperties": false
-    },
-    "perfilEstatal": {
-      "type": "object",
-      "required": [
-        "metodologia",
-        "nivel_pp",
-        "efecto_presidencial_pp",
-        "tendencia_pp_decada",
-        "volatilidad_pp",
-        "anios",
-        "referencia"
-      ],
-      "properties": {
-        "metodologia": {
-          "const": "perfil_descriptivo_estatal_v1"
-        },
-        "nivel_pp": {
-          "type": "number"
-        },
-        "efecto_presidencial_pp": {
-          "type": "number"
-        },
-        "tendencia_pp_decada": {
-          "type": "number"
-        },
-        "volatilidad_pp": {
-          "type": "number",
-          "minimum": 0
-        },
-        "anios": {
-          "type": "array",
-          "minItems": 6,
-          "maxItems": 6,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/anio"
-          }
-        },
-        "referencia": {
-          "const": "participacion_nacional_desde_conteos"
-        }
-      },
-      "additionalProperties": false
-    },
-    "estadoResolucion": {
-      "enum": [
-        "equivalencia_verificada",
-        "alias_historico_verificado",
-        "candidato_inequivoco",
-        "ambiguo",
-        "sin_resolver"
-      ]
     }
   }
 }
