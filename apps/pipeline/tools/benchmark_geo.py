@@ -58,8 +58,6 @@ def main() -> None:
                           'topologia_validada':round(topo_sec,3), 'total':round(time.perf_counter()-start,3)},
               'bytes':len(blob), 'calidad':quality, 'vecindades':sum(map(len,graph.values()))//2}
     log(f'final: {result["segundos"]["total"]:.2f} s; {len(blob):,} bytes')
-    # CAMBIO: json.dumps no serializa escalares NumPy/Shapely (p. ej. numpy.intc).
-    # Convertimos únicamente escalares compatibles a tipos nativos, sin alterar el reporte.
     def _json_default(value):
         item = getattr(value, 'item', None)
         if callable(item):

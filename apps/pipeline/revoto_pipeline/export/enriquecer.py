@@ -225,8 +225,7 @@ def enriquecer_staged(staged: Path, root: Path, *, years: tuple[int, ...],
             resolution = doc.get('estado_resolucion')
             geometry_code = code
             if geometry_code is None and resolution == 'candidato_inequivoco':
-                # CAMBIO: en exploratorio permitimos geometría candidata explícitamente
-                # etiquetada, sin promoverla a equivalencia territorial verificada.
+
                 geometry_code = candidate_code
             if geometry_code:
                 if geometry_code in by_geo:

@@ -788,7 +788,7 @@ def build_operational_mapping(mapped: list[dict], candidates: list[dict]) -> lis
         if not code:
             options = {str(x.get('cvegeo_candidato','')).strip(): x for x in candidate_index.get(key, [])
                        if str(x.get('cvegeo_candidato','')).strip()}
-            # CAMBIO: sólo candidato único dentro de entidad/año; sigue NO verificado.
+
             if len(options) == 1:
                 code, candidate = next(iter(options.items()))
                 canonical = str(candidate.get('nombre_inegi','')).strip()
@@ -827,7 +827,6 @@ def main(cfg: Settings | None = None) -> None:
     print(f'CANDIDATOS INEGI: {len(candidates)} filas de revisión; {candidate_path}')
     mapped = build_historic_mapping(cfg, records, conflicts, catalog)
     verified = [r for r in mapped if r['equivalencia_verificada'] == 'si']
-    # CAMBIO: el exportador exploratorio consume una serie operativa estable por municipio.
     operational = build_operational_mapping(mapped, candidates)
     operational_path = OUT/'municipios_operativo_ine_primero.csv'
     write_csv(operational_path, OPERATIONAL_COLUMNS, operational)

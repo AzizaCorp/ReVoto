@@ -63,7 +63,6 @@ def name_relation(a: object, b: object) -> tuple[str, float, int]:
     ratio = SequenceMatcher(None, ca, cb).ratio()
     distance = _damerau_levenshtein(ca, cb)
     longest = max(len(ca), len(cb))
-    # CAMBIO: typo corto sólo genera candidato operativo. No verifica CVEGEO.
     if longest >= 7 and distance <= max(1, int(longest * 0.12)) and ratio >= 0.86:
         return "variacion_ortografica_probable", ratio, distance
     return "distinto", ratio, distance
@@ -126,8 +125,6 @@ def reconcile_operational_rows(rows: Iterable[dict]) -> list[dict]:
             candidate_codes.discard("")
             all_codes = verified_codes | candidate_codes
             if ambiguous_group:
-                # CAMBIO: una clave INE con discontinuidad fuerte no se promociona
-                # aunque cada segmento tenga un candidato individual.
                 state = "ambiguo"
                 uid = f"ine_segmento:{ent:02}:{mun:03}:{segment_index}"
                 chosen = next(iter(all_codes), "") if len(all_codes) == 1 else ""
@@ -164,7 +161,6 @@ def reconcile_operational_rows(rows: Iterable[dict]) -> list[dict]:
                 updated["aliases_ine"] = " | ".join(aliases)
                 if chosen:
                     updated["cvegeo_candidato"] = chosen
-                # CAMBIO: una serie candidata no se presenta como equivalencia verificada.
                 if state != "equivalencia_verificada" and not _yes(updated.get("equivalencia_verificada")):
                     updated["equivalencia_verificada"] = "no"
                 updated["confianza"] = {

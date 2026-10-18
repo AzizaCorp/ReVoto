@@ -21,7 +21,6 @@ def save(path, obj):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(obj,ensure_ascii=False,allow_nan=False,separators=(',',':')),encoding='utf-8')
 
-# CAMBIO: alias legacy conservado, sin segunda implementación matemática.
 def election(year, vals, threshold):
     from revoto_pipeline.export.metricas import election as shared
     return shared(year, vals, threshold)
