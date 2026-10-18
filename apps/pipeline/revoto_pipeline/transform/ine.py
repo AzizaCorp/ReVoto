@@ -25,7 +25,7 @@ def ine_select(path: Path, year: int) -> str:
 
 
 def municipality_select(parquet: Path, by_sex: bool = False) -> str:
-    from ..config import sql_path
+    from revoto_pipeline.config import sql_path
     dims = 'AELEC, EDOCVE, MPIOCVE' + (', SEXO' if by_sex else '')
     return f'''SELECT {dims}, SUM(LN)::BIGINT AS LN, SUM(SV)::BIGINT AS SV,
           SUM(NV)::BIGINT AS NV, SUM(NS)::BIGINT AS NS,

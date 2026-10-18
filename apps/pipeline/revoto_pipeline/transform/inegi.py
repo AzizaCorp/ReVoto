@@ -14,9 +14,16 @@ INDICATORS = (
     'PEA','PEA_F','PEA_M','POCUPADA','POCUPADA_F','POCUPADA_M',
     'PDESOCUP','PDESOCUP_F','PDESOCUP_M','VPH_INTER','VPH_CEL','PSINDER','PDER_SS',
     'PRESOE15','PRESOE15_F','PRESOE15_M','P3HLINHE','P3HLINHE_F','P3HLINHE_M',
-    'VPH_S_ELEC','VPH_AGUADV','VPH_DRENAJ'
+    'VPH_S_ELEC','VPH_AGUADV','VPH_DRENAJ',
+    'VIVPAR_HAB','TVIVPARHAB','P_3YMAS'
 )
 EXPLICIT_SEX_PAIRS = {'POBTOT':('POBFEM','POBMAS')}
+
+
+def indicator_availability(columns: list[str]) -> dict[str, bool]:
+    """Per-source header presence, not an assumption of census comparability."""
+    available={name.upper() for name in columns}
+    return {name: name in available for name in INDICATORS}
 
 
 def find_sex_pairs(columns: list[str]) -> dict[str, tuple[str,str]]:

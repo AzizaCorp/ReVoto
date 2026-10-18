@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 import duckdb
+from revoto_pipeline.model.identidad_municipal import normalize_name
 from revoto_pipeline.config import Settings, sql_path
 
 
@@ -79,12 +80,61 @@ def build_database(cfg: Settings) -> dict[str,int]:
         if municipal and (cfg.integration.incluir_inegi or cfg.integration.incluir_conapo):
             for item in municipal:
                 columns={x[0] for x in con.execute(f"DESCRIBE SELECT * FROM read_parquet('{sql_path(item)}')").fetchall()}
+                required={'cvegeo_canonico','nombre_municipio_canonico','tipo_equivalencia',
+                                          'equivalencia_verificada'}
+                if not required <= columns:
+                    raise ValueError(f'full_context sin mapping municipal versionado: {item}; '
+                                     f'ejecuta build-full-context de nuevo')
                 for active,field in ((cfg.integration.incluir_inegi,'inegi_pobtot'),
                                      (cfg.integration.incluir_conapo,'poblacion_conapo')):
-                    if (field in columns)!=active:
-                        raise ValueError(f'Mart municipal obsoleto para configuración actual: {item} ({field})')
+                     if (field in columns)!=active:
+                         raise ValueError(f'Mart municipal obsoleto para configuración actual: {item} ({field})')
+                
             con.execute(f'CREATE OR REPLACE VIEW analytics.mart_contexto_municipio AS SELECT * FROM {_source(municipal)}')
             counts['mart_contexto_municipio']=len(municipal)
+            # This is one-to-one with the municipal electoral mart by construction.
+            # No joins to locality crosswalks or municipality population at section grain.
+            con.execute('''CREATE OR REPLACE VIEW analytics.bridge_municipio_historico_canonico AS
+                SELECT AELEC::INTEGER AS id_eleccion,EDOCVE::INTEGER AS cve_entidad,
+                    MPIOCVE::INTEGER AS cve_municipio_historico,
+                    cvegeo_canonico, nombre_municipio_canonico,
+                    tipo_equivalencia, equivalencia_verificada
+                FROM analytics.mart_contexto_municipio''')
+            inverse = con.execute('''SELECT COUNT(*) FROM (
+                SELECT id_eleccion,cvegeo_canonico,COUNT(*) n
+                FROM analytics.bridge_municipio_historico_canonico
+                GROUP BY 1,2 HAVING n>1)''').fetchone()[0]
+            invalid = con.execute('''SELECT COUNT(*) FROM analytics.bridge_municipio_historico_canonico
+                WHERE NOT equivalencia_verificada OR cvegeo_canonico IS NULL
+                  OR LENGTH(cvegeo_canonico)<>5''').fetchone()[0]
+            if inverse or invalid:
+                raise ValueError(f'Bridge de identidad municipal inválido: colisiones={inverse}, '
+                                 f'pendientes={invalid}')
+            from collections import defaultdict
+            labels=defaultdict(set)
+            for geo,name in con.execute('''SELECT cvegeo_canonico,nombre_municipio_canonico
+                FROM analytics.bridge_municipio_historico_canonico''').fetchall():
+                labels[geo].add(normalize_name(name))
+            inconsistent=sum(len(v)>1 for v in labels.values())
+            if inconsistent:
+                raise ValueError(f'Dimensión canónica con nombres incompatibles: {inconsistent}')
+            con.execute('''CREATE OR REPLACE TABLE analytics.dim_municipio_canonico AS
+                SELECT cvegeo_canonico,
+                    ARG_MAX(nombre_municipio_canonico, id_eleccion) AS nombre
+                FROM analytics.bridge_municipio_historico_canonico GROUP BY 1''')
+            counts['bridge_municipio_historico_canonico']=len(municipal)
+            counts['dim_municipio_canonico']=con.execute('SELECT COUNT(*) FROM analytics.dim_municipio_canonico').fetchone()[0]
+            # This is one-to-one with the municipal electoral mart by construction.
+            # No joins to locality crosswalks or municipality population at section grain.
+            con.execute('''CREATE OR REPLACE VIEW analytics.v_participacion_contexto_municipal AS
+                SELECT * FROM analytics.mart_contexto_municipio''')
+            dup=con.execute('''SELECT COUNT(*) FROM (
+                SELECT AELEC,EDOCVE,MPIOCVE,COUNT(*) n
+                FROM analytics.v_participacion_contexto_municipal
+                GROUP BY 1,2,3 HAVING n>1)''').fetchone()[0]
+            if dup:
+                raise ValueError(f'Contexto municipal con fanout: {dup}')
+            counts['v_participacion_contexto_municipal']=len(municipal)
         bridge=sorted((cfg.path('geo_staging')/'crosswalk').rglob('localidad_seccion_distrito.parquet'))
         if bridge and cfg.integration.incluir_geografia:
             con.execute(f'''CREATE OR REPLACE VIEW analytics.bridge_localidad_seccion AS
@@ -99,11 +149,13 @@ def build_database(cfg: Settings) -> dict[str,int]:
                         GROUP BY entidad,anio_eleccion,anio_cartografia,seccion_referencia
                         HAVING COUNT(DISTINCT distrito_local_referencia)=1
                            AND COUNT(*) FILTER (WHERE status_distrito<>'distrito_unico_contenido')=0''')
-        # No foreign keys on a Parquet-backed view: uniqueness is checked in quality gates.
-        if con.execute('''SELECT COUNT(*) FROM (SELECT AELEC,EDOCVE,MPIOCVE,SECCION,
-                    COUNT(DISTINCT COALESCE(TIPOSEC,'<NULL>')) AS n FROM analytics.hecho_participacion
-                    GROUP BY ALL HAVING n>1)''').fetchone()[0]:
-            raise ValueError('Secciones con TIPOSEC contradictorio')
+            from revoto_pipeline.model.mer import register_mer
+            register_mer(con, cfg)
+            # No foreign keys on a Parquet-backed view: uniqueness is checked in quality gates.
+            if con.execute('''SELECT COUNT(*) FROM (SELECT AELEC,EDOCVE,MPIOCVE,SECCION,
+                            COUNT(DISTINCT COALESCE(TIPOSEC,'<NULL>')) AS n FROM analytics.hecho_participacion
+                            GROUP BY ALL HAVING n>1)''').fetchone()[0]:
+                 raise ValueError('Secciones con TIPOSEC contradictorio')
     except Exception:
         con.close()
         pending.unlink(missing_ok=True)
