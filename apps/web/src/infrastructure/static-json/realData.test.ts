@@ -89,4 +89,18 @@ describe.runIf(available)('L4 data published in public/data', () => {
     expect(turnout.size).toBe(32);
     expect(turnout.get(9)?.turnout[2024]).toBe(0.693);
   });
+
+  it('names the archetype by its published name, not by the pipeline cluster number', async () => {
+    const mulege = municipality(3, 2, 'Mulegé', 'Baja California Sur', 'cvegeo:03002') as Extract<
+      Territory,
+      { level: 'municipality' }
+    >;
+    const cosio = municipality(1, 4, 'Cosío', 'Aguascalientes', 'cvegeo:01004') as Extract<
+      Territory,
+      { level: 'municipality' }
+    >;
+    // Published as A3 «Bajando el ritmo» and A5 «Montaña rusa».
+    expect((await repo.municipalityProfile(mulege)).archetype?.archetype).toBe('A5');
+    expect((await repo.municipalityProfile(cosio)).archetype?.archetype).toBe('A3');
+  });
 });

@@ -1,11 +1,13 @@
 // L4 contract DTO → domain model. The only place that knows both.
 import {
+  ARCHETYPES,
   election,
   figure,
   isElectionYear,
   municipality,
   proportion,
   type AgeGroup,
+  type ArchetypeId,
   type ArchetypeProfile,
   type ArchetypeTrait,
   type ElectionTurnout,
@@ -82,6 +84,23 @@ export function toMunicipalitySummary(
   };
 }
 
+const fold = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase();
+const ID_BY_NAME = new Map(
+  (Object.entries(ARCHETYPES) as [ArchetypeId, string][]).map(([id, name]) => [fold(name), id]),
+);
+
+/**
+ * The pipeline numbers its clusters in its own order (its A3 is «Bajando el ritmo» and its A5
+ * «Montaña rusa»), while the app, the cards and the canvas use ARCHETYPES. The name is what both
+ * agree on, so it decides the id; the published id is only the fallback for an unknown name.
+ */
+const archetypeId = (a: ArquetipoDto): ArchetypeId => ID_BY_NAME.get(fold(a.nombre)) ?? a.id;
+
 const TRAIT: Record<ArquetipoDto['rasgo'], ArchetypeTrait> = {
   nivel: 'level',
   efp: 'presidential-effect',
@@ -90,7 +109,7 @@ const TRAIT: Record<ArquetipoDto['rasgo'], ArchetypeTrait> = {
 };
 
 export const toArchetype = (a: ArquetipoDto): ArchetypeProfile => ({
-  archetype: a.id,
+  archetype: archetypeId(a),
   level: a.nivel,
   presidentialEffect: a.efecto_presidencial,
   trend: a.tendencia,
