@@ -12,7 +12,7 @@ Este documento explica cómo está construido y cómo se publica ReVoto, de punt
 
 - **Cubre:** pipeline de datos (L0 a L4), contrato de los archivos JSON, frontend estático, repositorio, entornos, CI/CD, operación y la ruta de evolución hacia un backend.
 - **No cubre:** diseño visual y de interacción (ver `docs/diseno/manual-de-diseno-wireframes.md` y `docs/diseno/arquitectura-informacion.md`), contenido narrativo ni reglas de negocio más allá de cómo se implementan (ver SRS).
-- **Historias relacionadas:** US-06 (dataset homologado), US-07 (diccionario de datos), US-08 (esqueleto y despliegue continuo), US-09 (motor de secuencia), US-15 (versión ligera), US-22 (datos abiertos).
+- **Historias relacionadas:** US-06 (dataset homologado), US-07 (diccionario de datos), US-08 (esqueleto y despliegue continuo), US-09 (motor de secuencia), US-11 (pantallas de cifras y adaptadores), US-14 (tarjeta compartible), US-15 (versión ligera y mapas), US-22 (datos abiertos).
 
 ---
 
@@ -28,7 +28,10 @@ Este documento explica cómo está construido y cómo se publica ReVoto, de punt
 | **DuckDB** | Motor SQL analítico que corre como librería, sin servidor. Lee parquet directamente. |
 | **Versión de datos** | Identificador de una corrida del pipeline (`AAAAMMDD-<hash corto>`), independiente de la versión SemVer del código. |
 | **Manifiesto** | `public/data/manifest.json`: dice qué versión de datos está vigente y qué archivos contiene. |
-| **ParticipacionRepository** | Puerto de `application` por el que pasa toda lectura de datos. Hoy lo implementa un adaptador de JSON estáticos; mañana podría ser una API. |
+| **Puertos de lectura** | `TurnoutRepository`, `GeographyRepository`, `QualityRepository` y `OpenDataRepository` en `application/ports`: toda lectura de datos pasa por ellos. Hoy los implementan adaptadores de JSON estáticos; mañana podría ser una API. |
+| **CVEGEO** | Clave geoestadística INEGI de 5 dígitos (entidad + municipio). Une cifras con geometría; no siempre coincide con la clave INE. |
+| **TopoJSON** | Formato de geometría que guarda una sola vez los límites compartidos entre polígonos. Más ligero que GeoJSON y permite calcular vecinos. |
+| **Puente v2 → L4** | `convertir_v2.py`: convierte la salida *frontend v2* de US-06 al contrato L4 mientras `exportar.py` no esté listo (ADR-0005). |
 | **CDN** | Red de distribución de Vercel que sirve los archivos estáticos cerca del usuario y por HTTPS. |
 
 ---
@@ -199,6 +202,8 @@ flowchart TD
 
 Cada paso es un archivo SQL que DuckDB ejecuta en orden sobre la misma base local. Si un paso falla, la corrida se detiene y `public/data/` no se toca.
 
+> ⚠️ **Estado al 18/10/2026:** el L4 publicado no sale todavía de `exportar.py`, sino del puente transitorio de la sección 4.7.
+
 ### 4.4 Ejemplos de SQL
 
 > La versión vigente está en `apps/pipeline/revoto_pipeline/sql/`. Respecto a estos ejemplos, el código separa RN-06 de RN-09: un registro con sexo fuera de catálogo sigue contando en los totales y solo se descarta del desglose por sexo.
@@ -322,6 +327,39 @@ python -m pytest -q
 
 La corrida completa sobre 54.8 M filas debe tardar minutos en una laptop con 16 GB de RAM, porque DuckDB procesa el parquet por columnas y en paralelo.
 
+### 4.7 Puente transitorio v2 → L4 (ADR-0005)
+
+Mientras `exportar.py` no esté listo, el L4 lo escribe `revoto_pipeline/convertir_v2.py` a partir de los JSON *frontend v2* de la rama `feat/US-06-dataset-pipeline`.
+
+```mermaid
+flowchart LR
+    V2["JSON frontend v2<br/>(US-06)"] --> C["convertir_v2.py"]
+    MG["Marco geoestadístico INEGI<br/>00ent.shp · 00mun.shp"] --> M["mapshaper<br/>snap · EPSG:6372 · simplificación"]
+    M --> C
+    INS["insumos/<br/>catálogos INEGI · arquetipos ·<br/>votos esperados por edad"] --> C
+    C --> L4["public/data/&lt;versión&gt;/<br/>JSON · geo · mapa · calidad · CSV"]
+    C --> MAN["manifest.json"]
+```
+
+| Paso | Qué hace |
+| --- | --- |
+| Cruce INE → INEGI | `cruce_ine_inegi`: toma el `cvegeo` de `insumos/arquetipos_municipales.csv`; si falta, aplica reglas de respaldo y las reporta en `calidad.json`. Las claves difieren en 1 372 de 2 477 municipios; hoy hay 10 cruces por respaldo. |
+| Geometría | mapshaper sobre el marco INEGI: `snap` para que los vecinos compartan arcos, proyección Lambert conforme cónica (EPSG:6372) y salida TopoJSON (ADR-0004). |
+| Vecinos | `vecinos_de`: municipios de la misma entidad que comparten al menos un arco. |
+| Mapa nacional | `mapa/participacion.json` en forma compacta: `cvegeo → [nombre, entidad, [participación por año]]` (166 KB, 54 KB con gzip). |
+| Presupuesto | Falla si `geo/municipios.topo.json` supera `mapa_nacional_kb`; aplica RN-05 con `UMBRAL_RN05 = 50`. |
+| Manifiesto | Nueva carpeta `AAAAMMDD-hash7` y `manifest.json` con `max_diferencia_pp = null` mientras RF-23 no tenga cifras oficiales. |
+
+```bash
+mkdir -p /tmp/v2 && git archive feat/US-06-dataset-pipeline apps/web/public/data | tar -x -C /tmp/v2
+PYTHONPATH=apps/pipeline python3 -m revoto_pipeline.convertir_v2 \
+  --v2 /tmp/v2/apps/web/public/data --marco <carpeta con 00mun.shp y 00ent.shp> \
+  --salida apps/web/public/data [--mapshaper <ruta a mapshaper>]
+npm run check:data && npm run check:budget
+```
+
+Cuando el PR de US-06 se fusione, la salida v2 no debe quedar dentro de `apps/web/public/data/` (allí solo vive el contrato L4) y este puente pasa a ser el último paso del pipeline o se retira en favor de `exportar.py` con la misma salida.
+
 ---
 
 ## 5. 📦 Contrato de datos (L4)
@@ -331,13 +369,20 @@ La corrida completa sobre 54.8 M filas debe tardar minutos en una laptop con 16 
 ```text
 public/data/
 ├─ manifest.json                       # sin caché: apunta a la versión vigente
-└─ 20261012-a1b2c3d/                   # versión de datos (inmutable)
+└─ 20261013-0e071d3/                   # versión de datos (inmutable)
    ├─ nacional.json                    # serie nacional por elección, edad y sexo
-   ├─ catalogos/entidades.json         # 32 entidades
-   ├─ entidad/14.json                  # serie de la entidad + lista de sus municipios
-   ├─ municipio/14-039.json            # detalle de un municipio
+   ├─ catalogos/entidades.json         # 32 entidades, nombres INEGI
+   ├─ entidad/14.json                  # serie, votos esperados por edad y lista de sus municipios
+   ├─ municipio/14-039.json            # serie, cvegeo, vecinos y arquetipo de un municipio
+   ├─ calidad.json                     # reglas verificadas, cruces por respaldo (W-20, RF-24)
+   ├─ geo/entidades.topo.json          # 32 entidades (W-02)
+   ├─ geo/14.topo.json                 # municipios de la entidad (W-04)
+   ├─ geo/municipios.topo.json         # todos los municipios (W-03, solo se pide ahí)
+   ├─ mapa/participacion.json          # cvegeo → participación por año (W-03)
    └─ csv/participacion.csv            # datos abiertos (US-22)
 ```
+
+Los esquemas de todos estos archivos están en `packages/contracts/schemas/` (`comun`, `manifest`, `nacional`, `entidades`, `entidad`, `municipio`, `calidad`, `geo`, `mapa`).
 
 El pipeline borra la versión anterior al exportar: en el repositorio solo existe la carpeta vigente, y las versiones anteriores quedan en el historial de Git.
 
@@ -378,6 +423,10 @@ Reglas del contrato:
 - Las proporciones van como decimales con 3 cifras; el formato de porcentaje lo aplica el frontend.
 - Un municipio bajo el umbral lleva `"suprimido": true` y ninguna cifra (RN-05).
 - Ningún archivo contiene secciones ni datos personales (RN-02, RNF-13, RNF-14).
+- Cada municipio lleva su `cvegeo` (clave INEGI) para unirse con la geometría; los archivos se siguen nombrando por la clave INE (ADR-0005).
+- `vecinos` lista claves INE de municipios de la misma entidad; `arquetipo` es `null` con menos de 5 elecciones o si el municipio está suprimido.
+- `entidad/<cve>.json` lleva `votos_esperados_por_edad` (W-09b) y `nombreEntidad`.
+- `validacion.max_diferencia_pp` es `null` mientras RF-23 no tenga cifras oficiales; W-20 lo muestra como «Pendiente».
 - Cambiar el contrato de forma incompatible es un `BREAKING CHANGE` (`STD-MENSAJES-COMMIT`) y obliga a actualizar el frontend en el mismo PR.
 
 ### 5.3 Presupuesto de peso
@@ -388,6 +437,9 @@ Reglas del contrato:
 | `manifest.json` + `nacional.json` + `entidades.json` | Primera visita | Incluidos en los 500 KB | Decenas de filas. |
 | `entidad/<cve>.json` | Al elegir entidad | ≤ 300 KB (RNF-04) | Serie de la entidad y solo el total por municipio. Oaxaca, con 570 municipios, es el caso más pesado. |
 | `municipio/<ent>-<mun>.json` | Al elegir municipio | ≤ 20 KB | Un territorio, 6 elecciones, 5 grupos de edad y 2 sexos. |
+| `geo/entidades.topo.json` y `geo/<cve>.topo.json` | W-02 / al elegir entidad | ≤ 300 KB | Geometría proyectada y simplificada (ADR-0004). |
+| `geo/municipios.topo.json` + `mapa/participacion.json` | Solo en W-03 | ≤ 650 KB (`mapa_nacional_kb`, pendiente de aprobación) | 559 KB + 166 KB en disco; 152 KB + 54 KB con gzip. Nunca en la versión ligera. |
+| Exportación de tarjetas (`html-to-image`) | Al pulsar «Descargar» en W-12 | Fuera de los 500 KB | Carga diferida (ADR-0006). La app inicial mide 398.3 KB. |
 
 `presupuesto.py` mide cada archivo al exportar y el check de CI lo repite en cada PR. Vercel además comprime con gzip o brotli, así que lo transferido es menor que el tamaño en disco.
 
@@ -399,21 +451,28 @@ Reglas del contrato:
 
 ### 6.1 Capas y acceso a datos
 
-La app se organiza con DDD (ADR-0003): `domain` (reglas puras), `application` (casos de uso y puertos), `infrastructure` (adaptadores) y `presentation` (React, con Atomic Design en `presentation/components`). Ningún componente ni página hace `fetch`: toda lectura pasa por el puerto `ParticipacionRepository`.
+La app se organiza con DDD (ADR-0003): `domain` (reglas puras), `application` (casos de uso y puertos), `infrastructure` (adaptadores) y `presentation` (React, con Atomic Design en `presentation/components`). Ningún componente ni página hace `fetch`: toda lectura pasa por los puertos de `application/ports`.
 
 ```ts
-// application/ports/ParticipacionRepository.ts
-export interface ParticipacionRepository {
-  entidades(): Promise<Territorio[]>;
-  municipios(cveEntidad: number): Promise<Territorio[]>;
-  serie(territorio: Territorio): Promise<SerieParticipacion>; // 'publicada' | 'suprimida' (RN-05)
+// application/ports/TurnoutRepository.ts (recortado)
+export interface TurnoutRepository {
+  states(): Promise<Territory[]>;
+  municipalities(stateCode: number): Promise<Territory[]>;
+  series(territory: Territory): Promise<TurnoutSeries>;            // 'suppressed' bajo RN-05
+  stateOverview(stateCode: number): Promise<StateOverview>;        // municipios + votos esperados
+  municipalityProfile(m: Municipality): Promise<MunicipalityProfile>; // cvegeo, vecinos, arquetipo
 }
+// También: GeographyRepository (W-02, W-03, W-04), QualityRepository (W-20), OpenDataRepository (W-16)
 ```
 
-- `infrastructure/json-estatico/ClienteJson.ts` pide `manifest.json` sin caché y luego `/data/<version_datos>/…`; traduce fallas a `DatosNoDisponibles` (W-17).
-- `infrastructure/json-estatico/mapeadores.ts` traduce los DTO del contrato a objetos de dominio (`Cifra` con territorio, elección y fuente, RN-10).
-- `application/casos-uso/consultarParticipacion.ts` implementa CU-02: si un municipio está suprimido, sube a la entidad y regresa `aviso: 'umbral-rn05'`.
-- `src/main.tsx` crea `JsonParticipacionRepository` y lo inyecta. Si algún día hay backend, se agrega otro adaptador y solo cambia esa línea (sección 11).
+| Capa | Piezas |
+| --- | --- |
+| `domain` | `turnout/Comparison`, `turnout/Insights`, `turnout/Scale` (cortes por cuantiles del mapa), `identity/ArchetypeProfile`, `quality/QualityReport` |
+| `application/use-cases` | `getTerritoryStory`, `compareTerritory`, `municipalityInsights` (lugar en la entidad, arquetipo, votos esperados), `getQualityReport`, `chooseTerritory` |
+| `infrastructure/static-json` | `JsonClient` (pide `manifest.json` sin caché y luego `/data/<version_datos>/…`; traduce fallas a error de datos, W-17), `mappers.ts` (DTO → dominio, RN-10), `topology.ts` (TopoJSON → anillos proyectados) y un repositorio `Json*Repository` por puerto |
+| `presentation` | `providers/Story` y la navegación, páginas W-01 a W-20, `share/exportCard.ts` (ADR-0006), organismo `ChoroplethMap` |
+
+`src/main.tsx` crea los cuatro repositorios con el mismo `JsonClient` y los inyecta. Si algún día hay backend, se agregan adaptadores que implementen los mismos puertos y solo cambia ese archivo (sección 11).
 
 ### 6.2 Secuencia de carga
 
@@ -439,6 +498,9 @@ sequenceDiagram
     else
         B-->>U: Cifras del municipio
     end
+    U->>B: Abre el mapa nacional (W-03)
+    B->>C: GET geo/municipios.topo.json + mapa/participacion.json
+    C-->>B: ≈ 206 KB con gzip, solo esta vez
 ```
 
 ---
@@ -640,7 +702,7 @@ Si la decisión de la sección 2 se reabre, el cambio está acotado:
 flowchart LR
     PIPE["Pipeline DuckDB<br/>(sin cambios)"] ==>|"carga marts · COPY"| DB[("Postgres gestionado<br/>una instancia por entorno")]
     API["API · Cloud Run<br/>GET /v1/participacion"] ==>|"SQL de solo lectura"| DB
-    NAV["Navegador<br/>ApiParticipacionRepository"] ==>|"HTTPS · JSON"| API
+    NAV["Navegador<br/>ApiTurnoutRepository"] ==>|"HTTPS · JSON"| API
     NAV -->|"HTML/JS"| CDN["Vercel Edge<br/>(sin cambios)"]
     CDN -.->|"JSON estáticos como respaldo<br/>de la versión ligera"| NAV
 ```
@@ -650,7 +712,7 @@ Las flechas gruesas son lo único nuevo. Lo que hay que hacer:
 1. Evaluación formal DAR y solicitud de cambio que reemplace RNF-17, aprobada por el CCB.
 2. Base de datos con migraciones versionadas y una instancia por entorno (`STD-ESTRATEGIA-RAMAS`, especificaciones 4 y 22).
 3. API con contrato OpenAPI versionado en `/v1`, compatible con la versión anterior del frontend (especificación 23).
-4. `ApiParticipacionRepository` en `infrastructure`, que implementa el mismo puerto `ParticipacionRepository`; solo cambia `main.tsx`.
+4. Adaptadores `Api*Repository` en `infrastructure`, que implementan los mismos puertos (`TurnoutRepository`, etc.); solo cambia `main.tsx`.
 5. Nuevos checks: validación de migraciones y pruebas de contrato.
 
 ---
@@ -663,6 +725,8 @@ Las flechas gruesas son lo único nuevo. Lo que hay que hacer:
 | El parquet o las fuentes se pierden | No se puede regenerar | Copia en el bucket con versionado de objetos y respaldo local en ambas laptops. |
 | Diferencias contra cifras oficiales > 1 pp | Publicación bloqueada | Es el comportamiento esperado (RF-23); se corrige la regla y se vuelve a correr. |
 | Plan Hobby de Vercel no admite el uso | Hay que cambiar de hosting | Verificar los términos de uso antes de la entrega; el sitio estático se mueve sin cambios (RIE-03). |
+| Cruce INE → INEGI equivocado en un municipio | El mapa colorea o nombra mal un municipio | `calidad.json` lista los 10 cruces por respaldo; se verifican a mano antes de promover a `staging`. |
+| La salida v2 de US-06 se fusiona dentro de `public/data/` | `check:data` falla o se publican archivos fuera de contrato | Mover la salida v2 fuera de `public/` al integrar el PR de US-06 (sección 4.7). |
 | Datos actualizados sin que el sitio lo note | Usuarios ven datos viejos | El manifiesto se revalida en cada visita y cada versión de datos usa una carpeta nueva. |
 
 ---
@@ -674,7 +738,9 @@ Las flechas gruesas son lo único nuevo. Lo que hay que hacer:
 | D-01 | Framework del frontend (propuesta: Vite + TypeScript sin framework pesado) | Architecture owner | US-08 |
 | D-02 | Bucket de fuentes: Google Cloud Storage (propuesta) o Google Drive del equipo | Architecture owner | US-06 |
 | D-03 | Dominios de Staging y Production | Program manager | US-08 |
-| D-04 | Si habrá mapas: geometrías simplificadas por entidad como un artefacto L4 más | Product owner | US-11 |
+| D-04 | ✅ Resuelta: mapas por entidad y municipio como artefactos L4 (TopoJSON proyectado), ver ADR-0004 | Product owner | US-11 |
+| D-06 | Aprobar `mapa_nacional_kb = 650` para el mapa municipal de W-03 | Equipo | Antes de promover a `staging` |
+| D-07 | Retirar el puente `convertir_v2.py` o integrarlo al pipeline de US-06 | Responsable de datos | Al fusionar US-06 |
 | D-05 | Ajustes a CA-01 y nuevo CA-04 de US-08 | Product owner | Antes de iniciar US-08 |
 
 ---
@@ -691,7 +757,9 @@ Las flechas gruesas son lo único nuevo. Lo que hay que hacer:
 ## 🔗 Related Resources
 
 - [Despliegue de ReVoto](https://claude.ai/artifact/Dp7zaGb6k9yGcSFzhYczKZ) — diagrama interactivo
-- `docs/historias/US-06-dataset-homologado.md` · `docs/historias/US-08-esqueleto-despliegue.md`
+- `docs/historias/US-06-dataset-homologado.md` · `docs/historias/US-08-esqueleto-despliegue.md` · `docs/historias/US-11-pantallas-cifras.md`
+- `docs/adr/0004-mapas-proyectados-en-el-pipeline.md` · `docs/adr/0005-puente-v2-l4-y-clave-cvegeo.md` · `docs/adr/0006-exportacion-de-tarjetas-en-carga-diferida.md`
+- `apps/web/public/data/README.md` · `packages/contracts/schemas/`
 - `docs/diseno/arquitectura-informacion.md` · `docs/diseno/manual-de-diseno-wireframes.md`
 - Documentación de DuckDB (https://duckdb.org/docs/) y de Vercel (https://vercel.com/docs)
 
@@ -710,3 +778,4 @@ Este documento se revisa al cierre de cada sprint y cada vez que cambie una deci
 | 1 | Angel Mauricio Ramirez | Creación inicial del documento | 08/10/2026 |
 | 2 | Angel Mauricio Ramirez | Estructura de monorepo (§7) y nota sobre RN-06 en el SQL vigente (§4.4) | 08/10/2026 |
 | 3 | Angel Mauricio Ramirez | Capas DDD en la app y monorepo mínimo (§6.1, §7, ADR-0003) | 08/10/2026 |
+| 4 | Angel Mauricio Ramirez | v0.4: puente v2 → L4 (§4.7), contrato extendido con geometría, mapa y calidad (§5), puertos y capas reales de la app (§6.1), nuevos riesgos y decisiones; ADR-0004 a ADR-0006 | 18/10/2026 |

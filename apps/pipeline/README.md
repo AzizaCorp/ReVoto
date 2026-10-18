@@ -1,6 +1,6 @@
 # Pipeline de datos
 
-Ver `AGENTS.md` en esta carpeta para el flujo, las reglas y los comandos, y `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.3.md` §4 para el diseño completo.
+Ver `AGENTS.md` en esta carpeta para el flujo, las reglas y los comandos, y `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.4.md` §4 para el diseño completo.
 
 ## Antes de la primera corrida
 

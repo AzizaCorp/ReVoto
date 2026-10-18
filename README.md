@@ -80,4 +80,4 @@ La razón de esta estructura y la regla de dependencias entre capas están en `d
 
 ## Despliegue
 
-Vercel con **Services** (`vercel.json` en la raíz, Root Directory = raíz del repo): un solo servicio público, `web` (`apps/web`). El pipeline no se despliega: corre fuera de línea. `develop` → Development, `staging` → Staging, `main` → Production. Detalle en `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.3.md`.
+Vercel con **Services** (`vercel.json` en la raíz, Root Directory = raíz del repo): un solo servicio público, `web` (`apps/web`). El pipeline no se despliega: corre fuera de línea. `develop` → Development, `staging` → Staging, `main` → Production. Detalle en `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.4.md`.
