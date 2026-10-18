@@ -4,15 +4,74 @@
   "type": "object",
   "required": ["territorio", "fuente", "suprimido", "elecciones"],
   "properties": {
-    "territorio": { "$ref": "comun.schema.json#/$defs/territorio" },
-    "fuente": { "type": "string", "minLength": 1 },
-    "suprimido": { "type": "boolean" },
+    "territorio": {
+      "$ref": "comun.schema.json#/$defs/territorio"
+    },
+    "fuente": {
+      "type": "string",
+      "minLength": 1
+    },
+    "suprimido": {
+      "type": "boolean"
+    },
+    "identidad_verificada": {
+      "type": "boolean"
+    },
+    "estado_resolucion": {
+      "$ref": "comun.schema.json#/$defs/estadoResolucion"
+    },
+    "aliases_ine": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "advertencia": {
+      "type": "string"
+    },
     "elecciones": {
       "type": "array",
-      "items": { "$ref": "comun.schema.json#/$defs/cifrasEleccion" }
+      "items": {
+        "$ref": "comun.schema.json#/$defs/cifrasEleccion"
+      }
+    },
+    "vecinos": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Identificadores operativos (id_operativo) de los municipios colindantes de la misma entidad."
+    },
+    "arquetipo": {
+      "$ref": "comun.schema.json#/$defs/arquetipo"
     }
   },
-  "if": { "properties": { "suprimido": { "const": true } } },
-  "then": { "properties": { "elecciones": { "maxItems": 0 } } },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "suprimido": {
+            "const": true
+          }
+        },
+        "required": ["suprimido"]
+      },
+      "then": {
+        "properties": {
+          "elecciones": {
+            "items": {
+              "not": {
+                "required": ["participacion"]
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": false
 }
