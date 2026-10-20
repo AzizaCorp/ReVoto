@@ -17,8 +17,8 @@
 | **L0 a L4** | Capas de datos: fuentes, staging, normalizado, marts, publicación. |
 | **Contrato L4** | Formato de los JSON que consume la app (`packages/contracts`). |
 | **DDD** | Domain-Driven Design: la app se organiza en capas `domain`, `application`, `infrastructure` y `presentation` (ADR-0003). |
-| **Puerto** | Interfaz que define `application` para lo que necesita del exterior (`ParticipacionRepository`). |
-| **Adaptador** | Implementación de un puerto en `infrastructure` (`JsonParticipacionRepository`). |
+| **Puerto** | Interfaz que define `application` para lo que necesita del exterior (`TurnoutRepository`, `GeographyRepository`, `QualityRepository`, `OpenDataRepository`). |
+| **Adaptador** | Implementación de un puerto en `infrastructure` (`JsonTurnoutRepository` y demás en `infrastructure/static-json/`). |
 | **DTO** | Objeto con la forma exacta del JSON; solo existe en `infrastructure` y `packages/contracts`. |
 | **W-NN** | Identificador de un wireframe / pantalla. |
 | **RIU-NN** | Requisito de interfaz de usuario del SRS. |

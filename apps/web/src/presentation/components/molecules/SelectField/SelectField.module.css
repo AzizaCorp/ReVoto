@@ -1,0 +1,60 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-02 «SelectField». */
+.selectField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-05);
+  width: 100%;
+}
+.label {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-05);
+  font-size: var(--rv-text-meta);
+  font-weight: var(--rv-weight-semibold);
+  color: var(--rv-color-ink-2);
+}
+.pin {
+  display: inline-flex;
+  color: var(--rv-color-brand-text);
+}
+.control {
+  position: relative;
+}
+.select {
+  appearance: none;
+  width: 100%;
+  min-height: var(--rv-button-height);
+  padding: 0 calc(var(--rv-space-5) + var(--rv-space-05)) 0 var(--rv-button-padding);
+  border: var(--rv-border-thin) solid var(--rv-color-line);
+  border-radius: var(--rv-radius);
+  background: var(--rv-color-paper);
+  color: var(--rv-color-ink);
+  font: inherit;
+  font-size: var(--rv-text-body);
+  font-weight: var(--rv-weight-medium);
+  cursor: pointer;
+  transition: border-color var(--rv-duration) var(--rv-easing);
+}
+.select:focus-visible {
+  border-color: var(--rv-color-brand-text);
+}
+.chevron {
+  position: absolute;
+  right: var(--rv-button-padding);
+  top: 50%;
+  translate: 0 -50%;
+  display: inline-flex;
+  color: var(--rv-color-ink-2);
+  pointer-events: none;
+}
+.disabled .label,
+.disabled .pin,
+.disabled .chevron {
+  color: var(--rv-color-muted);
+}
+.disabled .select {
+  background: var(--rv-color-fill-3);
+  border-color: var(--rv-color-border);
+  color: var(--rv-color-muted);
+  cursor: not-allowed;
+}

@@ -9,7 +9,7 @@
 | **Responsable** | Angel |
 | **Revisor (D3)** | Kira |
 | **Fecha compromiso** | 15/10/2026 |
-| **Estado** | Not started |
+| **Estado** | In progress |
 | **Ficha en Notion** | [User Story Backlog · US-09](https://app.notion.com/p/3efa4b895914818795c8df064a5a5285) |
 
 ## 🎯 Objetivo
@@ -85,8 +85,15 @@ stateDiagram-v2
 - El cambio entre pantallas debe medir ≤ 300 ms (RNF-03).
 - Si W-07, W-08 o W-09 salen del MVP, la barra de progreso se recalcula (degradación prevista en US-04).
 
+### Avance al 18/10/2026
+
+- Secuencia W-01 a W-17 con subpantallas, progreso por paso y navegación implementada sobre el sistema de componentes (átomos a plantillas). Commits `e835dd5` a `0eebab6`.
+- Código de `apps/web` en inglés (`c36cc9d`); la UI sigue en español.
+- La rama no tiene upstream: se integra al hacer push de `feat/US-11-adaptadores-datos`, que la contiene completa.
+
 ---
 
 | # | Autor | Modificación | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel | Creación del archivo a partir del User Story Backlog de Notion y SRS-01 | 06/10/2026 |
+| 2 | Angel | Avance de implementación, rama y pendientes | 18/10/2026 |

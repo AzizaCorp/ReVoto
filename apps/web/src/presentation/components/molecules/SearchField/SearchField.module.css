@@ -1,0 +1,40 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-02 «SearchField». */
+.searchField {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-15);
+  width: 100%;
+  min-height: var(--rv-field-height);
+  padding: 0 var(--rv-button-padding);
+  border: var(--rv-border-thin) solid var(--rv-color-line);
+  border-radius: var(--rv-radius-row);
+  background: var(--rv-color-paper);
+  transition: border-color var(--rv-duration) var(--rv-easing);
+}
+.searchField:focus-within {
+  border-color: var(--rv-color-brand-text);
+  box-shadow: var(--rv-focus-ring);
+}
+.icon {
+  display: inline-flex;
+  color: var(--rv-color-ink-2);
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--rv-touch-target);
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--rv-color-ink);
+  font: inherit;
+  font-size: var(--rv-text-body);
+  font-weight: var(--rv-weight-medium);
+}
+.input:focus-visible {
+  box-shadow: none;
+}
+.input::placeholder {
+  color: var(--rv-color-muted);
+  font-weight: var(--rv-weight-regular);
+}

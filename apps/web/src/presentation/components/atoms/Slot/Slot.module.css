@@ -1,0 +1,33 @@
+/* Skeleton placeholder: white card with a dashed border, like the design's placeholders. */
+.slot {
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  padding: var(--rv-space-15) var(--rv-space-2);
+  border: var(--rv-border-width) dashed var(--rv-slot-border);
+  border-radius: var(--rv-radius-card);
+  background: var(--rv-slot-bg);
+  color: var(--rv-color-muted);
+  text-align: center;
+  font-size: var(--rv-text-meta);
+}
+.label {
+  font-size: var(--rv-text-meta);
+}
+.line {
+  min-height: var(--rv-touch-target);
+  border-radius: var(--rv-radius-pill);
+}
+.small {
+  min-height: var(--rv-slot-small);
+}
+.medium {
+  min-height: var(--rv-slot-medium);
+}
+.large {
+  min-height: var(--rv-slot-large);
+}
+.fill {
+  flex: 1;
+  min-height: var(--rv-slot-medium);
+}

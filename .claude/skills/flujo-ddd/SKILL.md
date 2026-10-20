@@ -10,21 +10,21 @@ Lee antes `docs/adr/0003-ddd-en-la-app-web.md` y `apps/web/AGENTS.md`. Trabaja *
 ## 1. Dominio · `apps/web/src/domain/<modulo>/`
 
 - ¿La historia trae una regla (RN-NN), un cálculo o un concepto nuevo? Modélalo como tipo y función pura.
-- Usa los conceptos existentes: `Eleccion`, `Territorio`, `Proporcion`, `Cifra`, `SerieParticipacion`, `Secuencia`.
+- Usa los conceptos existentes: `Election`, `Territory`, `Proportion`, `Figure`, `TurnoutSeries`, `Sequence` (el código va en inglés; la UI en español).
 - Prueba en `<Modulo>.test.ts`. Sin React, sin `fetch`, sin DTO.
 
-## 2. Caso de uso · `apps/web/src/application/casos-uso/`
+## 2. Caso de uso · `apps/web/src/application/use-cases/`
 
 - Una función por flujo del SRS (`CU-NN`), que recibe el repositorio como primer parámetro.
-- Si necesita algo nuevo del exterior, **agrega un método al puerto** (`ports/ParticipacionRepository.ts`) o crea un puerto nuevo; no llames `fetch`.
-- Exporta desde `application/index.ts`. Prueba con un repositorio falso (ver `consultarParticipacion.test.ts`).
+- Si necesita algo nuevo del exterior, **agrega un método al puerto** (`ports/TurnoutRepository.ts`, `GeographyRepository.ts`, `QualityRepository.ts`, `OpenDataRepository.ts`) o crea un puerto nuevo; no llames `fetch`.
+- Exporta desde `application/index.ts`. Prueba con un repositorio falso (ver `compareTerritory.test.ts` y `apps/web/src/test/memoryRepositories.ts`).
 
-## 3. Adaptador · `apps/web/src/infrastructure/json-estatico/`
+## 3. Adaptador · `apps/web/src/infrastructure/static-json/`
 
-- Implementa el método nuevo del puerto en `JsonParticipacionRepository`.
-- Si el JSON cambia, actualiza **en el mismo PR**: `packages/contracts/src/l4.ts`, `packages/contracts/schemas/`, `mapeadores.ts` y `apps/pipeline/revoto_pipeline/exportar.py`.
-- Los DTO se traducen a dominio en `mapeadores.ts` y no salen de esta capa.
-- Prueba con un `fetch` falso (ver `JsonParticipacionRepository.test.ts`).
+- Implementa el método nuevo del puerto en el `Json*Repository` correspondiente.
+- Si el JSON cambia, actualiza **en el mismo PR**: `packages/contracts/src/l4.ts`, `packages/contracts/schemas/`, `mappers.ts` y el exportador del pipeline (`apps/pipeline/revoto_pipeline/export/`).
+- Los DTO se traducen a dominio en `mappers.ts` y no salen de esta capa.
+- Prueba con un `fetch` falso (ver `JsonTurnoutRepository.test.ts`).
 
 ## 4. Hook · `apps/web/src/presentation/hooks/`
 

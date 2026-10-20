@@ -9,7 +9,7 @@
 | **Responsable** | Angel |
 | **Revisor (D3)** | Kira |
 | **Fecha compromiso** | 24/10/2026 |
-| **Estado** | Not started |
+| **Estado** | In progress |
 | **Ficha en Notion** | [User Story Backlog · US-14](https://app.notion.com/p/3efa4b89591481408175fbb13c015458) |
 
 ## 🎯 Objetivo
@@ -29,7 +29,7 @@
 | Casos de uso | CU-06 |
 | Entregable | [D10 - Tarjetas visuales compartibles](https://app.notion.com/p/3efa4b89591481f680efeac6e4ddb0f7) en la base de Deliverables |
 | Actividad del PVG | 4.5 Generación y descarga de tarjeta compartible en la hoja PVG general |
-| Rama de GitHub | `feat/US-14-tarjeta-compartible` |
+| Rama de GitHub | `feat/US-11-adaptadores-datos` |
 | Pull request | [liga] |
 | Diseño en Figma | [liga al frame W-12 y plantillas 9:16 / 1:1] |
 | Depende de | [US-11 Implementar las pantallas de cifras y comparativos](./US-11-pantallas-cifras.md)<br/>[US-12 Implementar el arquetipo cívico y la ficha de fuente](./US-12-arquetipo-ficha-fuente.md)<br/>[US-13 Definir el sistema visual y las plantillas compartibles](./US-13-sistema-visual.md) |
@@ -86,8 +86,16 @@ sequenceDiagram
 - Riesgo de calendario: vence el 24/10 y US-16 (pruebas) empieza el 26/10; poco margen para corregir.
 - OBJ-05 tiene fecha meta 26/10/2026.
 
+### Avance al 18/10/2026
+
+- W-12 genera las tarjetas de arquetipo, insignia y ambas con datos reales y las descarga en PNG (1080 × 1920 y 1080 × 1080). Commit `3618c21`.
+- «Compartir arquetipo» preselecciona el arquetipo y «Compartir insignia» la insignia.
+- La exportación usa `html-to-image` en carga diferida para no afectar los 500 KB iniciales (ADR-0006).
+- Los PNG de referencia de `design/tarjetas/png/` no se versionan (49 MB); se regeneran con `design/tarjetas/tarjetas.html`.
+
 ---
 
 | # | Autor | Modificación | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel | Creación del archivo a partir del User Story Backlog de Notion y SRS-01 | 06/10/2026 |
+| 2 | Angel | Avance de implementación, rama y pendientes | 18/10/2026 |

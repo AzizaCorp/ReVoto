@@ -105,3 +105,7 @@ sequenceDiagram
 - Cambiar los JSON estáticos por una API (ADR-0001) es escribir otro adaptador en `infrastructure` y cambiar una línea en `main.tsx`.
 - Los DTO del contrato no se filtran a la UI: un cambio de formato en los JSON solo toca `infrastructure/json-estatico/mapeadores.ts`.
 - Costo: más carpetas y una capa de traducción. Para un equipo de dos personas se mantiene ligero: un solo puerto, sin entidades con identidad ni agregados complejos, sin bus de eventos.
+
+## Nota de implementación (18/10/2026)
+
+Con el código en inglés (`c36cc9d`) y los datos L4 (US-11), el puerto único `ParticipacionRepository` quedó dividido en `TurnoutRepository`, `GeographyRepository`, `QualityRepository` y `OpenDataRepository`, implementados en `infrastructure/static-json/` (`JsonTurnoutRepository`, etc.). Los casos de uso viven en `application/use-cases/`. La regla de dependencias de esta decisión no cambia.

@@ -1,0 +1,122 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. */
+.fieldTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--rv-text-meta);
+}
+.caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.fieldTable code {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-weight: var(--rv-weight-semibold);
+  color: var(--rv-color-ink);
+}
+.type {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--rv-pill-height-small);
+  padding: 0 var(--rv-space-1);
+  border-radius: var(--rv-radius-pill);
+  font-size: var(--rv-text-label);
+  font-weight: var(--rv-weight-bold);
+}
+.entero {
+  background: var(--rv-tone-indigo-bg);
+  color: var(--rv-tone-indigo-fg);
+}
+.decimal {
+  background: var(--rv-tone-brand-bg);
+  color: var(--rv-tone-brand-fg);
+}
+.texto {
+  background: var(--rv-tone-neutral-bg);
+  color: var(--rv-tone-neutral-fg);
+}
+.booleano {
+  background: var(--rv-tone-violet-bg);
+  color: var(--rv-tone-violet-fg);
+}
+.description {
+  color: var(--rv-color-ink-2);
+}
+
+/* Mobile: every row is a card (name and type on top, description, example). */
+@media (max-width: 767px) {
+  .fieldTable thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .fieldTable tbody {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rv-space-1);
+  }
+  .fieldTable tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--rv-space-05) var(--rv-space-1);
+    padding: var(--rv-space-15) var(--rv-space-15);
+    border: var(--rv-border-thin) solid var(--rv-color-border);
+    border-radius: var(--rv-radius-row);
+    background: var(--rv-color-paper);
+  }
+  .fieldTable th,
+  .fieldTable td {
+    display: block;
+    padding: 0;
+    text-align: left;
+  }
+  .name {
+    font-size: var(--rv-text-body);
+  }
+  .typeCell {
+    justify-self: end;
+  }
+  .description,
+  .example {
+    grid-column: 1 / -1;
+  }
+  .example {
+    font-size: var(--rv-text-label);
+    font-weight: var(--rv-weight-semibold);
+    color: var(--rv-color-muted);
+  }
+  .example::before {
+    content: attr(data-label) ' ';
+  }
+}
+
+/* Tablet and desktop: table inside a card. */
+@media (min-width: 768px) {
+  .fieldTable {
+    overflow: hidden;
+    border: var(--rv-border-thin) solid var(--rv-color-border);
+    border-radius: var(--rv-radius-card);
+    background: var(--rv-color-paper);
+    font-size: var(--rv-text-body);
+  }
+  .fieldTable thead th {
+    padding: var(--rv-space-15) var(--rv-space-2);
+    background: var(--rv-color-fill-2);
+    font-size: var(--rv-text-meta);
+    font-weight: var(--rv-weight-bold);
+    text-align: left;
+  }
+  .fieldTable tbody th,
+  .fieldTable tbody td {
+    padding: var(--rv-space-15) var(--rv-space-2);
+    border-top: var(--rv-border-thin) solid var(--rv-color-track);
+    text-align: left;
+    vertical-align: top;
+  }
+}

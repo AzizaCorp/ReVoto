@@ -1,0 +1,129 @@
+/* Lite version (W-15): system fonts, plain tables and links, no motion (boards WL/TL/DL). */
+.liteScreen {
+  --lite-pad: var(--rv-space-2);
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--rv-color-paper);
+  color: var(--rv-color-ink);
+  font-family: var(--rv-font-system);
+}
+.liteScreen *,
+.liteScreen *::before,
+.liteScreen *::after {
+  animation: none !important;
+  transition: none !important;
+}
+.header,
+.footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rv-space-2);
+  padding: 0 var(--lite-pad);
+}
+.header {
+  min-height: 56px;
+  border-bottom: var(--rv-border-width) solid var(--rv-color-border);
+}
+.footer {
+  min-height: 64px;
+  border-top: var(--rv-border-width) solid var(--rv-color-border);
+}
+.brand {
+  font-size: 15px;
+  font-weight: var(--rv-weight-bold);
+}
+.nav {
+  display: flex;
+  gap: 20px;
+}
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--rv-color-brand-text);
+  font: var(--rv-weight-semibold) 13px/var(--rv-touch-target) var(--rv-font-system);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.link:hover {
+  color: var(--rv-color-ink-2);
+}
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--rv-focus-ring);
+}
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: var(--rv-space-2) var(--lite-pad);
+}
+.body {
+  width: 100%;
+  max-width: var(--rv-lite-content-max);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 20px;
+}
+.body caption {
+  padding-bottom: var(--rv-space-1);
+  text-align: left;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--rv-color-ink-2);
+}
+.body th,
+.body td {
+  padding: 8px 10px;
+  border-bottom: var(--rv-border-width) solid var(--rv-color-border);
+  text-align: left;
+}
+.body thead th {
+  background: var(--rv-color-fill-2);
+  font-size: 13px;
+  font-weight: var(--rv-weight-semibold);
+}
+.wideOnly {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .liteScreen {
+    --lite-pad: 40px;
+  }
+  .header {
+    min-height: 64px;
+  }
+  .footer {
+    min-height: 72px;
+  }
+  .brand {
+    font-size: 17px;
+  }
+  .link {
+    font-size: 14px;
+  }
+  .main {
+    padding-block: var(--rv-space-4);
+  }
+  .body {
+    gap: var(--rv-space-2);
+  }
+  .wideOnly {
+    display: inline;
+  }
+}
+@media (min-width: 1200px) {
+  .liteScreen {
+    --lite-pad: 64px;
+  }
+}

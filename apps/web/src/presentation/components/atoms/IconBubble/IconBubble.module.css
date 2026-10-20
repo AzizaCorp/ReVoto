@@ -1,0 +1,40 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. */
+.iconBubble {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--rv-radius-pill);
+}
+.brand-strong {
+  background: var(--rv-tone-brand-strong-bg);
+  color: var(--rv-tone-brand-strong-fg);
+}
+.brand {
+  background: var(--rv-tone-brand-bg);
+  color: var(--rv-tone-brand-fg);
+}
+.violet {
+  background: var(--rv-tone-violet-bg);
+  color: var(--rv-tone-violet-fg);
+}
+.indigo {
+  background: var(--rv-tone-indigo-bg);
+  color: var(--rv-tone-indigo-fg);
+}
+.neutral {
+  background: var(--rv-tone-neutral-bg);
+  color: var(--rv-tone-neutral-fg);
+}
+.mint {
+  background: var(--rv-tone-mint-bg);
+  color: var(--rv-tone-mint-fg);
+}
+.warning {
+  background: var(--rv-color-paper);
+  color: var(--rv-tone-warning-fg);
+}
+.paper {
+  background: var(--rv-color-paper);
+  color: var(--rv-color-brand-text);
+}

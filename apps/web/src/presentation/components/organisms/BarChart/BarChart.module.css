@@ -1,0 +1,91 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-03 «BarChart». */
+.barChart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-15);
+  margin: 0;
+  padding: var(--rv-space-2) var(--rv-space-15) var(--rv-space-15);
+  border: var(--rv-border-thin) solid var(--rv-color-border);
+  border-radius: var(--rv-radius-card);
+  background: var(--rv-color-paper);
+  min-height: 0;
+}
+.title {
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-meta);
+  font-weight: var(--rv-weight-bold);
+}
+.plot {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  min-height: calc(var(--rv-space-8) * 2.5);
+  border-bottom: var(--rv-border-width) solid var(--rv-color-border);
+}
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--rv-space-05);
+  min-width: 0;
+}
+.value {
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-label);
+  font-weight: var(--rv-weight-bold);
+}
+.muted {
+  color: var(--rv-color-muted);
+}
+.bar {
+  width: min(70%, var(--rv-space-5));
+  border-radius: var(--rv-space-15) var(--rv-space-15) var(--rv-space-05) var(--rv-space-05);
+  transform-origin: bottom;
+  animation: rv-grow var(--rv-duration-grow) var(--rv-easing) backwards;
+}
+.label {
+  padding-top: var(--rv-space-05);
+  font-size: var(--rv-text-label);
+  font-weight: var(--rv-weight-semibold);
+  color: var(--rv-color-ink-2);
+}
+.presidential {
+  background: var(--rv-color-brand);
+}
+.midterm {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--rv-color-brand-soft) 0 4px,
+    var(--rv-color-brand-on-dark) 4px 6px
+  );
+}
+.pending {
+  opacity: 0.55;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rv-space-2);
+  font-size: var(--rv-text-meta);
+  font-weight: var(--rv-weight-medium);
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rv-space-05);
+}
+.swatch {
+  width: var(--rv-space-15);
+  height: var(--rv-space-15);
+  border-radius: var(--rv-space-05);
+}
+@keyframes rv-grow {
+  from {
+    scale: 1 0;
+  }
+  to {
+    scale: 1 1;
+  }
+}

@@ -1,39 +1,154 @@
-# pipeline · Contexto para agentes
 
-Pipeline fuera de línea en **Python 3.12 + DuckDB**. Transforma el parquet consolidado (L1, 54.8 M filas) en el modelo normalizado (L2), los marts (L3) y el contrato JSON (L4). **No corre en producción ni en CI** con datos reales.
+# REVOTO · Contexto para Agentes del Pipeline
 
-## Flujo
+> **Ámbito:** `apps/pipeline/` | **Proyecto:** REVOTO · MIZTEPOZ (Hackathon INE) | **Historia:** US-06 · Dataset Pipeline
+> **Propósito:** Guía de referencia técnica y operativa para agentes de IA y colaboradores que modifiquen, prueben o mantengan el pipeline de datos.
 
-`python -m revoto_pipeline` (desde `apps/pipeline`) ejecuta `revoto_pipeline/sql/*.sql` en orden, valida contra cifras oficiales y solo entonces exporta:
+---
 
-| Paso | Archivo | Regla |
+## 1. Visión General y Arquitectura
+
+REVOTO utiliza un pipeline **offline, reproducible y local en Python 3.12 + DuckDB**. Transforma el Parquet consolidado de fuentes electorales (INE), sociodemográficas (INEGI), proyecciones (CONAPO) y cartografía en el modelo analítico normalizado y en artefactos JSON para el frontend.
+
+```text
+Fuentes (INE, INEGI, CONAPO, Cartografía)
+                   │
+                   ▼
+       Ingestión y Parquet Canónico
+                   │
+                   ▼
+  Transformación / Mappings / Crosswalks Geo
+                   │
+                   ▼
+  Modelo Analítico DuckDB (Vistas + Tablas)
+                   │
+                   ▼
+   Validación (RF-23) y Privacidad (RN-05)
+                   │
+                   ▼
+       Contrato JSON para Frontend (L4)
+
+```
+
+### Stack Tecnológico Principal
+
+* **Core:** Python 3.12 (referencia) y DuckDB (SQL analítico y consultas Parquet).
+* **Geo:** GeoPandas, Shapely, Pyogrio.
+* **Procesamiento:** Polars / PyArrow.
+* **Testing:** Pytest.
+* ⚠️ **Restricción:** El pipeline es **100% offline y local**. **NO** se ejecuta en CI/CD con datos reales ni requiere infraestructura distribuida (Spark/Databricks).
+
+---
+
+## 2. Flujo de Ejecución del Pipeline
+
+> **Nota arquitectónica:** Los scripts SQL de `revoto_pipeline/sql/` son invocados directamente por la CLI de Python (`ejecutar.py`). No asumas una ejecución SQL puramente secuencial.
+
+| Paso / Comando | Componente / Script | Descripción y Regla |
 | --- | --- | --- |
-| 10 | `revoto_pipeline/sql/10_staging.sql` | Vista sobre el parquet L1 |
-| 20 | `revoto_pipeline/sql/20_dimensiones.sql` | Catálogos; grupos de edad RN-04; tipos de elección RN-03 |
-| 30 | `revoto_pipeline/sql/30_hechos.sql` | Tabla de hechos tipada con `TRY_CAST` |
-| 40 | `revoto_pipeline/sql/40_calidad.sql` | RN-09 (edad), RN-06 (sexo), bitácora `registro_calidad` (RF-24) |
-| 50 | `revoto_pipeline/sql/50_marts.sql` | `GROUPING SETS` nacional/entidad/municipio × edad/sexo; RN-01 |
-| 60 | `revoto_pipeline/sql/60_umbral.sql` | RN-05: suprime municipios bajo el umbral |
-| — | `revoto_pipeline/validacion/validar.sql` | RF-23: falla si alguna diferencia > 1 pp |
-| — | `revoto_pipeline/exportar.py` | L3 → L4 (pendiente US-06) |
-| — | `revoto_pipeline/presupuesto.py` | RNF-04: límites de `budget.json` |
+| **1. Ingestión INE** | `ingest-ine` / `aggregate-ine` | Ingesta y preserva granularidad de registros electorales. |
+| **2. Canónico y Marts** | `build-canonical` / `build-marts` | Construcción de agregaciones preserving `LN`, `SV`, `NV`, `NS`. |
+| **3. Fuentes Extra** | `build-inegi` / `build-conapo` | Carga Censo INEGI (2010, 2020) y proyecciones CONAPO. |
+| **4. Capas Geo** | `build-geo-layers` / `build-crosswalk` | Genera capas de intersección y mappings territoriales por año. |
+| **5. Integración** | `build-full-context` / `build-db` | Integra modelo dimensional e híbrido en DuckDB. |
+| **6. Validación** | `validate --all` / `validar.sql` | Aplica **RF-23**: Falla si alguna diferencia vs. cifra oficial es $> 1\text{ pp}$. |
+| **7. Exportación** | `export-web --all` | Genera JSON L4 para Frontend (sujeto a supresión **RN-05** y contratos). |
 
-## Reglas
+---
 
-- **Nunca** subas `data/`, parquet, XLSX, shapefiles ni `.duckdb` (están en `.gitignore`).
-- Los valores de reglas (umbral RN-05, máximo de RF-23) viven en `config.toml`, nunca en el SQL. Mientras `umbral_rn05 = "POR_DEFINIR"`, el pipeline se detiene a propósito.
-- Los marcadores `{{nombre}}` del SQL los sustituye `revoto_pipeline/ejecutar.py`; solo acepta rutas y enteros.
-- Toda regla nueva lleva su prueba en `tests/test_reglas.py` con datos sintéticos.
-- La forma de los JSON que exporta está en `packages/contracts` (tipos y JSON Schema): cámbiala ahí en el mismo PR.
-- Las reglas que también usa la app (RN-01, RN-03, RN-04) tienen su versión en `apps/web/src/domain`; si cambias una, cambia la otra.
-- Un PR de datos usa la rama `data/US-NN-slug`, el tipo de commit `data(pipeline:US-NN)` y adjunta el reporte de `apps/pipeline/reportes/`.
+## 3. Comandos Rápidos de Desarrollo
 
-## Comandos
+Ejecuta siempre los comandos desde `apps/pipeline` con el entorno virtual activo:
 
 ```powershell
+# Setup inicial
 cd apps/pipeline
-python -m venv .venv; .venv\Scripts\Activate.ps1
+python -m venv .venv
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+
+# Ejecución de Pruebas
 python -m pytest -q
-python -m revoto_pipeline
+python -m compileall -q revoto_pipeline
+
+# Pipeline Completo (Flujo Principal)
+python -m revoto_pipeline ingest-ine --all
+python -m revoto_pipeline build-marts --all
+python -m revoto_pipeline build-full-context --all
+python -m revoto_pipeline build-db
+python -m revoto_pipeline validate --all
+python -m revoto_pipeline export-web --all --integrado
+
 ```
+
+---
+
+## 4. Reglas y Restricciones Técnicas
+
+### 4.1 Data e Integridad
+
+* **Archivos Protegidos:** Nunca subir a Git datos reales (`data/`, `*.parquet`, `*.xlsx`, `*.shp`, `*.duckdb`). Todos están explícitamente en `.gitignore`.
+* **Configuración Centralizada (`config.toml`):** Umbrales, rutas y parámetros viven en `config.toml`, **nunca** cableados en SQL/Python.
+* Mientras `umbral_rn05 = "POR_DEFINIR"`, el pipeline detendrá la publicación a propósito.
+
+
+* **Fórmula Oficial de Participación:** Usar estrictamente la regla contractual aprobada:
+
+$$\text{Participación} = 100.0 \times \frac{\sum \text{SV}}{\text{NULLIF}(\sum \text{LN}, 0)}$$
+
+
+* **Sustitución de marcadores:** Los marcadores `{{nombre}}` en SQL son reemplazados únicamente por `sql_utils.py` / `ejecutar.py` (solo acepta rutas y enteros).
+
+### 4.2 Privacidad y Publicación (RN-05)
+
+* **RN-05** controla la supresión de agregados con Lista Nominal reducida.
+* **No enmascarar en Frontend:** Datos suprimidos por privacidad **NO** deben enviarse al frontend para ocultarse con CSS/JS; deben filtrarse desde la exportación backend.
+* **Contratos Frontend (`packages/contracts/`):** La estructura JSON se define mediante TypeScript/JSON Schema en `packages/contracts`. Cualquier cambio de estructura debe realizarse en el mismo PR actualizando ambas partes.
+
+---
+
+## 5. Organización del Código
+
+```text
+apps/pipeline/
+├── config.toml                     # Rutas, umbrales y parámetros de ejecución
+├── revoto_pipeline/
+│   ├── config.py                   # Lectura y validación de config.toml
+│   ├── ejecutar.py                 # Orquestación de la CLI de comandos
+│   ├── sql_utils.py                # Inyección segura de marcadores SQL
+│   ├── transform/                  # Transformaciones INE, INEGI y CONAPO
+│   ├── geo/                        # Crosswalks, capas geoespaciales y temporalidad
+│   ├── model/                      # Modelo dimensional y carga en DuckDB
+│   ├── export/                     # Generación de contratos y JSON para web
+│   └── validation/                 # Scripts de validación vs cifras oficiales (RF-23)
+└── tests/                          # Pruebas con datos sintéticos / fixtures
+
+```
+
+---
+
+## 6. Estándares de Git, Commits y PRs
+
+* **Ramas de trabajo:** `data/US-NN-slug` o `<tipo>/<ID>-<slug>` (ej. `data/US-06-pipeline-marts`).
+* **Formato de Commits:**
+```text
+data(pipeline:US-06): agrega cálculo de marts para participación por edad
+
+Se actualiza la consulta de agregación para incluir desgloses de edad RN-04.
+
+Refs: US-06
+
+```
+
+
+* **Tipos permitidos:** `feat`, `fix`, `data`, `perf`, `refactor`, `style`, `test`, `docs`, `build`, `ci`, `chore`.
+* **Entregables en PR:** Adjuntar captura o archivo del reporte generado en `apps/pipeline/reportes/`.
+
+---
+
+## 7. Directivas Específicas para Agentes de IA
+
+1. **Pruebas sintéticas:** Toda regla de negocio nueva (RN) o cambio de SQL debe incluir su test correspondiente en `tests/` utilizando fixtures sintéticos pequeñitos.
+2. **Cero Mocks destructivos:** No reemplaces lógica de negocio real por `mocks` o datos estáticos para "hacer pasar" una prueba.
+3. **Autonomía Git restringida:** El agente **NO** debe hacer `commit`, `push`, `merge` o `rebase` en remoto sin confirmación explícita del usuario.
+4. **Respeto a la compatibilidad:** Si modificas una regla de negocio utilizada también por la web (ej. `RN-01`, `RN-03`, `RN-04`), verifica y actualiza su réplica en `apps/web/src/domain/`.

@@ -1,0 +1,70 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-03 «BottomBar». */
+.bottomBar {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-1);
+  min-height: var(--rv-bottom-zone);
+  padding: var(--rv-space-1) var(--rv-side-margin);
+}
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-1);
+}
+.right {
+  margin-left: auto;
+}
+.note {
+  display: none;
+  font-size: var(--rv-text-meta);
+  opacity: 0.6;
+}
+.end {
+  padding: 0 var(--rv-space-05);
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-body);
+  font-weight: var(--rv-weight-bold);
+}
+.dark {
+  --rv-color-ink: var(--rv-color-on-ink);
+  --rv-color-paper: transparent;
+  --rv-color-line: rgb(255 255 255 / 0.35);
+  color: var(--rv-color-on-ink);
+}
+
+/* Cover: on mobile the bar disappears (the button lives in the content); from tablet up it only
+   carries the source note. */
+.onlyNote {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .onlyNote {
+    display: flex;
+  }
+  .onlyNote .note {
+    display: block;
+  }
+  .bottomBar {
+    gap: var(--rv-space-15);
+    border-top: var(--rv-border-thin) solid var(--rv-color-border);
+  }
+  .left,
+  .right {
+    gap: var(--rv-space-15);
+  }
+  .dark {
+    border-top-color: rgb(255 255 255 / 0.1);
+  }
+}
+
+/* Desktop: «Fuente» and «Compartir» live in the top bar; the source note takes their place. */
+@media (min-width: 1200px) {
+  .left:not(.keep) {
+    display: none;
+  }
+  .note {
+    display: block;
+  }
+}
