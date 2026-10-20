@@ -1,0 +1,11 @@
+/* The chip is truncated with «…» rather than overflowing the screen at 360 px. */
+.territoryChip {
+  display: flex;
+  min-width: 0;
+  max-width: 100%;
+}
+.territoryChip > * {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

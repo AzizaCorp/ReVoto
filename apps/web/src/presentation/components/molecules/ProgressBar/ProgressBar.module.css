@@ -1,0 +1,7 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. */
+.progressBar {
+  display: flex;
+  gap: var(--rv-space-05);
+  align-items: center;
+  width: 100%;
+}

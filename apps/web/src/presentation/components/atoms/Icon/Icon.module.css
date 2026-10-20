@@ -1,0 +1,7 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. */
+.icon {
+  flex: none;
+  display: block;
+  width: var(--rv-icon-size);
+  height: var(--rv-icon-size);
+}

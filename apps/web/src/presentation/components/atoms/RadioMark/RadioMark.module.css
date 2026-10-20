@@ -1,0 +1,31 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. */
+.radioMark {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rv-radio-size);
+  height: var(--rv-radio-size);
+  border-radius: var(--rv-radius-pill);
+  border: var(--rv-border-width) solid var(--rv-color-control);
+  color: var(--rv-color-on-ink);
+  transition:
+    background-color var(--rv-duration-press) ease-out,
+    border-color var(--rv-duration-press) ease-out;
+}
+.on {
+  background: var(--rv-color-brand);
+  border-color: var(--rv-color-brand);
+  animation: rv-pop var(--rv-duration-pop) var(--rv-easing-spring);
+}
+@keyframes rv-pop {
+  0% {
+    scale: 0.6;
+  }
+  70% {
+    scale: 1.08;
+  }
+  100% {
+    scale: 1;
+  }
+}

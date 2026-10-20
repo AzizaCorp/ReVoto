@@ -1,0 +1,57 @@
+/* Page-only details of W-18 (formula box and table of contents). */
+.formula {
+  margin: 0;
+  padding: var(--rv-space-15);
+  border-radius: var(--rv-radius-row);
+  background: var(--rv-color-brand-soft);
+  color: var(--rv-color-ink);
+  font-weight: var(--rv-weight-bold);
+  text-align: center;
+}
+.formula b {
+  color: var(--rv-color-brand-text);
+}
+.sections p {
+  margin: 0;
+}
+.toc ol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-05);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: section;
+}
+.toc li {
+  counter-increment: section;
+}
+.toc a {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-15);
+  min-height: var(--rv-button-height-small);
+  padding: 0 var(--rv-space-15);
+  border-radius: var(--rv-radius);
+  color: var(--rv-color-ink);
+  font-weight: var(--rv-weight-semibold);
+  text-decoration: none;
+}
+.toc a::before {
+  content: counter(section, decimal-leading-zero);
+  font-size: var(--rv-text-label);
+  color: var(--rv-color-muted);
+}
+.toc a:hover,
+.toc a:focus-visible {
+  background: var(--rv-color-brand-soft);
+  color: var(--rv-color-brand-text);
+}
+@media (min-width: 768px) and (max-width: 1199px) {
+  .sections {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--rv-space-15);
+  }
+}

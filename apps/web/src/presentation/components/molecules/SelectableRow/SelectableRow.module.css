@@ -1,0 +1,34 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-02 «SelectableRow». */
+.selectableRow {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-15);
+  width: 100%;
+  min-height: var(--rv-row-height);
+  padding: var(--rv-space-05) var(--rv-space-15) var(--rv-space-05) var(--rv-space-1);
+  border: var(--rv-border-thin) solid var(--rv-color-border);
+  border-radius: var(--rv-radius-row);
+  background: var(--rv-color-paper);
+  color: var(--rv-color-ink);
+  font: inherit;
+  font-size: var(--rv-text-body);
+  font-weight: var(--rv-weight-medium);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color var(--rv-duration) var(--rv-easing),
+    border-color var(--rv-duration) var(--rv-easing),
+    scale var(--rv-duration-press) ease-out;
+}
+.selectableRow:active {
+  scale: 0.98;
+}
+.text {
+  flex: 1;
+  min-width: 0;
+}
+.on {
+  background: var(--rv-color-brand-soft);
+  border-color: var(--rv-color-brand);
+  box-shadow: inset 0 0 0 calc(var(--rv-border-width) - var(--rv-border-thin)) var(--rv-color-brand);
+}

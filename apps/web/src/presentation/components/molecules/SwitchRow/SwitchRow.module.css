@@ -1,0 +1,25 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-02 «SwitchRow». */
+.switchRow {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-15);
+  min-height: calc(var(--rv-row-height) + var(--rv-space-15) + var(--rv-space-05));
+  padding: var(--rv-space-1) var(--rv-space-15) var(--rv-space-1) var(--rv-space-1);
+  border: var(--rv-border-thin) solid var(--rv-color-border);
+  border-radius: var(--rv-radius-row);
+  background: var(--rv-color-paper);
+}
+.texts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.title {
+  font-size: var(--rv-text-body);
+  font-weight: var(--rv-weight-semibold);
+}
+.description {
+  font-size: var(--rv-text-meta);
+  color: var(--rv-color-ink-2);
+}

@@ -1,6 +1,7 @@
 {
-  "$comment": "Presupuestos de peso (KB) · RNF-01 y RNF-04 del SRS. Lo leen scripts/check-budget.mjs y apps/pipeline/revoto_pipeline/presupuesto.py.",
+  "$comment": "Presupuestos de peso (KB) · RNF-01 y RNF-04 del SRS; mapa_nacional_kb es el mapa municipal de W-03, que solo se descarga en esa pantalla. Lo leen scripts/check-budget.mjs y apps/pipeline/revoto_pipeline/presupuesto.py.",
   "app_inicial_kb": 500,
   "entidad_kb": 300,
-  "municipio_kb": 20
+  "municipio_kb": 20,
+  "mapa_nacional_kb": 650
 }

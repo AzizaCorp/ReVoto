@@ -1,0 +1,44 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rv-space-05);
+  border-radius: var(--rv-radius-pill);
+  background: var(--rv-color-paper);
+  font-family: var(--rv-font);
+  font-weight: var(--rv-weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--rv-duration) var(--rv-easing),
+    border-color var(--rv-duration) var(--rv-easing),
+    color var(--rv-duration) var(--rv-easing),
+    scale var(--rv-duration-press) ease-out;
+}
+.chip:active {
+  scale: 0.96;
+}
+.option {
+  min-height: var(--rv-chip-height);
+  padding: 0 var(--rv-button-padding);
+  border: var(--rv-border-width) solid var(--rv-color-border);
+  color: var(--rv-color-ink);
+  font-size: var(--rv-text-button-small);
+}
+.option.on {
+  background: var(--rv-color-brand-soft);
+  border-color: var(--rv-color-brand);
+  color: var(--rv-color-brand-text);
+}
+.filter {
+  min-height: var(--rv-chip-height-small);
+  padding: 0 var(--rv-space-15);
+  border: var(--rv-border-thin) solid var(--rv-color-border);
+  color: var(--rv-color-ink-2);
+  font-size: var(--rv-text-meta);
+}
+.filter.on {
+  background: var(--rv-color-ink);
+  border-color: var(--rv-color-ink);
+  color: var(--rv-color-on-ink);
+}

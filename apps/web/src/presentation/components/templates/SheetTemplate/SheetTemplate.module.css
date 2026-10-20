@@ -1,0 +1,7 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-1);
+  padding-top: var(--rv-space-05);
+}

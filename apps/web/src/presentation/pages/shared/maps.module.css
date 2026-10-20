@@ -1,0 +1,7 @@
+.drill {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-1);
+  height: 100%;
+  min-height: 0;
+}

@@ -1,22 +1,40 @@
-// Punto de composición: el único archivo que conoce todas las capas.
-// Aquí se eligen los adaptadores de infraestructura y se inyectan en la presentación.
+// Composition root: the only file that knows every layer.
+// Infrastructure adapters are chosen here and injected into the presentation.
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { JsonParticipacionRepository } from '@/infrastructure';
+import {
+  JsonClient,
+  JsonGeographyRepository,
+  JsonOpenDataRepository,
+  JsonQualityRepository,
+  JsonTurnoutRepository,
+} from '@/infrastructure';
 import { App } from '@/presentation/App';
-import { ProveedorDependencias } from '@/presentation/providers/Dependencias';
+import { DependenciesProvider } from '@/presentation/providers/Dependencies';
+import '@fontsource/plus-jakarta-sans/latin-400.css';
+import '@fontsource/plus-jakarta-sans/latin-600.css';
+import '@fontsource/plus-jakarta-sans/latin-700.css';
+import '@fontsource/plus-jakarta-sans/latin-800.css';
+import '@fontsource/sora/latin-800.css';
 import '@/presentation/styles/tokens.css';
 import '@/presentation/styles/global.css';
 
-const dependencias = { participacion: new JsonParticipacionRepository() };
+// One client per visit: the manifest is requested once and pins the data version for every port.
+const client = new JsonClient();
+const dependencies = {
+  turnout: new JsonTurnoutRepository(client),
+  quality: new JsonQualityRepository(client),
+  openData: new JsonOpenDataRepository(client),
+  geography: new JsonGeographyRepository(client),
+};
 
-const raiz = document.getElementById('raiz');
-if (!raiz) throw new Error('No existe el contenedor #raiz en index.html');
+const root = document.getElementById('root');
+if (!root) throw new Error('index.html has no #root container');
 
-createRoot(raiz).render(
+createRoot(root).render(
   <StrictMode>
-    <ProveedorDependencias valor={dependencias}>
+    <DependenciesProvider value={dependencies}>
       <App />
-    </ProveedorDependencias>
+    </DependenciesProvider>
   </StrictMode>,
 );

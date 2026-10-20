@@ -1,0 +1,31 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-02 «SegmentedControl». */
+.segmentedControl {
+  display: flex;
+  gap: var(--rv-space-05);
+  width: 100%;
+  padding: var(--rv-space-05);
+  border-radius: var(--rv-radius-pill);
+  background: var(--rv-color-fill-2);
+}
+.option {
+  flex: 1;
+  min-height: var(--rv-button-height-small);
+  padding: 0 var(--rv-space-15);
+  border: 0;
+  border-radius: var(--rv-radius-pill);
+  background: transparent;
+  color: var(--rv-color-ink-2);
+  font: inherit;
+  font-size: var(--rv-text-button-small);
+  font-weight: var(--rv-weight-semibold);
+  cursor: pointer;
+  transition:
+    background-color var(--rv-duration) var(--rv-easing),
+    color var(--rv-duration) var(--rv-easing),
+    box-shadow var(--rv-duration) var(--rv-easing);
+}
+.on {
+  background: var(--rv-color-paper);
+  color: var(--rv-color-brand-text);
+  box-shadow: var(--rv-shadow-sm);
+}

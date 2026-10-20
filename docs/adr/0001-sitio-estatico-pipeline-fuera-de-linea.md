@@ -20,5 +20,5 @@ Backend en Vercel con Postgres gestionado, backend en Google Cloud (BigQuery o C
 
 - Costo $0 y ninguna pieza en línea que pueda fallar además del CDN.
 - No hay consultas libres: todo corte nuevo requiere cambiar el pipeline.
-- El frontend lee datos solo por el puerto `ParticipacionRepository` (ADR-0003), para poder agregar un adaptador de API sin reescribir la app.
+- El frontend lee datos solo por los puertos de `application/ports` (`TurnoutRepository`, `GeographyRepository`, `QualityRepository`, `OpenDataRepository`; ADR-0003), para poder agregar un adaptador de API sin reescribir la app.
 - **Se reabre** si una historia requiere consultas no precalculables o si un archivo L4 excede 300 KB aun dividido.

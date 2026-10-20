@@ -9,7 +9,7 @@
 | **Responsable** | Kira |
 | **Revisor (D3)** | Angel |
 | **Fecha compromiso** | 10/10/2026 |
-| **Estado** | Not started |
+| **Estado** | In progress |
 | **Ficha en Notion** | [User Story Backlog · US-07](https://app.notion.com/p/3efa4b89591481519731f74a75d3674a) |
 
 ## 🎯 Objetivo
@@ -29,7 +29,7 @@
 | Casos de uso | CU-05 |
 | Entregable | [D06 - Diccionario de datos y fuentes](https://app.notion.com/p/3efa4b89591481539745eca2dfdbdc7b) en la base de Deliverables |
 | Actividad del PVG | 3.3 Diccionario de datos y fuentes citadas en la hoja PVG general |
-| Rama de GitHub | `feat/US-07-diccionario-datos` |
+| Rama de GitHub | `feat/US-09-motor-secuencia` (W-16, W-20) |
 | Pull request | [liga] |
 | Diseño en Figma | No aplica |
 | Depende de | [US-05 Auditar las fuentes oficiales disponibles](./US-05-auditoria-fuentes.md)<br/>[US-06 Generar el dataset homologado y agregado del MVP](./US-06-dataset-homologado.md) |
@@ -79,8 +79,15 @@ flowchart LR
 
 - El diccionario es insumo directo de la ficha de fuente (US-12) y de los datos abiertos (US-22): mismo texto, una sola fuente de verdad.
 
+### Avance al 18/10/2026
+
+- Diccionario de datos y MER del contrato L4 redactados como documento de Claude para el equipo; describen todos los archivos de `public/data/<versión>/` y los campos nuevos (`cvegeo`, `vecinos`, `arquetipo`, `votos_esperados_por_edad`).
+- La app muestra metodología, diccionario y reporte de calidad (commit `603efa2`); el reporte lee `calidad.json`.
+- Pendiente: copiar el diccionario a `docs/` como archivo versionado y actualizarlo con el desglose municipal cuando llegue.
+
 ---
 
 | # | Autor | Modificación | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel | Creación del archivo a partir del User Story Backlog de Notion y SRS-01 | 06/10/2026 |
+| 2 | Angel | Avance de implementación, rama y pendientes | 18/10/2026 |

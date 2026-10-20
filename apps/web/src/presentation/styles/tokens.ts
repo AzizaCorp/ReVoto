@@ -1,25 +1,35 @@
-// Espejo en TypeScript de los tokens que necesita el código (gráficas, cálculos de layout).
-// Mantener sincronizado con tokens.css: si cambias un valor allá, cámbialo aquí.
+// TypeScript mirror of the tokens the code needs (charts, layout calculations).
+// Keep it in sync with tokens.css: if you change a value there, change it here.
+import type { ElectionType } from '@/domain';
 
-export const espacio = { 1: 8, 2: 16, 3: 24, 4: 32, 6: 48 } as const;
+export const spacing = { 1: 8, 2: 16, 3: 24, 4: 32, 6: 48 } as const;
 
-export const marco = {
-  ancho: 360,
-  alto: 760,
+export const frame = {
+  width: 360,
+  height: 760,
   max: 480,
-  zonaSuperior: 56,
-  zonaInferior: 72,
-  /** Alto visible del contenido de una pantalla narrativa sin desplazamiento (§3). */
-  contenido: 760 - 56 - 72,
 } as const;
 
-export const objetivoTactil = 44;
+export const touchTarget = 44;
 
-/** Tipos de elección que deben distinguirse en toda comparación temporal (RN-03). */
-export type TipoEleccion = 'presidencial' | 'intermedia';
+/** Button heights (px): small 36 · medium 44 · large 52 (board C-01). */
+export const buttonHeight = { small: 36, medium: 44, large: 52 } as const;
 
-/** Variable CSS del relleno de cada tipo de serie; nunca depende solo del color. */
-export const rellenoSerie: Record<TipoEleccion, string> = {
-  presidencial: 'var(--rv-serie-presidencial)',
-  intermedia: 'var(--rv-serie-intermedia)',
+/** Motion durations (ms), board C-00. */
+export const duration = {
+  press: 160,
+  state: 200,
+  enter: 480,
+  pop: 560,
+  grow: 640,
+  stagger: 70,
+} as const;
+
+/** Responsive breakpoints (px). In CSS they are written as literals inside @media (see tokens.css). */
+export const breakpoints = { tablet: 768, desktop: 1200 } as const;
+
+/** CSS variable with the fill of each kind of series; it never depends on color alone (RN-03). */
+export const seriesFill: Record<ElectionType, string> = {
+  presidential: 'var(--rv-series-presidential)',
+  midterm: 'var(--rv-series-midterm)',
 };

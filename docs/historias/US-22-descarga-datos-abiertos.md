@@ -9,7 +9,7 @@
 | **Responsable** | Sin asignar |
 | **Revisor (D3)** | Por asignar |
 | **Fecha compromiso** | — |
-| **Estado** | Not started |
+| **Estado** | In progress |
 | **Ficha en Notion** | [User Story Backlog · US-22](https://app.notion.com/p/3efa4b89591481959318ef307ca29e8b) |
 
 ## 🎯 Objetivo
@@ -29,7 +29,7 @@
 | Casos de uso | CU-07 |
 | Entregable | Sin entregable (backlog sin capacidad) |
 | Actividad del PVG | Sin actividad en el PVG en la hoja PVG general |
-| Rama de GitHub | `feat/US-22-descarga-datos-abiertos` |
+| Rama de GitHub | `feat/US-09-motor-secuencia` y `feat/US-11-adaptadores-datos` |
 | Pull request | [liga] |
 | Diseño en Figma | [liga al frame W-16] |
 | Depende de | [US-06 Generar el dataset homologado y agregado del MVP](./US-06-dataset-homologado.md)<br/>[US-07 Publicar el diccionario de datos y las fuentes citadas](./US-07-diccionario-datos.md) |
@@ -77,8 +77,15 @@ flowchart LR
 
 - HU-17 es *Should* en el SRS. Los artefactos L3 ya existirán por US-06: publicarlos es casi gratis si se versionan en `/public/data`.
 
+### Avance al 18/10/2026
+
+- W-16 enlaza `csv/participacion.csv` y `nacional.json` de la versión vigente mediante `JsonOpenDataRepository`.
+- El CSV incluye conteos para que se pueda recalcular RN-01.
+- Pendiente: RF-23 y desglose municipal por edad y sexo antes de declarar los datos definitivos.
+
 ---
 
 | # | Autor | Modificación | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel | Creación del archivo a partir del User Story Backlog de Notion y SRS-01 | 06/10/2026 |
+| 2 | Angel | Avance de implementación, rama y pendientes | 18/10/2026 |

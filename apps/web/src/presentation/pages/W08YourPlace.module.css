@@ -1,0 +1,98 @@
+/* W-08 · Position bar and ranking rows (canvas W08/T08/D08 · Tu lugar). */
+.scale {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-05);
+  width: 100%;
+}
+.bar {
+  position: relative;
+  height: 10px;
+  border-radius: var(--rv-radius-pill);
+  background: linear-gradient(
+    90deg,
+    var(--rv-color-brand-soft),
+    var(--rv-color-brand) 60%,
+    var(--rv-tone-violet-fg)
+  );
+}
+.marker {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--rv-color-paper);
+  border-radius: 50%;
+  background: var(--rv-color-ink);
+  box-shadow: 0 1px 4px rgb(23 24 36 / 0.3);
+  translate: -50% -50%;
+}
+.ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--rv-text-meta);
+  color: var(--rv-color-ink-2);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-1);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.title {
+  margin: 0;
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-meta);
+  font-weight: var(--rv-weight-bold);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-15);
+  min-height: 48px;
+  padding: var(--rv-space-05) var(--rv-space-15) var(--rv-space-05) var(--rv-space-1);
+  border: var(--rv-border-thin) solid var(--rv-color-border);
+  border-radius: 14px;
+  background: var(--rv-color-paper);
+  font-size: var(--rv-text-body);
+}
+.mine {
+  border: 1.5px solid var(--rv-color-brand);
+  background: var(--rv-color-brand-soft);
+  font-weight: var(--rv-weight-bold);
+}
+.badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 var(--rv-space-05);
+  border-radius: var(--rv-radius-pill);
+  background: var(--rv-color-background);
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-meta);
+  font-weight: var(--rv-weight-bold);
+  box-sizing: border-box;
+}
+.mine .badge {
+  background: var(--rv-color-brand);
+  color: var(--rv-color-paper);
+}
+.name {
+  flex: 1;
+  min-width: 0;
+}
+.value {
+  font-family: var(--rv-font-title);
+  font-weight: var(--rv-weight-bold);
+}
+.gap {
+  align-self: center;
+  color: var(--rv-color-muted);
+  line-height: 1;
+}

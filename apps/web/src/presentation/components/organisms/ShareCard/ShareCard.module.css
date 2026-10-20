@@ -1,0 +1,104 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-03 «ShareCard». */
+.shareCard {
+  --rv-logo-height: var(--rv-space-15);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-1);
+  width: 100%;
+  padding: var(--rv-space-2) var(--rv-space-2) var(--rv-space-15);
+  border-radius: var(--rv-radius-share);
+  overflow: hidden;
+  color: var(--rv-color-on-ink);
+  background:
+    radial-gradient(circle at 80% 15%, rgb(255 45 148 / 0.45), transparent 45%),
+    radial-gradient(circle at 0% 100%, rgb(147 61 130 / 0.7), transparent 50%), var(--rv-color-ink);
+  box-shadow: var(--rv-shadow-share);
+  animation: rv-pop var(--rv-duration-pop) var(--rv-easing-spring) 300ms backwards;
+}
+.story {
+  min-height: calc(var(--rv-space-8) * 4);
+}
+@media (min-width: 768px) {
+  .story {
+    aspect-ratio: 9 / 16;
+    width: auto;
+    height: 100%;
+    max-height: calc(var(--rv-frame-height) * 0.85);
+    margin: 0 auto;
+  }
+}
+.square {
+  aspect-ratio: 1;
+  max-width: calc(var(--rv-frame-width) * 1.2);
+  margin: 0 auto;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--rv-space-1);
+}
+.kicker {
+  font-size: var(--rv-text-label);
+  font-weight: var(--rv-weight-title);
+  letter-spacing: var(--rv-tracking-label);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.visual {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+.texts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-05);
+}
+.title {
+  margin: 0;
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-figure);
+  font-weight: var(--rv-weight-title);
+  line-height: 1;
+  letter-spacing: var(--rv-tracking-title);
+}
+.subtitle {
+  margin: 0;
+  font-size: var(--rv-text-meta);
+  opacity: 0.9;
+}
+.figure {
+  display: flex;
+  align-items: baseline;
+  gap: var(--rv-space-1);
+  margin: 0;
+  font-size: var(--rv-text-label);
+  font-weight: var(--rv-weight-semibold);
+}
+.figure b {
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-h2);
+  color: var(--rv-color-brand-on-dark);
+  white-space: nowrap;
+}
+.footer {
+  margin: 0;
+  font-size: calc(var(--rv-text-label) - 2px);
+  opacity: 0.6;
+}
+@keyframes rv-pop {
+  0% {
+    opacity: 0;
+    scale: 0.92;
+  }
+  70% {
+    opacity: 1;
+    scale: 1.02;
+  }
+  100% {
+    scale: 1;
+  }
+}
