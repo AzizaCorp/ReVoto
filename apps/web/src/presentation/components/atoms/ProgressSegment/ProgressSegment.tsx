@@ -1,0 +1,16 @@
+import styles from './ProgressSegment.module.css';
+
+/** One segment of the progress bar. Decorative: the text comes from `ProgressBar`. */
+export function ProgressSegment({ active, current }: { active: boolean; current?: boolean }) {
+  return (
+    <span
+      className={[
+        styles.progressSegment,
+        active ? styles.active : '',
+        current ? styles.current : '',
+      ].join(' ')}
+      data-active={active}
+      aria-hidden="true"
+    />
+  );
+}

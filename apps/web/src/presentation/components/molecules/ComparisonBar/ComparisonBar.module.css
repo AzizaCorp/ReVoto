@@ -1,0 +1,51 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-02 «ComparisonBar». */
+.comparisonBar {
+  display: grid;
+  grid-template-columns: minmax(0, 7.5em) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--rv-space-15);
+  font-size: var(--rv-text-meta);
+}
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.track {
+  position: relative;
+  height: var(--rv-track-height);
+  border-radius: var(--rv-radius-pill);
+  background: var(--rv-color-track);
+  overflow: hidden;
+}
+.pending {
+  background: var(--rv-color-track);
+  outline: var(--rv-border-width) dashed var(--rv-color-pending);
+  outline-offset: calc(-1 * var(--rv-border-width));
+}
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--rv-radius-pill);
+  background: var(--rv-color-brand);
+  transform-origin: left;
+  animation: rv-fill var(--rv-duration-grow) var(--rv-easing) 300ms backwards;
+}
+.value {
+  min-width: 4.5em;
+  text-align: right;
+  font-family: var(--rv-font-title);
+  font-weight: var(--rv-weight-bold);
+  white-space: nowrap;
+}
+.muted {
+  color: var(--rv-color-muted);
+}
+@keyframes rv-fill {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}

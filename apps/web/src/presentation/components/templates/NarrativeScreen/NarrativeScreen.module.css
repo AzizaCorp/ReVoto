@@ -1,0 +1,203 @@
+.narrativeScreen {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100dvh;
+  width: 100%;
+  max-width: var(--rv-frame-max);
+  margin: 0 auto;
+  background: var(--rv-color-background);
+}
+.scroller {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+}
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-15);
+  width: 100%;
+  padding: var(--rv-space-2) var(--rv-side-margin);
+}
+.text,
+.visual,
+.after {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-15);
+  min-width: 0;
+}
+
+/* Motion (M-01): text blocks rise with a 70 ms stagger; the visual pops after them. */
+.text > * {
+  animation: rv-rise var(--rv-duration-enter) var(--rv-easing) backwards;
+}
+.text > :nth-child(2) {
+  animation-delay: calc(var(--rv-stagger) * 1);
+}
+.text > :nth-child(3) {
+  animation-delay: calc(var(--rv-stagger) * 2);
+}
+.text > :nth-child(4) {
+  animation-delay: calc(var(--rv-stagger) * 3);
+}
+.text > :nth-child(5) {
+  animation-delay: calc(var(--rv-stagger) * 4);
+}
+.text > :nth-child(6) {
+  animation-delay: calc(var(--rv-stagger) * 5);
+}
+.text > :nth-child(n + 7) {
+  animation-delay: calc(var(--rv-stagger) * 6);
+}
+.visual {
+  animation: rv-pop var(--rv-duration-pop) var(--rv-easing-spring) 300ms backwards;
+}
+@keyframes rv-rise {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes rv-pop {
+  0% {
+    opacity: 0;
+    scale: 0.94;
+  }
+  70% {
+    opacity: 1;
+    scale: 1.01;
+  }
+  100% {
+    scale: 1;
+  }
+}
+.visual {
+  flex: 1;
+}
+/* Buttons keep their natural width; slots and texts take the whole column. */
+.text,
+.after {
+  align-items: flex-start;
+}
+.text > *,
+.after > * {
+  max-width: 100%;
+}
+
+/* Cover: ink background with magenta and grape gradients. */
+.dark {
+  --rv-color-brand-soft: rgb(255 255 255 / 0.12);
+  --rv-color-brand-text: var(--rv-color-brand-on-dark);
+  --rv-color-ink-2: rgb(255 255 255 / 0.78);
+  --rv-color-line: rgb(255 255 255 / 0.35);
+  --rv-color-paper: transparent;
+  --rv-slot-bg: rgb(255 255 255 / 0.06);
+  --rv-color-muted: rgb(255 255 255 / 0.7);
+  color: var(--rv-color-on-ink);
+  background:
+    radial-gradient(circle at 80% 70%, rgb(255 45 148 / 0.5), transparent 45%),
+    radial-gradient(circle at 0% 100%, rgb(147 61 130 / 0.75), transparent 45%),
+    radial-gradient(circle at 100% 0%, rgb(93 27 109 / 0.6), transparent 35%), var(--rv-color-ink);
+}
+.dark .content {
+  --rv-color-ink: var(--rv-color-on-ink);
+}
+
+@media (max-width: 767px) {
+  .visualFirst .visual {
+    order: -1;
+    flex: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .narrativeScreen {
+    max-width: none;
+  }
+  .content {
+    padding: var(--rv-space-4) var(--rv-side-margin);
+    gap: var(--rv-space-3);
+  }
+  .text {
+    gap: var(--rv-space-2);
+  }
+  .withVisual {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--rv-space-4);
+  }
+  .withVisual .visual {
+    align-self: stretch;
+    justify-content: center;
+  }
+}
+
+/* Desktop: centered 5/7 grid, content up to 1200 px. */
+@media (min-width: 1200px) {
+  .content {
+    max-width: calc(var(--rv-content-max) + 2 * var(--rv-side-margin));
+    margin: 0 auto;
+    padding: var(--rv-space-5) var(--rv-side-margin);
+    justify-content: center;
+  }
+  .withVisual {
+    grid-template-columns: 5fr 7fr;
+    gap: var(--rv-space-8);
+  }
+}
+/* Cover (D01): text and illustration share the width in halves. */
+@media (min-width: 1200px) {
+  .dark .withVisual {
+    grid-template-columns: 6fr 6fr;
+  }
+}
+
+/* «after» block: under the visual on mobile; under the text from tablet up, beside the visual. */
+.after {
+  animation: rv-rise var(--rv-duration-enter) var(--rv-easing) 420ms backwards;
+}
+@media (min-width: 768px) {
+  .withAfter {
+    grid-template-areas:
+      'text visual'
+      'after visual';
+    grid-template-rows: auto auto;
+    align-content: center;
+    row-gap: var(--rv-space-2);
+  }
+  .withAfter .text {
+    grid-area: text;
+  }
+  .withAfter .visual {
+    grid-area: visual;
+  }
+  .withAfter .after {
+    grid-area: after;
+  }
+  .visualLeft {
+    grid-template-areas: 'visual text';
+  }
+  .visualLeft.withAfter {
+    grid-template-areas:
+      'visual text'
+      'visual after';
+  }
+  .visualLeft .text {
+    grid-area: text;
+  }
+  .visualLeft .visual {
+    grid-area: visual;
+  }
+}
+@media (min-width: 1200px) {
+  .visualLeft {
+    grid-template-columns: 7fr 5fr;
+  }
+}

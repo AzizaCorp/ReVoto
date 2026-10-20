@@ -9,7 +9,7 @@
 | **Responsable** | Sin asignar |
 | **Revisor (D3)** | Por asignar |
 | **Fecha compromiso** | — |
-| **Estado** | Not started |
+| **Estado** | In progress |
 | **Ficha en Notion** | [User Story Backlog · US-21](https://app.notion.com/p/3efa4b895914815b9ebfdf49ea39a86f) |
 
 ## 🎯 Objetivo
@@ -29,7 +29,7 @@
 | Casos de uso | CU-01 |
 | Entregable | Sin entregable (backlog sin capacidad) |
 | Actividad del PVG | Sin actividad en el PVG en la hoja PVG general |
-| Rama de GitHub | `feat/US-21-resumen-cifras` |
+| Rama de GitHub | `feat/US-11-adaptadores-datos` |
 | Pull request | [liga] |
 | Diseño en Figma | [liga al frame W-10] |
 | Depende de | [US-09 Construir el motor de secuencia de pantallas](./US-09-motor-secuencia.md)<br/>[US-11 Implementar las pantallas de cifras y comparativos](./US-11-pantallas-cifras.md) |
@@ -77,8 +77,14 @@ flowchart LR
 - HU-06 es *Should* en el SRS; aquí queda *Could* sin capacidad. Por la decisión D-02 de US-04, W-10 ya funciona como cierre, así que el costo marginal es bajo.
 - AP-06 (las cinco cifras del resumen) sigue abierto.
 
+### Avance al 18/10/2026
+
+- W-10 se conectó a los datos L4 junto con el resto de la historia (commit `ab7fbd1`).
+- Pendiente: verificar los CA con datos reales de varias entidades.
+
 ---
 
 | # | Autor | Modificación | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel | Creación del archivo a partir del User Story Backlog de Notion y SRS-01 | 06/10/2026 |
+| 2 | Angel | Avance de implementación, rama y pendientes | 18/10/2026 |

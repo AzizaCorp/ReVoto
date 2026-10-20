@@ -1,0 +1,29 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-02 «Notice». */
+.notice {
+  display: flex;
+  align-items: center;
+  gap: var(--rv-space-15);
+  padding: var(--rv-space-15) var(--rv-button-padding);
+  border-radius: var(--rv-radius-card);
+  border: var(--rv-border-thin) solid transparent;
+  font-size: var(--rv-text-meta);
+  line-height: var(--rv-line-height);
+}
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-05);
+  min-width: 0;
+}
+.info {
+  background: var(--rv-color-brand-soft);
+}
+.threshold,
+.error {
+  background: var(--rv-tone-warning-bg);
+  border-color: color-mix(in srgb, var(--rv-tone-warning-fg) 25%, transparent);
+}
+.pending {
+  background: var(--rv-color-paper);
+  border: var(--rv-border-thin) dashed var(--rv-color-brand);
+}

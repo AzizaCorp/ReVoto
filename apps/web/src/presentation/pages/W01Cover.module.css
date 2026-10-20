@@ -1,0 +1,133 @@
+/* W-01 · Cover. Sizes and positions from the canvas artboards Main, T01 and D01 (Portada). */
+.title {
+  margin: 0;
+  max-width: 11ch;
+  font-family: var(--rv-font-title);
+  font-size: var(--rv-text-display);
+  font-weight: var(--rv-weight-title);
+  line-height: 1.1;
+  letter-spacing: var(--rv-tracking-title);
+}
+.title:focus,
+.title:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.accent {
+  color: var(--rv-color-brand-accent-on-dark);
+}
+.lead {
+  display: block;
+  max-width: 460px;
+  font-size: var(--rv-text-display-lead);
+}
+
+/* Illustration: grape blob behind the ballot box, a star and a sparkle around it. */
+.art {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 300px;
+}
+.blob,
+.ballot,
+.star,
+.sparkle {
+  position: absolute;
+  pointer-events: none;
+}
+.blob {
+  inset: 8% 6% 64px;
+  width: 88%;
+  height: calc(92% - 64px);
+  object-fit: contain;
+  opacity: 0.55;
+}
+.ballot {
+  inset: 0 0 64px;
+  width: 100%;
+  height: calc(100% - 64px);
+  object-fit: contain;
+  animation: rv-cover-pop var(--rv-duration-pop) var(--rv-easing-spring) 300ms backwards;
+}
+.star {
+  left: 0;
+  top: 6%;
+  width: 36px;
+  height: 36px;
+  animation: rv-cover-pop var(--rv-duration-pop) var(--rv-easing-spring) 520ms backwards;
+}
+.sparkle {
+  right: 0;
+  bottom: calc(14% + 64px);
+  width: 32px;
+  height: 32px;
+  animation: rv-cover-pop var(--rv-duration-pop) var(--rv-easing-spring) 640ms backwards;
+}
+.startMobile {
+  position: relative;
+  display: flex;
+}
+.startMobile > * {
+  flex: 1;
+}
+@keyframes rv-cover-pop {
+  0% {
+    opacity: 0;
+    scale: 0.6;
+  }
+  70% {
+    opacity: 1;
+    scale: 1.06;
+  }
+  100% {
+    scale: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ballot,
+  .star,
+  .sparkle {
+    animation: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .title {
+    max-width: none;
+  }
+  .art {
+    min-height: 520px;
+  }
+  .blob {
+    inset: 10% 4% 0;
+    width: 92%;
+    height: 90%;
+  }
+  .ballot {
+    inset: 0;
+    height: 100%;
+  }
+  .star {
+    left: 4%;
+    top: 8%;
+    width: 52px;
+    height: 52px;
+  }
+  .sparkle {
+    right: 4%;
+    bottom: 14%;
+    width: 44px;
+    height: 44px;
+  }
+  .startWide {
+    margin-top: var(--rv-space-1);
+  }
+}
+@media (min-width: 1200px) {
+  .art {
+    min-height: 560px;
+  }
+}

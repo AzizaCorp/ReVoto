@@ -9,7 +9,7 @@
 | **Responsable** | Kira |
 | **Revisor (D3)** | Angel |
 | **Fecha compromiso** | 09/10/2026 |
-| **Estado** | Not started |
+| **Estado** | In progress |
 | **Ficha en Notion** | [User Story Backlog · US-06](https://app.notion.com/p/3efa4b89591481ed81f2f75f4258a43c) |
 
 ## 🎯 Objetivo
@@ -29,7 +29,7 @@
 | Casos de uso | CU-09, CU-10, CU-11 |
 | Entregable | [D05 - Dataset procesado del MVP](https://app.notion.com/p/3efa4b895914819496f5d3387b0abc54) en la base de Deliverables |
 | Actividad del PVG | 3.2 Limpieza y agregación de indicadores del MVP en la hoja PVG general |
-| Rama de GitHub | `feat/US-06-dataset-homologado` |
+| Rama de GitHub | `feat/US-06-dataset-pipeline` |
 | Pull request | [liga] |
 | Diseño en Figma | No aplica |
 | Depende de | [US-05 Auditar las fuentes oficiales disponibles](./US-05-auditoria-fuentes.md) |
@@ -90,8 +90,16 @@ sequenceDiagram
 - 3 SP en un día al final del Sprint 1 con US-05 aún abierta: riesgo de SPI < 0.90 en el corte del 19/10.
 - El reporte de validación (CU-11) debe bloquear la publicación si hay diferencias > 1 pp.
 
+### Avance al 18/10/2026
+
+- El pipeline completo y los JSON *frontend v2* viven en `feat/US-06-dataset-pipeline`; el PR a `develop` está abierto y todavía no se fusiona.
+- Mientras `exportar.py` (L3 → L4) no esté listo, `apps/pipeline/revoto_pipeline/convertir_v2.py` (rama `feat/US-11-adaptadores-datos`) convierte esa salida v2 al contrato L4. Ver ADR-0005 y DIS v0.4 §4.7.
+- Al fusionar este PR: los archivos v2 no deben quedar dentro de `apps/web/public/data/` (solo publica el contrato L4 y `npm run check:data` fallaría) y `convertir_v2.py` debe integrarse como último paso del pipeline.
+- Pendiente: RF-23 (`cifras_oficiales.csv` sin filas, `max_diferencia_pp = null`) y desglose de edad y sexo por municipio.
+
 ---
 
 | # | Autor | Modificación | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel | Creación del archivo a partir del User Story Backlog de Notion y SRS-01 | 06/10/2026 |
+| 2 | Angel | Avance de implementación, rama y pendientes | 18/10/2026 |

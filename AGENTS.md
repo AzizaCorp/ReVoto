@@ -38,7 +38,7 @@ L0/L1 fuentes (bucket, fuera de Git)
                  └─► apps/web (React + Vite, DDD) ─► Vercel CDN ─► navegador
 ```
 
-Detalle: `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.3.md` y `docs/adr/0003-ddd-en-la-app-web.md`.
+Detalle: `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.4.md` y `docs/adr/0003-ddd-en-la-app-web.md`.
 
 ## Monorepo
 
@@ -54,9 +54,9 @@ Detalle: `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.3.md` y `docs/adr/00
 
 | Capa | Qué va aquí | Depende de |
 | --- | --- | --- |
-| `domain/` | Reglas puras: `Eleccion` (RN-03), `Territorio` (RN-02), participación (RN-01, RN-04), `Cifra` (RN-10), `Secuencia` (RF-01–03) | Nada |
-| `application/` | Casos de uso (`consultarParticipacion`, `listarEntidades`) y puertos (`ParticipacionRepository`) | `domain` |
-| `infrastructure/` | Adaptadores: leer JSON del CDN y traducir DTO → dominio | `domain`, `application`, `@revoto/contracts` |
+| `domain/` | Reglas puras: `election` (RN-03), `territory` (RN-02), `turnout` (RN-01, RN-04, `Figure` RN-10, escala del mapa), `identity` (arquetipo, insignia), `narrative/Sequence` (RF-01–03), `quality` | Nada |
+| `application/` | Casos de uso (`use-cases/`: `getTurnout`, `getTerritoryStory`, `compareTerritory`, `municipalityInsights`…) y puertos (`ports/`: `TurnoutRepository`, `GeographyRepository`, `QualityRepository`, `OpenDataRepository`) | `domain` |
+| `infrastructure/` | Adaptadores en `static-json/`: leer JSON del CDN (`JsonClient`), traducir DTO → dominio (`mappers.ts`) y TopoJSON (`topology.ts`) | `domain`, `application`, `@revoto/contracts` |
 | `presentation/` | React: `pages/` (W-NN), `components/` con **Atomic Design**, hooks, estilos | `domain`, `application` |
 | `main.tsx` | Punto de composición: crea adaptadores y los inyecta | Todo |
 
@@ -120,7 +120,7 @@ Definiciones en `.claude/agents/` y `.claude/skills/`.
 | Términos del dominio electoral | `docs/contexto/glosario.md` |
 | Ramas, commits, PR y DoD | `docs/contexto/convenciones.md` |
 | Diseño de la UI | `docs/diseno/manual-de-diseno-wireframes.md`, `design/wireframes/index.html` |
-| Arquitectura y despliegue | `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.3.md` |
+| Arquitectura y despliegue | `docs/diseno/DIS-REVOTO-ARQUITECTURA-DESPLIEGUE-v0.4.md` |
 | Capas DDD y por qué | `docs/adr/0003-ddd-en-la-app-web.md` |
 | Decisiones de arquitectura | `docs/adr/` |
 | Historias de usuario | `docs/historias/README.md` |

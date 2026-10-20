@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "geo.schema.json",
+  "title": "Geometría TopoJSON proyectada (Lambert conforme cónica, metros): geo/entidades, geo/<cve> y geo/municipios",
+  "type": "object",
+  "required": ["type", "arcs", "objects", "transform"],
+  "properties": {
+    "type": {
+      "const": "Topology"
+    },
+    "arcs": {
+      "type": "array"
+    },
+    "transform": {
+      "type": "object",
+      "required": ["scale", "translate"],
+      "properties": {
+        "scale": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "translate": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "bbox": {
+      "type": "array"
+    },
+    "objects": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "geometries"],
+        "properties": {
+          "geometries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["properties"],
+              "properties": {
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "cve": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "cvegeo": {
+                      "$ref": "comun.schema.json#/$defs/cvegeo"
+                    },
+                    "nombre": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

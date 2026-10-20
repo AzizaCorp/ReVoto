@@ -1,0 +1,126 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. Board C-01 «Button». */
+.button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rv-space-05);
+  min-width: var(--rv-touch-target);
+  border-radius: var(--rv-radius-pill);
+  border: var(--rv-border-width) solid transparent;
+  font-family: var(--rv-font);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--rv-duration) var(--rv-easing),
+    border-color var(--rv-duration) var(--rv-easing),
+    color var(--rv-duration) var(--rv-easing),
+    scale var(--rv-duration-press) ease-out;
+}
+.button:active:not(:disabled) {
+  scale: 0.96;
+}
+.button:disabled {
+  cursor: not-allowed;
+}
+.icon,
+.compact {
+  display: inline-flex;
+}
+.compact {
+  display: none;
+}
+
+/* Sizes */
+.small {
+  min-height: var(--rv-button-height-small);
+  padding: 0 var(--rv-button-padding);
+  font-size: var(--rv-text-button-small);
+  font-weight: var(--rv-weight-semibold);
+}
+.medium {
+  min-height: var(--rv-button-height);
+  padding: 0 var(--rv-button-padding);
+  font-size: var(--rv-text-button-small);
+  font-weight: var(--rv-weight-semibold);
+}
+.large {
+  gap: var(--rv-space-15);
+  min-height: var(--rv-button-height-large);
+  padding: 0 var(--rv-button-padding-large);
+  font-size: var(--rv-text-button);
+  font-weight: var(--rv-weight-bold);
+}
+
+/* Variants */
+.primary {
+  background: var(--rv-color-ink);
+  color: var(--rv-color-on-ink);
+}
+.brand {
+  background: var(--rv-color-brand);
+  color: var(--rv-color-on-brand);
+}
+.secondary {
+  background: var(--rv-color-paper);
+  border-color: var(--rv-color-line);
+  color: var(--rv-color-ink);
+}
+@media (hover: hover) {
+  .secondary:hover:not(:disabled) {
+    border-color: var(--rv-color-ink);
+  }
+}
+.text {
+  min-width: 0;
+  min-height: var(--rv-touch-target);
+  padding: 0;
+  background: transparent;
+  color: var(--rv-color-ink-2);
+  font-size: var(--rv-text-button-small);
+  font-weight: var(--rv-weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.primary:disabled,
+.brand:disabled,
+.secondary:disabled {
+  background: var(--rv-color-paper);
+  border-color: var(--rv-color-border);
+  color: var(--rv-color-muted);
+}
+.fullWidth {
+  width: 100%;
+}
+@media (max-width: 767px) {
+  .fullWidthMobile {
+    width: 100%;
+  }
+}
+
+/* Below 768 px: 44 px circle with only the icon. */
+@media (max-width: 767px) {
+  .collapsible {
+    width: var(--rv-touch-target);
+    min-height: var(--rv-touch-target);
+    padding: 0;
+  }
+  .collapsible .content,
+  .collapsible:has(.compact) .icon {
+    display: none;
+  }
+  .collapsible .compact {
+    display: inline-flex;
+  }
+}
+@media (max-width: 359px) {
+  .narrow {
+    width: var(--rv-touch-target);
+    padding: 0;
+  }
+  .narrow .content {
+    display: none;
+  }
+}
