@@ -15,6 +15,7 @@ import { useNavigation, type ShareSubject } from '@/presentation/providers/Navig
 import { useProfile } from '@/presentation/providers/Profile';
 import { useStoryData } from '@/presentation/providers/Story';
 import { cardToPng, download, shareOrDownload, slug } from '@/presentation/share/exportCard';
+import { useShareBlocker } from '../shared/shareBlocker';
 import { archetypeStat, compareWithGeneration } from '../shared/storyFigures';
 
 const WHAT = [
@@ -56,14 +57,8 @@ export function W12Share() {
   const cardFormat = format === 'square' ? 'post' : 'story';
   const you = `${votes} de 3`;
 
-  const missing =
-    (what !== 'badge' && !profile) || (what === 'badge' && !badge)
-      ? what === 'badge'
-        ? 'Responde «Sobre ti» para crear tu insignia.'
-        : t.level === 'municipality'
-          ? `${t.name} tiene menos de 5 elecciones: aún no tiene arquetipo.`
-          : 'Elige un municipio para crear la tarjeta de su arquetipo.'
-      : null;
+  const blocker = useShareBlocker(what);
+  const missing = blocker?.text ?? null;
 
   const name = `revoto-${FILE[what]}${placeText ? `-${slug(t.name)}` : ''}-${format === 'square' ? '1x1' : '9x16'}.png`;
   const caption =
@@ -156,16 +151,15 @@ export function W12Share() {
       {missing ? (
         <Notice tone="pending">
           {missing}{' '}
-          {what === 'badge' ? (
+          {blocker?.fix === 'answer' && (
             <Button variant="text" onClick={() => nav.goTo('W-02b')}>
               Responder ahora
             </Button>
-          ) : (
-            t.level !== 'municipality' && (
-              <Button variant="text" onClick={nav.changeTerritory}>
-                Elegir municipio
-              </Button>
-            )
+          )}
+          {blocker?.fix === 'territory' && (
+            <Button variant="text" onClick={nav.changeTerritory}>
+              Elegir municipio
+            </Button>
           )}
         </Notice>
       ) : (
@@ -210,3 +204,5 @@ export function W12Share() {
     </SheetTemplate>
   );
 }
+
+export { shareBlocker, type ShareBlocker } from '../shared/shareBlocker';

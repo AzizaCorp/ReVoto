@@ -12,6 +12,7 @@ import { useProfile } from '@/presentation/providers/Profile';
 import { useStoryData } from '@/presentation/providers/Story';
 import layout from './shared/Layout.module.css';
 import { breakdown, placeOf, YEAR } from './shared/storyFigures';
+import { ShareAction } from './shared/ShareAction';
 import { StoryFrame } from './shared/StoryFrame';
 
 type Row = readonly [string | null, string, IconName, BubbleTone, ViewId];
@@ -114,14 +115,7 @@ export function W10Summary() {
         </Button>
       </div>
       <div className={[layout.narrowOnly, layout.fill].join(' ')}>{rows}</div>
-      <Button
-        variant="primary"
-        icon="share"
-        fullWidth="mobile"
-        onClick={() => nav.openSheet('W-12', { share: 'both' })}
-      >
-        Compartir mi resumen
-      </Button>
+      <ShareAction what="both">Compartir mi resumen</ShareAction>
       <div className={layout.grid2}>
         <Button icon="download" onClick={() => nav.goTo('W-16')}>
           Datos abiertos
