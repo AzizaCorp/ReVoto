@@ -136,6 +136,9 @@
   .withVisual .visual {
     align-self: stretch;
     justify-content: center;
+    /* «safe»: when the visual is taller than the column it starts at the top instead of being
+       cut above it (W-03: «Volver a México» was hidden behind the top bar). */
+    justify-content: safe center;
   }
 }
 
@@ -146,6 +149,7 @@
     margin: 0 auto;
     padding: var(--rv-space-5) var(--rv-side-margin);
     justify-content: center;
+    justify-content: safe center;
   }
   .withVisual {
     grid-template-columns: 5fr 7fr;

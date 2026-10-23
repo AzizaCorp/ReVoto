@@ -27,6 +27,13 @@
 .compact {
   max-height: 340px;
 }
+/* Tablet and desktop: the map leaves room for its card, legend and the bars of the screen, so
+   the whole block fits in the window (W-03). */
+@media (min-width: 768px) {
+  .svg {
+    max-height: min(70vh, calc(100dvh - 400px));
+  }
+}
 @media (max-width: 767px) {
   /* Mobile: the map is one block of the story, not the whole screen (boards W-03 230, W-04 176). */
   .svg {
