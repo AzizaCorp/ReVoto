@@ -45,6 +45,17 @@ describe('App · sequence engine', () => {
     expect(title()).toHaveTextContent('¿Dónde votas?');
   });
 
+  it('plays the top bar fill in reverse when going back (DEF-29)', () => {
+    window.location.hash = '#/W-04';
+    const { container } = render(<App />);
+    const bar = () => container.querySelector('[data-direction]');
+    fireEvent.keyDown(window, { key: 'ArrowRight' });
+    expect(bar()).toHaveAttribute('data-direction', 'forward');
+    fireEvent.keyDown(window, { key: 'ArrowLeft' });
+    expect(bar()).toHaveAttribute('data-direction', 'back');
+    expect(container.querySelectorAll('[data-leaving]')).toHaveLength(1);
+  });
+
   it('goes back to the screen of origin after editing the answers (DEF-25)', () => {
     window.location.hash = '#/W-09b';
     render(<App />);

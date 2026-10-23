@@ -1,11 +1,12 @@
 import { Button, IconButton, Logo } from '../../atoms';
-import { ProgressBar } from '../../molecules';
+import { ProgressBar, type ProgressDirection } from '../../molecules';
 import styles from './TopBar.module.css';
 
 export interface BarProgress {
   position: number;
   total: number;
   text: string;
+  direction?: ProgressDirection;
 }
 
 export interface TopBarProps {

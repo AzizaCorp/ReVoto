@@ -79,7 +79,7 @@ export function StoryFrame({
       top={
         <TopBar
           dark={cover}
-          progress={nav.progress}
+          progress={nav.progress && { ...nav.progress, direction: nav.direction }}
           stepName={nav.stepName ?? undefined}
           onSettings={() => nav.openSheet('W-13')}
           onSource={openSource}

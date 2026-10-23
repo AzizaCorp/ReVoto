@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -37,6 +38,8 @@ export interface Navigation {
   /** Last story screen visited (the lite version uses it to continue from there). */
   lastScreen: ScreenId;
   progress: Progress | null;
+  /** How the current screen was reached; the top bar plays its fill in reverse going back (DEF-29). */
+  direction: 'forward' | 'back';
   stepName: string | null;
   sheet: SheetId | null;
   /** Label of the chosen territory: «Ciudad de México · Iztacalco», «Jalisco» or «Nacional». */
@@ -97,13 +100,24 @@ export function NavigationProvider({
   const [answersReturnTo, setAnswersReturnTo] = useState<ScreenId | null>(null);
   const [selected, setSelected] = useState<Territory>(NATIONAL);
 
-  const goTo = useCallback((id: ViewId) => {
-    setSheet(null);
-    setCurrent(id);
-    if (isScreen(id)) setLastScreen(id);
-    // Leaving «Sobre ti» by any other way forgets the pending return.
-    if (id !== 'W-02b') setAnswersReturnTo(null);
-  }, []);
+  const [direction, setDirection] = useState<'forward' | 'back'>('forward');
+  const currentRef = useRef(current);
+
+  const goTo = useCallback(
+    (id: ViewId) => {
+      const from = sequence.screens.indexOf(currentRef.current as ScreenId);
+      const to = sequence.screens.indexOf(id as ScreenId);
+      // The hash echo of a move lands on the same screen and keeps the direction.
+      if (to !== from) setDirection(from >= 0 && to >= 0 && to < from ? 'back' : 'forward');
+      currentRef.current = id;
+      setSheet(null);
+      setCurrent(id);
+      if (isScreen(id)) setLastScreen(id);
+      // Leaving «Sobre ti» by any other way forgets the pending return.
+      if (id !== 'W-02b') setAnswersReturnTo(null);
+    },
+    [sequence],
+  );
 
   // URL ↔ state
   useEffect(() => {
@@ -128,6 +142,7 @@ export function NavigationProvider({
       currentView: current,
       lastScreen,
       progress: inSequence ? progressOf(sequence, current) : null,
+      direction,
       stepName: isScreen(current) ? screenName(current) : null,
       sheet,
       territory:
@@ -168,6 +183,7 @@ export function NavigationProvider({
     sequence,
     current,
     lastScreen,
+    direction,
     sheet,
     goTo,
     returnTo,
