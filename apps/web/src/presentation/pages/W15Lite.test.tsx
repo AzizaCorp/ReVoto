@@ -23,6 +23,16 @@ describe('W-15 · Lite version', () => {
     expect(screen.getByText(/Pantalla 3 de 12 · México/)).toBeInTheDocument();
   });
 
+  it('goes back to the screen of origin after editing the answers (DEF-25)', async () => {
+    window.location.hash = '#/W-09b';
+    await renderLite();
+    expect(heading()).toBe('Aún sin insignia');
+    fireEvent.click(screen.getByRole('button', { name: /Responder/ }));
+    expect(heading()).toBe('Cuéntanos de ti');
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar y volver ›' }));
+    expect(heading()).toBe('Aún sin insignia');
+  });
+
   it('ends at the summary with «Fin» and no images', async () => {
     const { container } = await renderLite();
     for (let i = 0; i < 12; i++) next();

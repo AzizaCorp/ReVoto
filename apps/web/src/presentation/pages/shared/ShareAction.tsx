@@ -40,7 +40,7 @@ export function ShareAction({
   }
   if (blocker.fix === 'answer') {
     return (
-      <Button variant="primary" icon="star" fullWidth={fullWidth} onClick={() => nav.goTo('W-02b')}>
+      <Button variant="primary" icon="star" fullWidth={fullWidth} onClick={nav.editAnswers}>
         Responder «Sobre ti»
       </Button>
     );

@@ -110,7 +110,11 @@ export function W10Summary() {
         <Button size="small" icon="pin" onClick={() => nav.goTo('W-09')}>
           {archetype ? `Tu municipio: «${ARCHETYPES[archetype]}»` : 'Tu municipio: sin arquetipo'}
         </Button>
-        <Button size="small" icon="star" onClick={() => nav.goTo(badge ? 'W-09b' : 'W-02b')}>
+        <Button
+          size="small"
+          icon="star"
+          onClick={badge ? () => nav.goTo('W-09b') : nav.editAnswers}
+        >
           {badge ? `Tú: «${BADGES[badge]}»` : 'Tú: responde «Sobre ti»'}
         </Button>
       </div>

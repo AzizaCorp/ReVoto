@@ -77,14 +77,18 @@ export function W09cMyMunicipalityAndMe() {
             Tu municipio: elígelo
           </Button>
         )}
-        <Button size="small" icon="star" onClick={() => nav.goTo(badge ? 'W-09b' : 'W-02b')}>
+        <Button
+          size="small"
+          icon="star"
+          onClick={badge ? () => nav.goTo('W-09b') : nav.editAnswers}
+        >
           {badge ? `Tú: «${BADGES[badge]}»` : 'Tú: responde «Sobre ti»'}
         </Button>
       </div>
       {badge ? (
         <ShareAction what="both">Compartir los dos</ShareAction>
       ) : (
-        <Button variant="primary" icon="star" fullWidth="mobile" onClick={() => nav.goTo('W-02b')}>
+        <Button variant="primary" icon="star" fullWidth="mobile" onClick={nav.editAnswers}>
           Responder «Sobre ti»
         </Button>
       )}

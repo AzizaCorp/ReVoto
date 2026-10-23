@@ -77,13 +77,13 @@ export function W09bBadge() {
             <ShareAction what="badge" fullWidth={false}>
               Compartir mi insignia
             </ShareAction>
-            <Button variant="text" onClick={() => nav.goTo('W-02b')}>
+            <Button variant="text" onClick={nav.editAnswers}>
               Cambiar respuestas
             </Button>
           </>
         ) : (
           <>
-            <Button variant="primary" icon="star" onClick={() => nav.goTo('W-02b')}>
+            <Button variant="primary" icon="star" onClick={nav.editAnswers}>
               Responder ahora
             </Button>
             <Button variant="text" onClick={nav.next ?? undefined}>

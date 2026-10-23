@@ -19,6 +19,7 @@ export function W15Lite() {
   const story = useStoryData();
   const wide = useMediaQuery('(min-width: 768px)');
   const [id, setId] = useState<ScreenId>(nav.lastScreen);
+  const [answersReturnTo, setAnswersReturnTo] = useState<ScreenId | null>(null);
   const title = useRef<HTMLHeadingElement>(null);
   const first = useRef(true);
   useEffect(() => {
@@ -28,12 +29,18 @@ export function W15Lite() {
   }, [id]);
 
   const show = (target: ScreenId) => {
+    if (target !== 'W-02b') setAnswersReturnTo(null);
     setId(nav.sequence.screens.includes(target) ? target : (next(nav.sequence, target) ?? 'W-01'));
     window.scrollTo?.(0, 0);
   };
   const step = liteStep(id, {
     show,
     screens: storyLength(nav.sequence),
+    editAnswers: () => {
+      if (id !== 'W-02b') setAnswersReturnTo(id);
+      show('W-02b');
+    },
+    answersReturnTo,
     open: nav.goTo,
     wide,
     answers: profile.answers,

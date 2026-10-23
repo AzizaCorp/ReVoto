@@ -44,6 +44,10 @@ export interface LiteContext {
   show: (id: ScreenId) => void;
   /** Screens after the cover, from the sequence (DEF-27). */
   screens: number;
+  /** Opens «Sobre ti» and remembers the screen to come back to (DEF-25). */
+  editAnswers: () => void;
+  /** Screen «Sobre ti» goes back to, or null when it was reached in order. */
+  answersReturnTo: ScreenId | null;
   /** Leaves the lite version for an auxiliary view (open data, methodology). */
   open: (view: 'W-16' | 'W-18') => void;
   /** Tablet and desktop: the 15-year table adds the state column (board TL05/DL05). */
@@ -223,9 +227,19 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
                 </div>
               </fieldset>
             ))}
-            <button type="button" className={styles.strongLink} onClick={() => c.show('W-03')}>
-              Saltar
-            </button>
+            {c.answersReturnTo ? (
+              <button
+                type="button"
+                className={styles.button}
+                onClick={() => c.answersReturnTo && c.show(c.answersReturnTo)}
+              >
+                Guardar y volver ›
+              </button>
+            ) : (
+              <button type="button" className={styles.strongLink} onClick={() => c.show('W-03')}>
+                Saltar
+              </button>
+            )}
           </>
         ),
       };
@@ -563,7 +577,7 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
               ]}
               highlight="Tú"
             />
-            <button type="button" className={styles.strongLink} onClick={() => c.show('W-02b')}>
+            <button type="button" className={styles.strongLink} onClick={c.editAnswers}>
               Cambiar respuestas
             </button>
           </>
@@ -581,7 +595,7 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
               ]}
               highlight="Tú"
             />
-            <button type="button" className={styles.button} onClick={() => c.show('W-02b')}>
+            <button type="button" className={styles.button} onClick={c.editAnswers}>
               Responder «Sobre ti»
             </button>
           </>
@@ -611,7 +625,7 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
                 {crossing?.phrase ?? 'Elige un municipio con arquetipo para ver el cruce.'}
               </p>
             ) : (
-              <button type="button" className={styles.strongLink} onClick={() => c.show('W-02b')}>
+              <button type="button" className={styles.strongLink} onClick={c.editAnswers}>
                 Responder «Sobre ti» para completar la tarjeta
               </button>
             )}

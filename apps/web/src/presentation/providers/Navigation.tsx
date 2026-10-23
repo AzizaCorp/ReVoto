@@ -57,6 +57,12 @@ export interface Navigation {
   changeTerritory: () => void;
   /** Leaves W-02: goes back to the screen of origin, or moves on if it was reached in order. */
   confirmTerritory: () => void;
+  /** Opens W-02b from «Cambiar respuestas» or «Responder ahora» and remembers the origin (DEF-25). */
+  editAnswers: () => void;
+  /** Screen W-02b will go back to, or null when it was reached in order. */
+  answersReturnTo: ScreenId | null;
+  /** Leaves W-02b: back to the screen of origin, or on to the next screen. */
+  doneAnswers: () => void;
 }
 
 const Context = createContext<Navigation | null>(null);
@@ -88,12 +94,15 @@ export function NavigationProvider({
   const [sheet, setSheet] = useState<SheetId | null>(null);
   const [shareSubject, setShareSubject] = useState<ShareSubject>('archetype');
   const [returnTo, setReturnTo] = useState<ScreenId | null>(null);
+  const [answersReturnTo, setAnswersReturnTo] = useState<ScreenId | null>(null);
   const [selected, setSelected] = useState<Territory>(NATIONAL);
 
   const goTo = useCallback((id: ViewId) => {
     setSheet(null);
     setCurrent(id);
     if (isScreen(id)) setLastScreen(id);
+    // Leaving «Sobre ti» by any other way forgets the pending return.
+    if (id !== 'W-02b') setAnswersReturnTo(null);
   }, []);
 
   // URL ↔ state
@@ -145,8 +154,27 @@ export function NavigationProvider({
         setReturnTo(null);
         goTo(target);
       },
+      editAnswers: () => {
+        if (isScreen(current) && current !== 'W-02b') setAnswersReturnTo(current);
+        goTo('W-02b');
+      },
+      answersReturnTo,
+      doneAnswers: () => {
+        const target = answersReturnTo ?? nextOf(sequence, 'W-02b') ?? 'W-03';
+        goTo(target);
+      },
     };
-  }, [sequence, current, lastScreen, sheet, goTo, returnTo, selected, shareSubject]);
+  }, [
+    sequence,
+    current,
+    lastScreen,
+    sheet,
+    goTo,
+    returnTo,
+    answersReturnTo,
+    selected,
+    shareSubject,
+  ]);
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

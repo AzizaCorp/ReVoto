@@ -152,7 +152,7 @@ export function W12Share() {
         <Notice tone="pending">
           {missing}{' '}
           {blocker?.fix === 'answer' && (
-            <Button variant="text" onClick={() => nav.goTo('W-02b')}>
+            <Button variant="text" onClick={nav.editAnswers}>
               Responder ahora
             </Button>
           )}

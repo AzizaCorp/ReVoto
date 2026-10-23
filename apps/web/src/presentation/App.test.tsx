@@ -45,6 +45,24 @@ describe('App · sequence engine', () => {
     expect(title()).toHaveTextContent('¿Dónde votas?');
   });
 
+  it('goes back to the screen of origin after editing the answers (DEF-25)', () => {
+    window.location.hash = '#/W-09b';
+    render(<App />);
+    expect(title()).toHaveTextContent('Y tú, ¿cómo votas?');
+    fireEvent.click(screen.getByRole('button', { name: 'Responder ahora' }));
+    expect(title()).toHaveTextContent('Cuéntanos de ti');
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar y volver' }));
+    expect(title()).toHaveTextContent('Y tú, ¿cómo votas?');
+    expect(window.location.hash).toBe('#/W-09b');
+  });
+
+  it('moves on from «Sobre ti» when it was reached in order', () => {
+    window.location.hash = '#/W-02b';
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Saltar' }));
+    expect(title()).toHaveTextContent('Así vota México');
+  });
+
   it('opens a screen from the URL and the source sheet', () => {
     window.location.hash = '#/W-03';
     render(<App />);
