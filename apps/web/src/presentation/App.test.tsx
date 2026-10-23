@@ -22,6 +22,15 @@ describe('App · sequence engine', () => {
     expect(title()).toHaveTextContent('¿Cuánto vota tu territorio?');
   });
 
+  it('promises as many screens as the sequence has and counts them all (DEF-27)', () => {
+    const { unmount } = render(<App />);
+    expect(screen.getByText(/Descubre en 12 pantallas/)).toBeInTheDocument();
+    unmount();
+    window.location.hash = '#/W-09b';
+    const { container } = render(<App />);
+    expect(container.querySelector('[aria-live="polite"]')).toHaveTextContent('Pantalla 10 de 12');
+  });
+
   it('moves with the buttons and the → key and announces the progress (CA-02, CA-04)', () => {
     const { container } = render(<App />);
     expect(screen.queryByRole('button', { name: 'Pantalla siguiente' })).not.toBeInTheDocument();
@@ -31,7 +40,7 @@ describe('App · sequence engine', () => {
     fireEvent.keyDown(window, { key: 'ArrowRight' });
     expect(title()).toHaveTextContent('Cuéntanos de ti');
     expect(screen.getByRole('button', { name: 'Pantalla anterior' })).toBeInTheDocument();
-    expect(container.querySelector('[aria-live="polite"]')).toHaveTextContent('Pantalla 2 de 10');
+    expect(container.querySelector('[aria-live="polite"]')).toHaveTextContent('Pantalla 2 de 12');
     fireEvent.keyDown(window, { key: 'ArrowLeft' });
     expect(title()).toHaveTextContent('¿Dónde votas?');
   });

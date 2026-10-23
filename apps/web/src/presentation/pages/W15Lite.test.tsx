@@ -20,7 +20,7 @@ describe('W-15 · Lite version', () => {
     next(); // W-03
     expect(heading()).toBe('Así vota México');
     expect(screen.getByRole('table', { name: /Participación nacional/ })).toBeInTheDocument();
-    expect(screen.getByText(/Pantalla 3 de 10 · México/)).toBeInTheDocument();
+    expect(screen.getByText(/Pantalla 3 de 12 · México/)).toBeInTheDocument();
   });
 
   it('ends at the summary with «Fin» and no images', async () => {

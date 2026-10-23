@@ -13,7 +13,7 @@ import styles from './StoryFrame.module.css';
 export interface StoryFrameProps {
   children: ReactNode;
   visual?: ReactNode;
-  /** Section pill («MÉXICO»). The «N/9» number comes from the engine. */
+  /** Section pill («MÉXICO»). The «N/12» number comes from the engine. */
   label?: string;
   /** Prefix of the cover pill («ELECCIONES FEDERALES» before «2009–2024»). */
   labelPrefix?: string;
@@ -42,12 +42,10 @@ export interface StoryFrameProps {
   onNext?: () => void;
 }
 
-/** Number of the section pill: the cover does not count, so W-03 is «2/9». */
+/** Number of the section pill, the same as the bar: the cover does not count, so W-03 is «3/12». */
 export function useStepNumber(): string | undefined {
   const { progress } = useNavigation();
-  return progress && progress.position > 1
-    ? `${progress.position - 1}/${progress.total - 1}`
-    : undefined;
+  return progress && progress.position > 0 ? `${progress.position}/${progress.total}` : undefined;
 }
 
 /** Joins the narrative template with the sequence engine: bars, progress and navigation. */

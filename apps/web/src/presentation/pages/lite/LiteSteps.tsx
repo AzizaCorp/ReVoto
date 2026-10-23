@@ -42,6 +42,8 @@ const AGES = ['18–24', '25–34', '35–44', '45–59', '60 +'] as const;
 export interface LiteContext {
   /** Moves inside the lite version. */
   show: (id: ScreenId) => void;
+  /** Screens after the cover, from the sequence (DEF-27). */
+  screens: number;
   /** Leaves the lite version for an auxiliary view (open data, methodology). */
   open: (view: 'W-16' | 'W-18') => void;
   /** Tablet and desktop: the 15-year table adds the state column (board TL05/DL05). */
@@ -64,7 +66,7 @@ const expectedOf = (c: LiteContext) => {
 };
 
 export interface LiteStep {
-  /** Short name after «Pantalla N de 10». */
+  /** Short name after «Pantalla N de 12». */
   label: string;
   title: string;
   /** Shows «[Municipio], [Entidad] · cambiar» (from W-03 on). */
@@ -156,7 +158,8 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
         body: (
           <>
             <p className={styles.intro}>
-              Descubre en 10 pantallas cómo vota tu municipio frente al país. Sin datos personales.
+              Descubre en {c.screens} pantallas cómo vota tu municipio frente al país. Sin datos
+              personales.
             </p>
             <ol className={styles.toc}>
               <li>Elige tu territorio</li>

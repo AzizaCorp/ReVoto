@@ -8,7 +8,7 @@ export interface UtilityScreenProps {
   title: string;
   /** Section pill above the title, e.g. «TU TERRITORIO». */
   label?: string;
-  /** Pill prefix, e.g. «1/9». */
+  /** Pill prefix, e.g. «1/12». */
   number?: string;
   /** Short text under the title. */
   lead?: string;

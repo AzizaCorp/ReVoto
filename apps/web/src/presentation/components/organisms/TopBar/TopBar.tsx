@@ -46,14 +46,14 @@ export function TopBar({
       {progress && (
         <div className={styles.progress}>
           <ProgressBar {...progress} />
-          {stepName && (
+          {stepName && progress.position > 0 && (
             <span className={styles.step} aria-hidden="true">
-              Paso {progress.position} de {progress.total} · {stepName}
+              Pantalla {progress.position} de {progress.total} · {stepName}
             </span>
           )}
         </div>
       )}
-      {progress && (
+      {progress && progress.position > 0 && (
         <span className={styles.counter} aria-hidden="true">
           {progress.position}/{progress.total}
         </span>
