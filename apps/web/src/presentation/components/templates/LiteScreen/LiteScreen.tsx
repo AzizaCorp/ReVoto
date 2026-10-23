@@ -5,6 +5,8 @@ export interface LiteScreenProps {
   onFullVersion: () => void;
   /** «Fuente» in the header (tablet and desktop only, as in boards TL/DL). */
   onSource?: () => void;
+  /** «Ajustes»: easy reading and text size also apply here (DEF-28). */
+  onSettings?: () => void;
   children: ReactNode;
   /** Text navigation at the foot («‹ Anterior · Siguiente ›»). */
   footer?: ReactNode;
@@ -14,7 +16,13 @@ export interface LiteScreenProps {
  * Lite version template (W-15, RF-18): text and tables only, system fonts, no images, charts or
  * motion (boards WL/TL/DL on the «secuencia» page).
  */
-export function LiteScreen({ onFullVersion, onSource, children, footer }: LiteScreenProps) {
+export function LiteScreen({
+  onFullVersion,
+  onSource,
+  onSettings,
+  children,
+  footer,
+}: LiteScreenProps) {
   return (
     <div className={styles.liteScreen}>
       <header className={styles.header}>
@@ -27,6 +35,11 @@ export function LiteScreen({ onFullVersion, onSource, children, footer }: LiteSc
               onClick={onSource}
             >
               Fuente
+            </button>
+          )}
+          {onSettings && (
+            <button type="button" className={styles.link} onClick={onSettings}>
+              Ajustes
             </button>
           )}
           <button type="button" className={styles.link} onClick={onFullVersion}>

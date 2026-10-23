@@ -74,19 +74,39 @@
   --rv-font-system: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --rv-lite-content-max: 760px;
   --rv-font-title: 'Sora', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --rv-text-figure: 32px;
-  --rv-text-figure-small: 19px;
-  --rv-text-h1: 30px;
+  --rv-size-figure: 32px;
+  --rv-size-figure-small: 19px;
+  --rv-size-h1: 30px;
   /* Cover (W-01): bigger headline and lead than the rest of the story. */
-  --rv-text-display: 38px;
-  --rv-text-display-lead: 15px;
-  --rv-text-h2: 22px;
-  --rv-text-lead: 14px;
-  --rv-text-body: 14px;
-  --rv-text-meta: 12px;
-  --rv-text-label: 11px;
-  --rv-text-button: 15px; /* large */
-  --rv-text-button-small: 13px; /* small and medium */
+  --rv-size-display: 38px;
+  --rv-size-display-lead: 15px;
+  --rv-size-h2: 22px;
+  --rv-size-lead: 14px;
+  --rv-size-body: 14px;
+  --rv-size-meta: 12px;
+  --rv-size-label: 11px;
+  --rv-size-button: 15px; /* large */
+  --rv-size-button-small: 13px; /* small and medium */
+
+  /* Applied text sizes (DEF-28): base × «Tamaño de texto» (A− A A+) × «Lectura fácil». Titles and
+     figures grow half as much, so long words still fit on a 320 px screen. Components only use
+     --rv-text-*; the raw --rv-size-* change per breakpoint. */
+  --rv-size-scale: 1;
+  --rv-reading-scale: 1;
+  --rv-text-scale: calc(var(--rv-size-scale) * var(--rv-reading-scale));
+  --rv-title-scale: calc(1 + (var(--rv-text-scale) - 1) / 2);
+  --rv-text-body: calc(var(--rv-size-body) * var(--rv-text-scale));
+  --rv-text-button: calc(var(--rv-size-button) * var(--rv-text-scale));
+  --rv-text-button-small: calc(var(--rv-size-button-small) * var(--rv-text-scale));
+  --rv-text-display: calc(var(--rv-size-display) * var(--rv-title-scale));
+  --rv-text-h1: calc(var(--rv-size-h1) * var(--rv-title-scale));
+  --rv-text-h2: calc(var(--rv-size-h2) * var(--rv-title-scale));
+  --rv-text-display-lead: calc(var(--rv-size-display-lead) * var(--rv-text-scale));
+  --rv-text-figure: calc(var(--rv-size-figure) * var(--rv-title-scale));
+  --rv-text-figure-small: calc(var(--rv-size-figure-small) * var(--rv-title-scale));
+  --rv-text-label: calc(var(--rv-size-label) * var(--rv-text-scale));
+  --rv-text-lead: calc(var(--rv-size-lead) * var(--rv-text-scale));
+  --rv-text-meta: calc(var(--rv-size-meta) * var(--rv-text-scale));
   --rv-weight-regular: 400;
   --rv-weight-medium: 500;
   --rv-weight-semibold: 600;
@@ -186,15 +206,15 @@
    as literals only inside @media: 768 px (tablet) and 1200 px (desktop). */
 @media (min-width: 768px) {
   :root {
-    --rv-text-display: 48px;
-    --rv-text-display-lead: 16px;
-    --rv-text-h1: 40px;
-    --rv-text-h2: 26px;
-    --rv-text-figure: 40px;
-    --rv-text-figure-small: 30px;
-    --rv-text-lead: 15px;
-    --rv-text-body: 15px;
-    --rv-text-meta: 13px;
+    --rv-size-display: 48px;
+    --rv-size-display-lead: 16px;
+    --rv-size-h1: 40px;
+    --rv-size-h2: 26px;
+    --rv-size-figure: 40px;
+    --rv-size-figure-small: 30px;
+    --rv-size-lead: 15px;
+    --rv-size-body: 15px;
+    --rv-size-meta: 13px;
     --rv-side-margin: 40px;
     --rv-bottom-zone: 88px;
     --rv-logo-height: 22px;
@@ -202,26 +222,28 @@
 }
 @media (min-width: 1200px) {
   :root {
-    --rv-text-display: 64px;
-    --rv-text-display-lead: 18px;
-    --rv-text-h1: 52px;
-    --rv-text-lead: 17px;
+    --rv-size-display: 64px;
+    --rv-size-display-lead: 18px;
+    --rv-size-h1: 52px;
+    --rv-size-lead: 17px;
     --rv-side-margin: 64px;
-    --rv-text-label: 12px;
+    --rv-size-label: 12px;
     --rv-top-zone: 80px;
     --rv-logo-height: 24px;
   }
 }
 
-/* ── Easy reading (HU-10 · W-13): larger text and no animations ── */
+/* ── Text size (W-13 «Tamaño de texto», DEF-28) ── */
+:root[data-text-size='small'] {
+  --rv-size-scale: 0.9;
+}
+:root[data-text-size='large'] {
+  --rv-size-scale: 1.15;
+}
+
+/* ── Easy reading (HU-10 · W-13): larger text, more line spacing and no animations ── */
 :root[data-reading='easy'] {
-  --rv-text-figure: 40px;
-  --rv-text-h1: 34px;
-  --rv-text-h2: 24px;
-  --rv-text-lead: 18px;
-  --rv-text-body: 19px;
-  --rv-text-meta: 17px;
-  --rv-text-label: 14px;
+  --rv-reading-scale: 1.2;
   --rv-line-height: 1.6;
   --rv-duration-press: 0ms;
   --rv-duration: 0ms;

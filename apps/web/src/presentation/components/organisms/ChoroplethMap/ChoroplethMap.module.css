@@ -120,7 +120,7 @@
   background: var(--rv-color-paper);
   border: var(--rv-border-width) solid var(--rv-color-border);
   font-size: var(--rv-text-meta);
-  line-height: 16px;
+  line-height: var(--rv-line-height);
   box-sizing: border-box;
 }
 .tip b {

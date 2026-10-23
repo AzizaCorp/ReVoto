@@ -58,6 +58,7 @@ export function W15Lite() {
   return (
     <LiteScreen
       onFullVersion={() => nav.goTo(id)}
+      onSettings={() => nav.openSheet('W-13')}
       onSource={step.source ? () => nav.openSheet('W-11') : undefined}
       footer={
         <>

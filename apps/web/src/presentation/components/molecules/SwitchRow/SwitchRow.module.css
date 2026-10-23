@@ -1,5 +1,6 @@
 /* Only tokens from presentation/styles/tokens.css: no literal values. Board C-02 «SwitchRow». */
 .switchRow {
+  flex: none;
   display: flex;
   align-items: center;
   gap: var(--rv-space-15);
