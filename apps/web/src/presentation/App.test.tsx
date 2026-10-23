@@ -45,6 +45,19 @@ describe('App · sequence engine', () => {
     expect(screen.getByRole('dialog', { name: '¿De dónde sale esta cifra?' })).toBeInTheDocument();
   });
 
+  it('names the source next to the figures and opens it from there (DEF-33)', () => {
+    window.location.hash = '#/W-03';
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /^Fuente: INE/ }));
+    expect(screen.getByRole('dialog', { name: '¿De dónde sale esta cifra?' })).toBeInTheDocument();
+  });
+
+  it('the cover has no source link: it shows no figures yet', () => {
+    window.location.hash = '#/W-01';
+    render(<App />);
+    expect(screen.queryByRole('button', { name: /^Fuente: INE/ })).toBeNull();
+  });
+
   it('the territory chip opens W-02 and comes back to the same screen (HU-28)', async () => {
     window.location.hash = '#/W-04';
     render(<App />);

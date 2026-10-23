@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import {
   BottomBar,
+  Button,
   NarrativeScreen,
   Pill,
   TopBar,
@@ -101,6 +102,13 @@ export function StoryFrame({
         </div>
       )}
       {children}
+      {openSource && !cover && (
+        <p className={styles.source}>
+          <Button variant="text" size="small" icon="info" onClick={openSource}>
+            Fuente: INE, conteos censales 2009–2024
+          </Button>
+        </p>
+      )}
     </NarrativeScreen>
   );
 }
