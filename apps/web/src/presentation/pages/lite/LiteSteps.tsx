@@ -318,13 +318,13 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
       const diff = pres !== null && mid !== null ? pointDifference(pres, mid) : null;
       const wideState = c.wide && st;
       return {
-        label: '15 años',
+        label: '2009–2024',
         title:
           diff === null
             ? '[Mensaje sobre presidenciales e intermedias]'
             : diff >= 0
-              ? `En presidenciales se vota ${pointsAbs(diff)} más que en intermedias`
-              : `En intermedias se vota ${pointsAbs(diff)} más que en presidenciales`,
+              ? `De 2009 a 2024, en presidenciales se vota ${pointsAbs(diff)} más que en intermedias`
+              : `De 2009 a 2024, en intermedias se vota ${pointsAbs(diff)} más que en presidenciales`,
         territory: true,
         source: true,
         body: (
@@ -351,7 +351,10 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
               items={[
                 ['Promedio presidencial', pres === null ? P : pct(pres)],
                 ['Promedio intermedia', mid === null ? P : pct(mid)],
-                ['De 2018 a 2024', change === null ? '± —.— pts' : points(change)],
+                [
+                  'Cambio entre las dos últimas presidenciales',
+                  change === null ? '± —.— pts' : points(change),
+                ],
               ]}
             />
           </>

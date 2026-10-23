@@ -29,7 +29,7 @@ export function W05FifteenYears() {
   return (
     <StoryFrame
       pending={!story}
-      label="15 años"
+      label="2009–2024"
       after={
         <Averages
           presidential={presidential}
@@ -57,8 +57,8 @@ export function W05FifteenYears() {
         {diff === null
           ? '[Mensaje sobre presidenciales e intermedias]'
           : diff >= 0
-            ? `En presidenciales se vota ${pointsAbs(diff)} más que en intermedias`
-            : `En intermedias se vota ${pointsAbs(diff)} más que en presidenciales`}
+            ? `De 2009 a 2024, en presidenciales se vota ${pointsAbs(diff)} más que en intermedias`
+            : `De 2009 a 2024, en intermedias se vota ${pointsAbs(diff)} más que en presidenciales`}
       </Text>
       <Text variant="lead">
         {story ? place(story.own.territory) : '[Territorio]'} · Elecciones federales 2009–2024
@@ -94,7 +94,7 @@ function Averages({
           pending={midterm === null}
         />
         <StatCard
-          label="De 2018 a 2024"
+          label="Cambio entre las dos últimas presidenciales"
           value={change === null ? `± ${PENDING} pts` : points(change)}
           pending={change === null}
         />

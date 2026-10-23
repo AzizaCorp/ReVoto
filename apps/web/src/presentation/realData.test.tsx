@@ -34,6 +34,16 @@ describe.runIf(hasRealData)('The story with the published data (Iztacalco, CDMX)
 
     forward(); // W-03
     expect(await screen.findByText('59.7 %')).toBeInTheDocument();
+    // DEF-32: the headline names the highest and lowest state, not only the map colors.
+    expect(
+      await screen.findByText(
+        (_, el) =>
+          el?.tagName === 'P' &&
+          /En 2024, Yucatán tuvo la participación más alta \(71\.4 %\) y Baja California la más baja \(47\.0 %\)/.test(
+            el.textContent ?? '',
+          ),
+      ),
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole('radio', { name: 'Intermedia' }));
     expect(screen.getByText('51.8 %')).toBeInTheDocument();
 
@@ -42,7 +52,9 @@ describe.runIf(hasRealData)('The story with the published data (Iztacalco, CDMX)
     expect(await screen.findByText('+9.7 pts vs. nacional')).toBeInTheDocument();
 
     forward(); // W-05
-    expect(title()).toHaveTextContent('En presidenciales se vota 24.8 pts más que en intermedias');
+    expect(title()).toHaveTextContent(
+      'De 2009 a 2024, en presidenciales se vota 24.8 pts más que en intermedias',
+    );
     expect(screen.getByText('69.3 %')).toBeInTheDocument();
     expect(screen.getByText('−1.8 pts')).toBeInTheDocument();
 
