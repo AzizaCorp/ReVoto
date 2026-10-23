@@ -35,14 +35,14 @@ const ELECTION: readonly Field[] = [
   {
     name: 'tipo',
     type: 'texto',
-    description: 'presidencial o intermedia (RN-03).',
+    description: 'presidencial o intermedia.',
     example: 'presidencial',
   },
 ];
 const TURNOUT: Field = {
   name: 'participacion',
   type: 'decimal',
-  description: 'Votaron ÷ (lista nominal − sin dato), de 0 a 1 con 3 decimales (RN-01).',
+  description: 'Votaron ÷ (lista nominal − sin dato), de 0 a 1 con 3 decimales.',
   example: '0.598',
 };
 
@@ -70,7 +70,7 @@ const DATASETS: Record<string, { title: string; fields: readonly Field[] | null 
         name: 'suprimido',
         type: 'booleano',
         description:
-          'true si no alcanza el umbral de publicación (RN-05); entonces no trae cifras.',
+          'true si no alcanza el umbral de publicación (50 personas); entonces no trae cifras.',
         example: 'false',
       },
     ],
@@ -83,13 +83,13 @@ const DATASETS: Record<string, { title: string; fields: readonly Field[] | null 
       {
         name: 'grupo_edad',
         type: 'texto',
-        description: '18-24, 25-34, 35-44, 45-59 o 60+ (RN-04). La edad simple nunca se publica.',
+        description: '18-24, 25-34, 35-44, 45-59 o 60+. La edad simple nunca se publica.',
         example: '25-34',
       },
       {
         name: 'sexo',
         type: 'texto',
-        description: 'H o M, según el catálogo (RN-06).',
+        description: 'H o M, según el catálogo del INE.',
         example: 'M',
       },
       TURNOUT,

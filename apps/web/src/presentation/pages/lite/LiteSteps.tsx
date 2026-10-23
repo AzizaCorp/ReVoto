@@ -428,7 +428,9 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
             <p className={styles.big}>
               Diferencia entre mujeres y hombres: {g === null ? '—.— pts' : points(g)}
             </p>
-            <p className={styles.note}>Se excluyen registros con sexo fuera de catálogo (RN-06).</p>
+            <p className={styles.note}>
+              No se cuentan los registros sin sexo registrado como hombre o mujer.
+            </p>
           </>
         ),
       };

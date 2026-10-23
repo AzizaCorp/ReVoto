@@ -75,7 +75,7 @@ export function W04YourTerritory() {
       {c?.notice && (
         <Notice tone="threshold" title="Mostramos tu entidad">
           Tu municipio tiene menos de 50 personas en la lista nominal; sus cifras no se publican
-          (RN-05).
+          para proteger la privacidad.
         </Notice>
       )}
       {result.status === 'error' ? (

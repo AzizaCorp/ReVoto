@@ -31,7 +31,7 @@ const SECTIONS: readonly Section[] = [
   },
   {
     id: 'formula',
-    title: 'Fórmula de participación · RN-01',
+    title: 'Fórmula de participación',
     icon: 'chart',
     tone: 'brand-strong',
     body: (
@@ -45,21 +45,21 @@ const SECTIONS: readonly Section[] = [
   },
   {
     id: 'exclusiones',
-    title: 'Qué se excluye · RN-06, RN-09',
+    title: 'Qué se excluye',
     icon: 'minus',
     tone: 'violet',
     body: 'Registros sin dato de participación, sexo fuera de catálogo y edades fuera de 18–110 años. El reporte de calidad dice cuántos fueron.',
   },
   {
     id: 'umbral',
-    title: 'Umbral de publicación · RN-05',
+    title: 'Umbral de publicación',
     icon: 'users',
     tone: 'indigo',
     body: 'Un municipio con lista nominal menor a [umbral] no se publica: se muestra su entidad con una nota, para no identificar a grupos pequeños.',
   },
   {
     id: 'grupos',
-    title: 'Grupos de edad y tipo de elección · RN-03, RN-04',
+    title: 'Grupos de edad y tipo de elección',
     icon: 'calendar',
     tone: 'neutral',
     body: 'Cinco grupos: 18–24, 25–34, 35–44, 45–59 y 60 +. Intermedias y presidenciales siempre se distinguen.',
@@ -76,7 +76,7 @@ const SECTIONS: readonly Section[] = [
     title: 'Validación',
     icon: 'check',
     tone: 'mint',
-    body: 'Cada cifra se compara con la publicada por el INE. Si alguna difiere más de 1 punto, no se publica (RF-23).',
+    body: 'Cada cifra se compara con la publicada por el INE. Si alguna difiere más de 1 punto, no se publica.',
   },
 ];
 

@@ -254,7 +254,7 @@ export function ChoroplethMap({
           </span>
           {values.some((v) => v === null) && (
             <span className={styles.empty}>
-              <i /> Sin dato o con menos de 50 personas en lista (RN-05)
+              <i /> Sin dato o con menos de 50 personas en la lista nominal
             </span>
           )}
         </figcaption>

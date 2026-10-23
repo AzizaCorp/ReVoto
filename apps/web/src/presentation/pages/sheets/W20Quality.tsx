@@ -24,7 +24,7 @@ export function W20Quality() {
     [
       'Diferencia máxima vs. INE',
       r ? (r.maxDifferencePoints === null ? 'Pendiente' : `${r.maxDifferencePoints} pp`) : '—.— pp',
-      'Debe ser ≤ 1 pp (RF-23)',
+      'Debe ser de 1 punto o menos',
     ],
     [
       'Reglas que se cumplen',
@@ -71,12 +71,11 @@ export function W20Quality() {
           r
             ? checks.map((c) => ({
                 text: c.description,
-                reference: c.id,
                 passed: c.result === 'pending' ? null : c.result === 'passed',
               }))
             : [
-                { text: 'Esquema y tipos homologados', reference: 'RF-20', passed: null },
-                { text: 'Comparación con cifras oficiales', reference: 'RF-23', passed: null },
+                { text: 'Esquema y tipos homologados', passed: null },
+                { text: 'Comparación con cifras oficiales', passed: null },
               ]
         }
       />

@@ -83,7 +83,9 @@ export function W07WomenAndMen() {
             highlight
             hero
           />
-          <Notice tone="pending">Se excluyen registros con sexo fuera de catálogo (RN-06).</Notice>
+          <Notice tone="pending">
+            No se cuentan los registros sin sexo registrado como hombre o mujer.
+          </Notice>
         </>
       }
     >

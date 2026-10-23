@@ -182,7 +182,7 @@ export function StateMap({
           ? {
               title: m.municipality.name,
               detail: m.suppressed
-                ? 'Menos de 50 personas en lista (RN-05)'
+                ? 'Menos de 50 personas en la lista nominal'
                 : `Participación ${pct(m.turnout[year])}`,
             }
           : null;

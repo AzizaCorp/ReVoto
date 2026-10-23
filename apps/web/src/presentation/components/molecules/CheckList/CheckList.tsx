@@ -3,15 +3,13 @@ import styles from './CheckList.module.css';
 
 export interface CheckItem {
   text: string;
-  /** Requirement it verifies, e.g. «RF-23». */
-  reference: string;
   /** `null` while the pipeline has not run. */
   passed: boolean | null;
 }
 
 const STATUS = { true: 'Cumple', false: 'No cumple', null: 'Pendiente' } as const;
 
-/** Validation checks with their requirement (W-20 «Reporte de calidad»). */
+/** Validation checks with their status in words (W-20 «Reporte de calidad»). */
 export function CheckList({ items }: { items: readonly CheckItem[] }) {
   return (
     <ul className={styles.checkList}>
@@ -24,9 +22,11 @@ export function CheckList({ items }: { items: readonly CheckItem[] }) {
           />
           <span className={styles.text}>
             {c.text}
-            <VisuallyHidden> · {STATUS[String(c.passed) as keyof typeof STATUS]}</VisuallyHidden>
+            <VisuallyHidden> · </VisuallyHidden>
           </span>
-          <span className={styles.reference}>{c.reference}</span>
+          <span className={styles.reference}>
+            {STATUS[String(c.passed) as keyof typeof STATUS]}
+          </span>
         </li>
       ))}
     </ul>

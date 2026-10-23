@@ -77,7 +77,7 @@ export function W11Source() {
       />
       <Notice tone="info">
         Los registros sin dato de participación salen del denominador. No son abstención: el
-        registro no trae información (RN-01).
+        registro no trae información.
       </Notice>
     </SheetTemplate>
   );
