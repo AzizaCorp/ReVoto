@@ -380,11 +380,17 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
           <>
             <LiteTable
               caption={`Participación por grupo de edad · ${YEAR}`}
-              head={['Grupo de edad', b ? b.territory.name : 'Territorio', 'Nacional']}
+              head={
+                b?.territory.level === 'national'
+                  ? ['Grupo de edad', 'Nacional']
+                  : ['Grupo de edad', b ? b.territory.name : 'Territorio', 'Nacional']
+              }
               rows={AGE_GROUPS.map((a, i) => [
                 AGES[i]!,
                 byAge[a] === undefined ? P : pct(byAge[a]),
-                n?.byAge[a] === undefined ? P : pct(n.byAge[a]),
+                ...(b?.territory.level === 'national'
+                  ? []
+                  : [n?.byAge[a] === undefined ? P : pct(n.byAge[a])]),
               ])}
             />
             <p className={styles.big}>

@@ -19,14 +19,18 @@ const LABEL: Record<(typeof AGE_GROUPS)[number], string> = {
 /** W-06 · Your generation (RF-09, RN-04). Turnout by age group. */
 export function W06YourGeneration() {
   const story = useStoryData();
-  const [scope, setScope] = useState<'territory' | 'national'>('territory');
+  const [chosen, setScope] = useState<'territory' | 'national'>('territory');
+  const own = story ? breakdown(story, 'age', 'territory').territory : null;
+  // DEF-35: with national figures there is nothing to compare, so no «Nacional | Nacional».
+  const comparable = own !== null && own.level !== 'national';
+  const scope = comparable ? chosen : 'territory';
   const b = story ? breakdown(story, 'age', scope) : null;
   const byAge = b?.figures?.byAge ?? {};
   const youngVsOld = gap(byAge['18-24'], byAge['60+']);
   const scopes = [
     {
       value: 'territory',
-      text: story ? breakdown(story, 'age', 'territory').territory.name : '[Territorio]',
+      text: own ? own.name : '[Territorio]',
     },
     { value: 'national', text: 'Nacional' },
   ];
@@ -43,12 +47,14 @@ export function W06YourGeneration() {
       }
       visual={
         <>
-          <SegmentedControl
-            label="Ámbito"
-            options={scopes}
-            value={scope}
-            onChange={(v) => setScope(v as 'territory' | 'national')}
-          />
+          {(comparable || !story) && (
+            <SegmentedControl
+              label="Ámbito"
+              options={scopes}
+              value={scope}
+              onChange={(v) => setScope(v as 'territory' | 'national')}
+            />
+          )}
           <section className={layout.panel}>
             <h2 className={layout.panelTitle}>Participación por grupo de edad · {YEAR}</h2>
             {AGE_GROUPS.map((g) => (
