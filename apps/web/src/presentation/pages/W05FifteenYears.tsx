@@ -1,7 +1,6 @@
 import { averageByType, changeBetween, pointDifference } from '@/domain';
-import { BarChart, Button, StatCard, Text } from '@/presentation/components';
+import { BarChart, ChartTable, StatCard, Text } from '@/presentation/components';
 import { percent, PENDING, place, points, pointsAbs } from '@/presentation/format';
-import { useNavigation } from '@/presentation/providers/Navigation';
 import { useStoryData } from '@/presentation/providers/Story';
 import { DataStatus } from './shared/DataStatus';
 import layout from './shared/Layout.module.css';
@@ -18,39 +17,42 @@ const ELECTIONS = [
 
 /** W-05 · Fifteen years of elections (RF-08, RN-03). 2009–2024 series. */
 export function W05FifteenYears() {
-  const nav = useNavigation();
   const story = useStoryData();
   const elections = story?.own.elections ?? [];
   const presidential = averageByType(elections, 'presidential');
   const midterm = averageByType(elections, 'midterm');
   const change = changeBetween(elections, 2018, 2024);
+  const bars = ELECTIONS.map(([label, kind]) => {
+    const e = elections.find((x) => String(x.election.year) === label);
+    return {
+      label,
+      kind,
+      value: e ? (e.total.value * 100).toFixed(1) : PENDING,
+      ratio: e ? e.total.value : null,
+    };
+  });
   const diff =
     presidential !== null && midterm !== null ? pointDifference(presidential, midterm) : null;
   return (
     <StoryFrame
       pending={!story}
       label="2009–2024"
-      after={
-        <Averages
-          presidential={presidential}
-          midterm={midterm}
-          change={change}
-          onTable={() => nav.goTo('W-15')}
-        />
-      }
+      after={<Averages presidential={presidential} midterm={midterm} change={change} />}
       visual={
-        <BarChart
-          title="Participación por elección"
-          bars={ELECTIONS.map(([label, kind]) => {
-            const e = elections.find((x) => String(x.election.year) === label);
-            return {
-              label,
-              kind,
-              value: e ? (e.total.value * 100).toFixed(1) : PENDING,
-              ratio: e ? e.total.value : null,
-            };
-          })}
-        />
+        <ChartTable
+          table={{
+            caption: `Participación por elección · ${story ? place(story.own.territory) : '[Territorio]'}`,
+            head: ['Elección', 'Tipo', 'Participación'],
+            numericFrom: 2,
+            rows: bars.map((b) => [
+              b.label,
+              b.kind === 'presidential' ? 'Presidencial' : 'Intermedia',
+              b.ratio === null ? `${PENDING} %` : `${b.value} %`,
+            ]),
+          }}
+        >
+          <BarChart title="Participación por elección" bars={bars} />
+        </ChartTable>
       }
     >
       <Text variant="h1">
@@ -72,36 +74,29 @@ function Averages({
   presidential,
   midterm,
   change,
-  onTable,
 }: {
   presidential: number | null;
   midterm: number | null;
   change: number | null;
-  onTable: () => void;
 }) {
   return (
-    <>
-      <div className={[layout.grid3, layout.wideTwo].join(' ')}>
-        <StatCard
-          label="Promedio presidencial"
-          value={presidential === null ? `${PENDING} %` : percent(presidential)}
-          pending={presidential === null}
-          highlight
-        />
-        <StatCard
-          label="Promedio intermedia"
-          value={midterm === null ? `${PENDING} %` : percent(midterm)}
-          pending={midterm === null}
-        />
-        <StatCard
-          label="Cambio entre las dos últimas presidenciales"
-          value={change === null ? `± ${PENDING} pts` : points(change)}
-          pending={change === null}
-        />
-      </div>
-      <Button variant="text" onClick={onTable}>
-        Ver como tabla
-      </Button>
-    </>
+    <div className={[layout.grid3, layout.wideTwo].join(' ')}>
+      <StatCard
+        label="Promedio presidencial"
+        value={presidential === null ? `${PENDING} %` : percent(presidential)}
+        pending={presidential === null}
+        highlight
+      />
+      <StatCard
+        label="Promedio intermedia"
+        value={midterm === null ? `${PENDING} %` : percent(midterm)}
+        pending={midterm === null}
+      />
+      <StatCard
+        label="Cambio entre las dos últimas presidenciales"
+        value={change === null ? `± ${PENDING} pts` : points(change)}
+        pending={change === null}
+      />
+    </div>
   );
 }

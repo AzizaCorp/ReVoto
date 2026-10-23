@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { AGE_GROUPS, gap } from '@/domain';
-import { ComparisonBar, Notice, SegmentedControl, StatCard, Text } from '@/presentation/components';
+import {
+  ChartTable,
+  ComparisonBar,
+  Notice,
+  SegmentedControl,
+  StatCard,
+  Text,
+} from '@/presentation/components';
 import { percent, PENDING, place, points, pointsAbs } from '@/presentation/format';
 import { useStoryData } from '@/presentation/providers/Story';
 import { DataStatus } from './shared/DataStatus';
@@ -55,17 +62,28 @@ export function W06YourGeneration() {
               onChange={(v) => setScope(v as 'territory' | 'national')}
             />
           )}
-          <section className={layout.panel}>
-            <h2 className={layout.panelTitle}>Participación por grupo de edad · {YEAR}</h2>
-            {AGE_GROUPS.map((g) => (
-              <ComparisonBar
-                key={g}
-                label={LABEL[g]}
-                value={byAge[g] === undefined ? `${PENDING} %` : percent(byAge[g])}
-                ratio={byAge[g] ?? null}
-              />
-            ))}
-          </section>
+          <ChartTable
+            table={{
+              caption: `Participación por grupo de edad · ${b ? place(b.territory) : '[Territorio]'} · ${YEAR}`,
+              head: ['Grupo de edad', 'Participación'],
+              rows: AGE_GROUPS.map((g) => [
+                LABEL[g],
+                byAge[g] === undefined ? `${PENDING} %` : percent(byAge[g]),
+              ]),
+            }}
+          >
+            <section className={layout.panel}>
+              <h2 className={layout.panelTitle}>Participación por grupo de edad · {YEAR}</h2>
+              {AGE_GROUPS.map((g) => (
+                <ComparisonBar
+                  key={g}
+                  label={LABEL[g]}
+                  value={byAge[g] === undefined ? `${PENDING} %` : percent(byAge[g])}
+                  ratio={byAge[g] ?? null}
+                />
+              ))}
+            </section>
+          </ChartTable>
         </>
       }
     >

@@ -1,5 +1,12 @@
 import { gap } from '@/domain';
-import { IconBubble, Notice, StatCard, Text, VisuallyHidden } from '@/presentation/components';
+import {
+  ChartTable,
+  IconBubble,
+  Notice,
+  StatCard,
+  Text,
+  VisuallyHidden,
+} from '@/presentation/components';
 import { percent, PENDING, place, points, pointsAbs } from '@/presentation/format';
 import { useStoryData } from '@/presentation/providers/Story';
 import { DataStatus } from './shared/DataStatus';
@@ -68,10 +75,21 @@ export function W07WomenAndMen() {
       pending={diff === null}
       label="Mujeres y hombres"
       visual={
-        <div className={layout.grid2}>
-          <Ring name="Mujeres" value={bySex.M} tone="women" />
-          <Ring name="Hombres" value={bySex.H} tone="men" />
-        </div>
+        <ChartTable
+          table={{
+            caption: `Participación por sexo · ${b ? place(b.territory) : '[Territorio]'} · ${YEAR}`,
+            head: ['Sexo', 'Participación'],
+            rows: [
+              ['Mujeres', bySex.M === undefined ? `${PENDING} %` : percent(bySex.M)],
+              ['Hombres', bySex.H === undefined ? `${PENDING} %` : percent(bySex.H)],
+            ],
+          }}
+        >
+          <div className={layout.grid2}>
+            <Ring name="Mujeres" value={bySex.M} tone="women" />
+            <Ring name="Hombres" value={bySex.H} tone="men" />
+          </div>
+        </ChartTable>
       }
       after={
         <>

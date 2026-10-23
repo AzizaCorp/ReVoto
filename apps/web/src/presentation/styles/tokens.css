@@ -41,6 +41,8 @@
   --rv-map-empty: #e6dfe4; /* no data or below RN-05 */
   --rv-map-stage: #f6f0f3;
   --rv-map-line: #ffffff;
+  /* A chart shown as a table scrolls inside this height (DEF-24: a state can have 570 rows). */
+  --rv-table-max-height: 60vh;
 
   /* Icon bubble tones (background / icon), board C-00 */
   --rv-tone-brand-strong-bg: #ff2d94;

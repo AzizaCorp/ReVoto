@@ -32,6 +32,19 @@ describe('Skeleton pages', () => {
     },
   );
 
+  it.each(['W-04', 'W-05', 'W-06', 'W-07'] as ViewId[])(
+    '%s shows its chart as a table in place, without switching to the lite version (DEF-24)',
+    async (id) => {
+      window.location.hash = `#/${id}`;
+      const Page = PAGES[id];
+      await withProviders(<Page />);
+      fireEvent.click(screen.getAllByRole('button', { name: 'Ver como tabla' })[0]!);
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(window.location.hash).toBe(`#/${id}`);
+      expect(screen.getByRole('button', { name: 'Ver como gráfica' })).toBeInTheDocument();
+    },
+  );
+
   it('W-02 offers a way back to the cover with the same ‹ › bar as the story (DEF-23)', async () => {
     window.location.hash = '#/W-02';
     const Page = PAGES['W-02'];

@@ -55,7 +55,7 @@ El aspecto y el movimiento de cada componente salen de la página **«Sistema de
 | --- | --- |
 | Átomos | `Button` (small 36 · medium 44 · large 52, íconos SVG, círculo ‹ › en móvil), `Chip`, `Icon`, `IconBubble`, `IconButton`, `Illustration`, `Logo`, `Pill`, `ProgressSegment`, `RadioMark`, `Slot`, `Switch`, `Text` (`figure`, `figureSmall`, `pending`), `VisuallyHidden` |
 | Moléculas | `CheckList`, `ComparisonBar`, `DataList`, `Disclosure`, `FieldTable`, `Notice`, `OptionGroup`, `ProgressBar`, `SearchField`, `SegmentedControl`, `SelectableRow`, `SelectField`, `StatCard`, `SummaryRow`, `SwitchRow`, `TerritoryChip` |
-| Organismos | `BarChart`, `BottomBar` (`secondaryAction`), `BottomSheet` (hoja · hoja con márgenes · panel lateral · `popover`), `IdentityCard` (`ArchetypeCard` A1–A5 y `BadgeCard` I1–I6 en formato historia, publicación y móvil), `ShareCard`, `StatusView`, `TopBar` (variante utilidad con `onBack`) |
+| Organismos | `BarChart`, `ChartTable` (gráfica ↔ tabla en el mismo lugar), `BottomBar` (`secondaryAction`), `BottomSheet` (hoja · hoja con márgenes · panel lateral · `popover`), `IdentityCard` (`ArchetypeCard` A1–A5 y `BadgeCard` I1–I6 en formato historia, publicación y móvil), `ShareCard`, `StatusView`, `TopBar` (variante utilidad con `onBack`) |
 | Plantillas | `LiteScreen`, `NarrativeScreen` (`visualFirst`), `SheetTemplate`, `UtilityScreen` (`aside`) |
 
 Movimiento (M-01): los bloques de texto entran con *rise* (480 ms, desfase de 70 ms), el visual con *pop* (560 ms, resorte), las barras crecen (640 ms, desfase de 90 ms) y el segmento nuevo del progreso se llena (480 ms). Todo pasa a 0 ms con movimiento reducido o lectura fácil. Las tarjetas de arquetipo e insignia animan sus barras (grow), líneas (draw), piezas (pop), sol y luna. Pendiente: el `Tooltip` del mapa, la tarjeta de los 30 cruces (W-09c) y los mapas.
@@ -102,6 +102,7 @@ Derivado del catálogo lo-fi (`docs/diseno/manual-de-diseno-wireframes.md` §6) 
 | `BottomBar` | Fuente · Compartir · ‹ › (zona de 72 px) | US-09 |
 | `BottomSheet` | Bottom sheet con asa, título, cierre con Escape y foco atrapado (W-11, W-12, W-13) | US-09 |
 | `BarChart` | Barras + tabla alternativa (RIU-04) + texto alternativo (RF-17) | US-11 |
+| `ChartTable` | «Ver como tabla» por gráfica, sin cambiar a la versión ligera (DEF-24, RIU-04) | US-15 |
 | `TimeSeries` | 2009–2024 sólido/rayado + tabla alternativa (RN-03) | US-11 |
 | `TerritorySelector` | Entidad → municipio dependiente + «Continuar con cifras nacionales» (W-02) | US-09 |
 | `SourceCard` | Fuente, año, corte, fórmula, % sin dato, liga (W-11) | US-12 |

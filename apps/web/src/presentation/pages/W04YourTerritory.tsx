@@ -2,6 +2,7 @@ import { compareTerritory } from '@/application';
 import { territoryLabel } from '@/domain';
 import {
   Button,
+  ChartTable,
   ComparisonBar,
   Notice,
   StatCard,
@@ -53,17 +54,29 @@ export function W04YourTerritory() {
       visual={
         <>
           <StateMap territory={t} story={story} year={YEAR} />
-          <section className={layout.panel}>
-            <h2 className={layout.panelTitle}>Comparado con</h2>
-            {rows.map(([label, value]) => (
-              <ComparisonBar
-                key={label}
-                label={label}
-                value={value === null ? '—.— %' : percent(value)}
-                ratio={value}
-              />
-            ))}
-          </section>
+          <ChartTable
+            table={{
+              caption: `Participación comparada · elección federal ${YEAR}`,
+              head: ['Territorio', 'Participación'],
+              rows: rows.map(([label, value]) => [
+                label,
+                value === null ? '—.— %' : percent(value),
+              ]),
+              highlight: rows[0]?.[0],
+            }}
+          >
+            <section className={layout.panel}>
+              <h2 className={layout.panelTitle}>Comparado con</h2>
+              {rows.map(([label, value]) => (
+                <ComparisonBar
+                  key={label}
+                  label={label}
+                  value={value === null ? '—.— %' : percent(value)}
+                  ratio={value}
+                />
+              ))}
+            </section>
+          </ChartTable>
         </>
       }
     >
