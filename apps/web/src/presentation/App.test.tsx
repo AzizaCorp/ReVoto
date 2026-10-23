@@ -30,7 +30,7 @@ describe('App · sequence engine', () => {
     expect(window.location.hash).toBe('#/W-02');
     fireEvent.keyDown(window, { key: 'ArrowRight' });
     expect(title()).toHaveTextContent('Cuéntanos de ti');
-    expect(screen.getByRole('button', { name: 'Anterior' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Pantalla anterior' })).toBeInTheDocument();
     expect(container.querySelector('[aria-live="polite"]')).toHaveTextContent('Pantalla 2 de 10');
     fireEvent.keyDown(window, { key: 'ArrowLeft' });
     expect(title()).toHaveTextContent('¿Dónde votas?');

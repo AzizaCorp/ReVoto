@@ -39,7 +39,7 @@ describe('W-02 · Choose your territory', () => {
   it('the states map can be zoomed and points to the search for small states (DEF-31)', async () => {
     renderW02();
     expect(await screen.findByRole('button', { name: 'Acercar' })).toBeInTheDocument();
-    expect(screen.getByText(/Acércalo con \+ o búscala por nombre/)).toBeInTheDocument();
+    expect(screen.getByText(/Acércalo o búscala por nombre/)).toBeInTheDocument();
     expect(screen.getByRole('searchbox', { name: 'Buscar entidad' })).toBeInTheDocument();
   });
 

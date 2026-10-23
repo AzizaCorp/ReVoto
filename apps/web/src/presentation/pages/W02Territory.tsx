@@ -8,16 +8,14 @@ import {
   SelectableRow,
   SelectField,
   Text,
-  UtilityScreen,
   type BubbleTone,
 } from '@/presentation/components';
 import { useAsync } from '@/presentation/hooks/useAsync';
 import { useDependencies } from '@/presentation/providers/Dependencies';
 import { useNavigation } from '@/presentation/providers/Navigation';
-import { useStepNumber } from './shared/StoryFrame';
+import { StoryFrame } from './shared/StoryFrame';
 import layout from './shared/Layout.module.css';
 import { StatesPicker } from './shared/maps';
-import { UtilityTopBar } from './shared/UtilityTopBar';
 
 const TONES: readonly BubbleTone[] = ['brand', 'violet', 'indigo', 'brand', 'neutral'];
 const normalize = (t: string) =>
@@ -35,7 +33,6 @@ const stateCodeOf = (t: Territory) => (t.level === 'national' ? null : t.stateCo
 export function W02Territory() {
   const nav = useNavigation();
   const { turnout } = useDependencies();
-  const number = useStepNumber();
   const [query, setQuery] = useState('');
   const [stateCode, setStateCode] = useState<number | null>(stateCodeOf(nav.selected));
   const [municipality, setMunicipality] = useState(
@@ -64,13 +61,13 @@ export function W02Territory() {
     NATIONAL;
 
   return (
-    <UtilityScreen
-      top={<UtilityTopBar />}
+    <StoryFrame
       label="Tu territorio"
-      number={number}
-      title="¿Dónde votas?"
-      lead="Elige tu entidad y municipio para comparar sus cifras con las del país. No guardamos tu elección."
-      aside={
+      hasSource={false}
+      shareable={false}
+      nextLabel="Continuar"
+      onNext={() => confirm(chosen)}
+      visual={
         <>
           <StatesPicker
             selected={stateCode}
@@ -80,30 +77,16 @@ export function W02Territory() {
             }}
           />
           <Text variant="meta">
-            ¿Tu entidad es pequeña en el mapa? Acércalo con + o búscala por nombre.
+            ¿Tu entidad es pequeña en el mapa? Acércalo o búscala por nombre.
           </Text>
         </>
       }
-      actions={
-        <>
-          <Button
-            variant="primary"
-            size="large"
-            trailingIcon="arrow"
-            fullWidth="mobile"
-            onClick={() => confirm(chosen)}
-          >
-            Continuar
-          </Button>
-          <Button icon="back" onClick={() => nav.goTo('W-01')}>
-            Inicio
-          </Button>
-          <Button variant="text" onClick={() => confirm(NATIONAL)}>
-            Usar cifras nacionales
-          </Button>
-        </>
-      }
     >
+      <Text variant="h1">¿Dónde votas?</Text>
+      <Text variant="lead">
+        Elige tu entidad y municipio para comparar sus cifras con las del país. No guardamos tu
+        elección.
+      </Text>
       <SearchField
         label="Buscar entidad"
         value={query}
@@ -155,6 +138,9 @@ export function W02Territory() {
               : `Elige un municipio de ${chosenState.name}`
         }
       />
-    </UtilityScreen>
+      <Button variant="text" onClick={() => confirm(NATIONAL)}>
+        Usar cifras nacionales
+      </Button>
+    </StoryFrame>
   );
 }

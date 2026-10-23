@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { type SheetId, type ViewId } from '@/presentation/providers/Navigation';
 import { renderWithApp } from '@/test/renderWithApp';
 import { PAGES, SHEETS } from '.';
@@ -32,9 +32,23 @@ describe('Skeleton pages', () => {
     },
   );
 
-  it('W-02 offers a way back to the cover', async () => {
+  it('W-02 offers a way back to the cover with the same ‹ › bar as the story (DEF-23)', async () => {
+    window.location.hash = '#/W-02';
     const Page = PAGES['W-02'];
     await withProviders(<Page />);
-    expect(screen.getByRole('button', { name: /inicio/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Pantalla anterior' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Continuar' })).toBeInTheDocument();
+  });
+
+  it('W-02b has the story bar: «Saltar» until an answer, then «Ver mis cifras» (DEF-23)', async () => {
+    window.location.hash = '#/W-02b';
+    const Page = PAGES['W-02b'];
+    await withProviders(<Page />);
+    expect(
+      screen.getByRole('navigation', { name: 'Navegación de la historia' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Saltar' })).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole('button', { name: '25–34' })[0]!);
+    expect(screen.getByRole('button', { name: 'Ver mis cifras' })).toBeInTheDocument();
   });
 });

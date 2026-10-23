@@ -36,6 +36,10 @@ export interface StoryFrameProps {
   after?: ReactNode;
   /** Tablet and desktop: the visual on the left (W-09). */
   visualLeft?: boolean;
+  /** Text of the forward button («Continuar» in W-02, «Ver mis cifras» in W-02b). */
+  nextLabel?: string;
+  /** Replaces the plain «next» of the sequence (W-02 confirms the territory first). */
+  onNext?: () => void;
 }
 
 /** Number of the section pill: the cover does not count, so W-03 is «2/9». */
@@ -60,6 +64,8 @@ export function StoryFrame({
   visualFirst,
   after,
   visualLeft,
+  nextLabel,
+  onNext,
 }: StoryFrameProps) {
   const nav = useNavigation();
   const number = useStepNumber();
@@ -89,7 +95,8 @@ export function StoryFrame({
           onShare={openShare}
           secondaryAction={secondaryAction}
           onPrevious={nav.previous}
-          onNext={nav.next}
+          onNext={onNext ?? nav.next}
+          {...(nextLabel ? { nextLabel } : {})}
           hideNavigation={cover}
           note={cover}
         />
