@@ -71,6 +71,7 @@ export function CountryMap({
       }}
       highlight={highlight === null ? null : String(highlight)}
       onSelect={(id) => setOpen(Number(id))}
+      zoomable
       credit={CREDIT}
     />
   );
@@ -225,6 +226,7 @@ export function StatesPicker({
       highlight={selected === null ? null : String(selected)}
       onSelect={(id) => onSelect(Number(id))}
       picker
+      zoomable
     />
   );
 }

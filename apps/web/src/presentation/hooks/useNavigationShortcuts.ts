@@ -9,6 +9,11 @@ interface Options {
 const FORM_FIELDS = ['INPUT', 'SELECT', 'TEXTAREA'];
 /** Minimum distance (px) of a horizontal swipe to change screens. */
 const SWIPE_THRESHOLD = 60;
+/**
+ * Elements with their own gestures: a swipe that starts on them never changes the screen (maps
+ * that pan and pinch, sliders). DEF-31: pinching the map used to jump to the next screen.
+ */
+const OWN_GESTURES = '[data-gesture], input[type="range"]';
 
 /**
  * Arrow keys ← → and horizontal swipe (RF-02, US-09 CA-02). Does nothing inside form fields or
@@ -27,7 +32,12 @@ export function useNavigationShortcuts({ enabled, next, previous }: Options) {
     let y0 = 0;
     const onTouchStart = (e: TouchEvent) => {
       const t = e.touches[0];
-      if (!t) return;
+      const target = e.target instanceof Element ? e.target : null;
+      // Two fingers are a pinch, not a swipe; gestures of a map or slider stay theirs.
+      if (!t || e.touches.length > 1 || target?.closest(OWN_GESTURES)) {
+        x0 = null;
+        return;
+      }
       x0 = t.clientX;
       y0 = t.clientY;
     };

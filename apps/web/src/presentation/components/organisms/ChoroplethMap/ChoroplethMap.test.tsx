@@ -76,4 +76,44 @@ describe('ChoroplethMap', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Ver todo' }));
     expect(box()).toBe(all);
   });
+
+  it('pinches with two fingers to zoom in, and a pinch never selects an area (DEF-31)', () => {
+    // jsdom has no PointerEvent: a MouseEvent with a pointerId is enough for the handlers.
+    class TestPointerEvent extends MouseEvent {
+      pointerId: number;
+      pointerType: string;
+      constructor(type: string, init: PointerEventInit = {}) {
+        super(type, init);
+        this.pointerId = init.pointerId ?? 0;
+        this.pointerType = init.pointerType ?? 'touch';
+      }
+    }
+    vi.stubGlobal('PointerEvent', TestPointerEvent);
+    const onSelect = vi.fn();
+    const { container } = render(<ChoroplethMap {...props} zoomable onSelect={onSelect} />);
+    const map = container.querySelector('svg')!;
+    const box = () => map.getAttribute('viewBox');
+    const all = box();
+    const area = container.querySelector('path[data-id="a"]')!;
+    fireEvent.pointerDown(area, { pointerId: 1, clientX: 100, clientY: 100 });
+    fireEvent.pointerDown(area, { pointerId: 2, clientX: 120, clientY: 100 });
+    fireEvent.pointerMove(area, { pointerId: 2, clientX: 200, clientY: 100 });
+    expect(box()).not.toBe(all);
+    fireEvent.pointerUp(area, { pointerId: 2, clientX: 200, clientY: 100 });
+    fireEvent.pointerUp(area, { pointerId: 1, clientX: 100, clientY: 100 });
+    expect(onSelect).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it('shows the card of the area under the map, not over it', () => {
+    const { container } = render(
+      <ChoroplethMap
+        {...props}
+        highlight="a"
+        tooltip={() => ({ title: 'Alto', detail: '80 %' })}
+      />,
+    );
+    const stage = container.querySelector('svg')!.parentElement!;
+    expect(stage.contains(screen.getByText('Alto'))).toBe(false);
+  });
 });

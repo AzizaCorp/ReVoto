@@ -7,6 +7,7 @@ import {
   SearchField,
   SelectableRow,
   SelectField,
+  Text,
   UtilityScreen,
   type BubbleTone,
 } from '@/presentation/components';
@@ -70,13 +71,18 @@ export function W02Territory() {
       title="¿Dónde votas?"
       lead="Elige tu entidad y municipio para comparar sus cifras con las del país. No guardamos tu elección."
       aside={
-        <StatesPicker
-          selected={stateCode}
-          onSelect={(code) => {
-            setStateCode(code);
-            setMunicipality('');
-          }}
-        />
+        <>
+          <StatesPicker
+            selected={stateCode}
+            onSelect={(code) => {
+              setStateCode(code);
+              setMunicipality('');
+            }}
+          />
+          <Text variant="meta">
+            ¿Tu entidad es pequeña en el mapa? Acércalo con + o búscala por nombre.
+          </Text>
+        </>
       }
       actions={
         <>
