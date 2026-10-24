@@ -42,8 +42,8 @@
 | --- | --- | --- | --- |
 | CA-01 | **Dado** que abro el sitio, **cuando** carga la primera pantalla, **entonces** veo una sola idea principal, su cifra y un control visible para avanzar. | Prueba manual en 360 px | ⬜ Pendiente |
 | CA-02 | **Dado** que estoy en cualquier pantalla, **cuando** deslizo, presiono el control o uso las flechas, **entonces** avanzo o retrocedo una pantalla. | Prueba con gesto, botón y teclado (← →) | ⬜ Pendiente |
-| CA-03 | **Dado** el recorrido completo, **cuando** llegue al final, **entonces** no supera 10 pantallas. | Conteo en configuración de la narrativa (RF-01) | ⬜ Pendiente |
-| CA-04 | **Dado** que avanzo, **cuando** cambia la pantalla, **entonces** el indicador de progreso refleja mi posición. | Inspección del indicador «N de 10» | ⬜ Pendiente |
+| CA-03 | **Dado** el recorrido completo, **cuando** llegue al final, **entonces** cada pantalla después de la portada cuenta una vez y el total sale de la secuencia. *Antes: «no supera 10 pantallas»; cambio por DEF-27 (23/10/2026).* | `Sequence.test.ts` y conteo en configuración de la narrativa (RF-01) | ⬜ Pendiente |
+| CA-04 | **Dado** que avanzo, **cuando** cambia la pantalla, **entonces** el indicador de progreso refleja mi posición. | Inspección del indicador «Pantalla N de 12» | ⬜ Pendiente |
 | CA-05 | **Dado** un fallo de carga, **cuando** ocurra, **entonces** se muestra el motivo y un control para reintentar. | Simulación de red caída → W-17 Error | ⬜ Pendiente |
 
 ## 🧭 Diagrama

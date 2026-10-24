@@ -8,7 +8,7 @@
 
 ## 1. Modelo de navegación
 
-ReVoto es una **secuencia lineal tipo *stories*** de 10 pantallas (RF-01, HU-31 · CA-03) con tres tipos de salida lateral que **no rompen la secuencia** (al cerrar, se regresa a la pantalla de origen):
+ReVoto es una **secuencia lineal tipo *stories*** (RF-01, HU-31 · CA-03): la portada y 12 pantallas que cuentan en el progreso (D-04), con tres tipos de salida lateral que **no rompen la secuencia** (al cerrar, se regresa a la pantalla de origen):
 
 | Tipo | Pantallas | Cómo se abre | Cómo se cierra |
 | --- | --- | --- | --- |
@@ -53,7 +53,7 @@ flowchart TD
 
     START((Entrada<br/>enlace / tarjeta compartida)) --> W01
 
-    subgraph SEQ["Secuencia narrativa · 10 pantallas · RF-01"]
+    subgraph SEQ["Secuencia narrativa · portada + 12 pantallas · RF-01"]
       direction TB
       W01["1 · W-01 Portada"]:::must --> W02["2 · W-02 Elige tu territorio"]:::must
       W02 -->|elige entidad + municipio| W03["3 · W-03 México votó"]:::must
@@ -84,13 +84,13 @@ flowchart TD
 
 **Leyenda:** relleno negro = Must · borde sólido = Should · borde punteado = Could · gris = auxiliar (hoja, modo o estado). Línea continua = avance de la secuencia; punteada = salida lateral que regresa a su origen.
 
-**Elementos persistentes en W-03 a W-09:** barra de progreso (10 segmentos), chip de territorio (abre W-02), botón «Aa» (abre W-13 y «Ver resumen»), «ⓘ Fuente», «↗ Compartir», ‹ ›.
+**Elementos persistentes en W-03 a W-09:** barra de progreso (un segmento por pantalla después de la portada, 12 hoy), chip de territorio (abre W-02), botón «Aa» (abre W-13 y «Ver resumen»), «ⓘ Fuente», «↗ Compartir», ‹ ›.
 
 ## 4. Jerarquía de contenido por pantalla narrativa
 
 Orden de lectura fijo (también orden de foco):
 
-1. Progreso «Pantalla N de 10» (oculto visualmente, anunciado).
+1. Progreso «Pantalla N de 12» (oculto visualmente, anunciado). La portada no cuenta.
 2. Mensaje principal (h1) — una frase, verbo en presente, sin juicio.
 3. Cifra protagonista.
 4. Meta: **territorio · periodo** (RN-10).
@@ -136,9 +136,10 @@ Orden de lectura fijo (también orden de foco):
 
 | # | Decisión / pendiente | Impacto |
 | --- | --- | --- |
-| D-01 | La portada y el selector cuentan dentro de las 10 pantallas (interpretación estricta de HU-31 · CA-03). | Deja 7 pantallas de contenido. |
+| D-01 | ~~La portada y el selector cuentan dentro de las 10 pantallas.~~ Reemplazada por D-04. | — |
 | D-02 | El resumen (HU-06) funciona como pantalla de cierre, no como vista aparte. | Una pantalla menos que construir. |
 | D-03 | Las hojas inferiores no cuentan como pantallas de la secuencia. | El progreso no cambia al abrir Fuente/Compartir. |
+| D-04 | El progreso cuenta cada pantalla después de la portada, subpantallas incluidas (W-02b, W-09b, W-09c), y el total sale de la secuencia (DEF-27, 23/10/2026). Cambia RF-01 / HU-31 · CA-03 de «máximo 10 pasos» a «cada pantalla cuenta». | La portada, el progreso y la versión ligera dicen 12 pantallas; quitar o agregar una pantalla actualiza todo. |
 | AP-01 | Nombre del producto: se usa «ReVoto» como provisional. | Portada y tarjeta. |
 | AP-05 | Catálogo de arquetipos sin definir: W-09 usa texto de ejemplo. | Revisión de neutralidad. |
 | AP-06 | Las 5 cifras del resumen son propuesta: nacional, territorio, cambio 2009→2024, brecha generacional, brecha por sexo. | W-10. |

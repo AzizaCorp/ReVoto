@@ -53,8 +53,8 @@ El aspecto y el movimiento de cada componente salen de la página **«Sistema de
 
 | Nivel | Implementados |
 | --- | --- |
-| Átomos | `Button` (small 36 · medium 44 · large 52, íconos SVG, círculo ‹ › en móvil), `Chip`, `Icon`, `IconBubble`, `IconButton`, `Illustration`, `Logo`, `Pill`, `ProgressSegment`, `RadioMark`, `Slot`, `Switch`, `Text` (`figure`, `figureSmall`, `pending`), `VisuallyHidden` |
-| Moléculas | `CheckList`, `ComparisonBar`, `DataList`, `Disclosure`, `FieldTable`, `Notice`, `OptionGroup`, `ProgressBar`, `SearchField`, `SegmentedControl`, `SelectableRow`, `SelectField`, `StatCard`, `SummaryRow`, `SwitchRow`, `TerritoryChip` |
+| Átomos | `Button` (small 36 · medium 44 · large 52, íconos SVG, círculo ‹ › en móvil, `download` para descargas; texto y chips pasan a otra línea), `Chip`, `Icon`, `IconBubble`, `IconButton`, `Illustration`, `Logo`, `Pill`, `ProgressSegment`, `RadioMark`, `Slot`, `Switch`, `Text` (`figure`, `figureSmall`, `pending`), `VisuallyHidden` |
+| Moléculas | `CheckList` (con `detail` de lo medido), `ComparisonBar`, `DataList`, `Disclosure`, `FieldTable`, `Notice`, `OptionGroup`, `ProgressBar`, `SearchField`, `SegmentedControl`, `SelectableRow`, `SelectField`, `StatCard`, `SummaryRow`, `SwitchRow`, `TerritoryChip` |
 | Organismos | `BarChart`, `ChartTable` (gráfica ↔ tabla en el mismo lugar), `BottomBar` (`secondaryAction`), `BottomSheet` (hoja · hoja con márgenes · panel lateral · `popover`), `IdentityCard` (`ArchetypeCard` A1–A5 y `BadgeCard` I1–I6 en formato historia, publicación y móvil), `ShareCard`, `StatusView`, `TopBar` (variante utilidad con `onBack`) |
 | Plantillas | `LiteScreen`, `NarrativeScreen` (`visualFirst`), `SheetTemplate`, `UtilityScreen` (`aside`) |
 
@@ -75,8 +75,8 @@ Derivado del catálogo lo-fi (`docs/diseno/manual-de-diseno-wireframes.md` §6) 
 | `Switch` | `.wf-toggle` | `role="switch"`: lectura fácil, movimiento reducido, versión ligera | US-15 |
 | `Select` | `.wf-select` | `<select>` nativo con etiqueta visible | US-09 |
 | `Skeleton` | `.wf-skel` | Estado de carga | US-11 |
-| `ProgressSegment` | `.wf-progress span` | Un segmento de la barra de 10 | US-09 |
-| `VisuallyHidden` | — | Texto solo para lector de pantalla («Pantalla 4 de 10») | US-09 |
+| `ProgressSegment` | `.wf-progress span` | Un segmento de la barra; se anima al revés al regresar (DEF-29) | US-09 |
+| `VisuallyHidden` | — | Texto solo para lector de pantalla («Pantalla 4 de 12») | US-09 |
 | `Link` | `.wf-link` | Enlaces de texto y «‹ Volver» | US-09 |
 | `SeriesSwatch` | rayado / sólido | Patrón de intermedia vs. presidencial (RN-03) | US-11 |
 
@@ -86,7 +86,7 @@ Derivado del catálogo lo-fi (`docs/diseno/manual-de-diseno-wireframes.md` §6) 
 | --- | --- | --- | --- |
 | `FigureWithContext` | `Figure` + `Text meta` | Cifra + territorio · periodo + referencia a fuente (RN-10) | US-11 |
 | `TerritoryChip` | `Button` + `Text` | «Entidad · Municipio ▾»; abre W-02 (HU-28) | US-09 |
-| `ProgressBar` | `ProgressSegment` × N + `VisuallyHidden` | 10 segmentos, texto oculto, se recalcula si se degrada la secuencia | US-09 |
+| `ProgressBar` | `ProgressSegment` × N + `VisuallyHidden` | Un segmento por pantalla después de la portada, texto oculto, se recalcula si se degrada la secuencia (DEF-27) | US-09 |
 | `SelectField` | `Text` + `Select` | Entidad y municipio con etiqueta asociada | US-09 |
 | `SwitchRow` | `Text` + `Switch` | Ajuste con descripción (W-01, W-13) | US-15 |
 | `Notice` | `Text` + icono | Umbral RN-05, error, periodo faltante (W-17) | US-11 |
