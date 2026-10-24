@@ -54,7 +54,7 @@
 - Cada pantalla tiene su paleta («wrapped»): `SLIDE_THEMES` en `components/organisms/IdentityCard/slideThemes.ts`.
 - RN-03: las barras de intermedias van rayadas y su etiqueta dice «int.»; las presidenciales, lisas y «pres.».
 - En W-03 a W-10 la hoja W-12 no muestra «Qué compartes»: indica «Esta pantalla · [nombre]» y solo deja elegir el formato. Las opciones «Mi arquetipo», «Mi insignia» y «Los dos» aparecen solo en W-09, W-09b y W-09c.
-- Los botones de compartir llaman la atención con un efecto «cromado» (`Button chroma`): un borde degradado que gira, un destello y un brillo que se reproducen 2 s después de cambiar de pantalla, para no competir con la lectura de la pantalla (`--rv-chroma-delay`). Con «Reducir movimiento», «Lectura fácil» o `prefers-reduced-motion` no se anima: queda solo el borde de color.
+- Los botones de compartir llaman la atención con un efecto «cromado» (`Button chroma`). La franja de luz del borde gira desde que aparece la pantalla. El salto, el resplandor y el destello llegan 2 s después, para no competir con la lectura, y se repiten mientras la persona siga en la pantalla con pausas que crecen en escala Fibonacci: 3, 5, 8, 13, 21, 34 y 55 s, y luego cada 55 s (`atoms/Button/chromaBursts.ts`). Con «Reducir movimiento», «Lectura fácil» o `prefers-reduced-motion` no se anima: queda solo el borde de color.
 
   | Variante | Colores (paleta del diseño) | Dónde |
   | --- | --- | --- |

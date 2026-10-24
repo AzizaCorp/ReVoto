@@ -138,8 +138,9 @@
   }
 }
 
-/* Chroma (US-24): only tokens. The fill of each variant stays inside a gradient border that
-   spins; the glow, the pop and the shine play once, --rv-chroma-delay after the screen appears.
+/* Chroma (US-24): only tokens. The fill of each variant stays inside a gradient border whose band
+   of light spins from the start. The pop, the glow and the shine play while .burst is on: the
+   button adds it 2 s after the screen appears and then on a Fibonacci rhythm (chromaBursts.ts).
    global.css stops every animation under reduced motion and easy reading: the border stays. */
 @property --rv-chroma-angle {
   syntax: '<angle>';
@@ -156,10 +157,13 @@
     linear-gradient(var(--chroma-fill), var(--chroma-fill)) padding-box,
     conic-gradient(from var(--rv-chroma-angle), var(--chroma-colors)) border-box;
   box-shadow: 0 0 var(--rv-space-1) var(--chroma-glow);
+  animation: rv-chroma-spin var(--rv-chroma-spin) linear infinite;
+}
+.chroma.burst {
   animation:
-    rv-chroma-spin var(--rv-chroma-spin) linear var(--rv-chroma-delay) infinite,
-    rv-chroma-pop var(--rv-duration-pop) var(--rv-easing-spring) var(--rv-chroma-delay) 1,
-    rv-chroma-glow var(--rv-chroma-burst) ease-out var(--rv-chroma-delay) 1;
+    rv-chroma-spin var(--rv-chroma-spin) linear infinite,
+    rv-chroma-pop var(--rv-duration-pop) var(--rv-easing-spring) 1,
+    rv-chroma-glow var(--rv-chroma-burst) ease-out 1;
 }
 .chroma.primary {
   --chroma-fill: var(--rv-color-ink);
@@ -178,7 +182,9 @@
   background: linear-gradient(105deg, transparent 30%, var(--rv-chroma-shine) 50%, transparent 70%);
   translate: -120% 0;
   pointer-events: none;
-  animation: rv-chroma-shine var(--rv-chroma-burst) var(--rv-easing) var(--rv-chroma-delay) 1;
+}
+.chroma.burst::after {
+  animation: rv-chroma-shine var(--rv-chroma-burst) var(--rv-easing) 1;
 }
 .fucsia {
   --chroma-colors: var(--rv-chroma-fucsia);

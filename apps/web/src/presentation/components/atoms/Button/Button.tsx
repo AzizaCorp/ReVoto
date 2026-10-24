@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Icon, type IconName } from '../Icon';
 import styles from './Button.module.css';
+import { useChromaBurst } from './chromaBursts';
 
 export type ButtonVariant = 'primary' | 'brand' | 'secondary' | 'text';
 export type ButtonSize = 'small' | 'medium' | 'large';
@@ -34,8 +35,9 @@ export interface ButtonProps {
    */
   collapsible?: boolean | 'mobile' | 'narrow';
   /**
-   * Draws attention to the button: a spinning gradient border, a glow and a shine that play 2 s
-   * after the screen appears (it remounts on every screen). Static under reduced motion.
+   * Draws attention to the button: a band of light spins around its border from the start, and a
+   * pop with a glow and a shine plays 2 s after the screen appears, then again after 3, 5, 8, 13…
+   * seconds (Fibonacci) while the screen stays. Static under reduced motion.
    */
   chroma?: ButtonChroma;
 }
@@ -57,6 +59,7 @@ export function Button({
   collapsible,
   chroma,
 }: ButtonProps) {
+  const bursting = useChromaBurst(Boolean(chroma) && !disabled);
   const className = [
     styles.button,
     styles[variant],
@@ -64,8 +67,10 @@ export function Button({
     fullWidth === 'mobile' ? styles.fullWidthMobile : fullWidth ? styles.fullWidth : '',
     collapsible === 'narrow' ? styles.narrow : collapsible ? styles.collapsible : '',
     chroma && !disabled ? `${styles.chroma} ${styles[chroma]}` : '',
+    bursting ? styles.burst : '',
   ].join(' ');
-  const chromaAttr = chroma && !disabled ? { 'data-chroma': chroma } : {};
+  const chromaAttr =
+    chroma && !disabled ? { 'data-chroma': chroma, ...(bursting ? { 'data-burst': '' } : {}) } : {};
   const content = (
     <>
       {icon && (
