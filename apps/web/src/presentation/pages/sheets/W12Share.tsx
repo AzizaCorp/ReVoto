@@ -6,6 +6,7 @@ import {
   Button,
   DuoCard,
   Notice,
+  Pill,
   SegmentedControl,
   SheetTemplate,
   SlideCard,
@@ -19,10 +20,10 @@ import { cardToPng, download, shareOrDownload, slug } from '@/presentation/share
 import { useShareBlocker } from '../shared/shareBlocker';
 import { isSlideScreen, slideCard, type SlideScreen } from '../shared/slideCards';
 import { archetypeStat, compareWithGeneration } from '../shared/storyFigures';
+import styles from './W12Share.module.css';
 
 type Identity = Exclude<ShareSubject, 'slide'>;
 
-const SLIDE_OPTION = { value: 'slide', text: 'Esta pantalla' } as const;
 const WHAT = [
   { value: 'archetype', text: 'Mi arquetipo' },
   { value: 'badge', text: 'Mi insignia' },
@@ -168,21 +169,25 @@ export function W12Share() {
         </>
       }
     >
-      <SegmentedControl
-        label="Qué compartes"
-        options={slideScreen ? [SLIDE_OPTION, ...WHAT] : WHAT}
-        value={what}
-        onChange={(v) => setWhat(v as ShareSubject)}
-      />
+      {/* A story screen shares its own card; only the identity screens choose what to share. */}
+      {slide && slideScreen ? (
+        <p className={styles.subject}>
+          <Pill number="Esta pantalla">{screenName(slideScreen)}</Pill>
+        </p>
+      ) : (
+        <SegmentedControl
+          label="Qué compartes"
+          options={WHAT}
+          value={what}
+          onChange={(v) => setWhat(v as ShareSubject)}
+        />
+      )}
       <SegmentedControl
         label="Formato"
         options={FORMATS}
         value={format}
         onChange={(v) => setFormat(v as 'story' | 'square')}
       />
-      {slideScreen && what === 'slide' && (
-        <Text variant="meta">Tarjeta de «{screenName(slideScreen)}»</Text>
-      )}
       {missing ? (
         <Notice tone="pending">
           {missing}{' '}

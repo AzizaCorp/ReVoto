@@ -264,8 +264,8 @@ describe('W-12 · Share sheet · US-24', () => {
   describe('US-24 · a card for every story screen', () => {
     it('«Compartir» on W-04 opens on the card of that screen, with the real figures', async () => {
       const sheet = await open(W04YourTerritory, /^Compartir$/, 'W-04');
-      expect(chosen(sheet)).toHaveTextContent('Esta pantalla');
-      expect(sheet).toHaveTextContent('Tarjeta de «Tu territorio»');
+      expect(within(sheet).queryByRole('radiogroup', { name: 'Qué compartes' })).toBeNull();
+      expect(sheet).toHaveTextContent('Esta pantallaTu territorio');
       const card = within(sheet).getByRole('figure');
       expect(card).toHaveTextContent('69.4 %');
       expect(card).toHaveTextContent('8.4 pts más que el país');
@@ -289,7 +289,8 @@ describe('W-12 · Share sheet · US-24', () => {
 
     it('«Compartir mi resumen» on W-10 shares the summary card', async () => {
       const sheet = await open(W10Summary, /Compartir mi resumen/, 'W-10');
-      expect(chosen(sheet)).toHaveTextContent('Esta pantalla');
+      expect(within(sheet).queryByRole('radiogroup', { name: 'Qué compartes' })).toBeNull();
+      expect(sheet).toHaveTextContent('Esta pantallaTu resumen');
       expect(within(sheet).getByRole('figure')).toHaveTextContent(
         'Lo esencial de mi recorrido en ReVoto',
       );
@@ -303,10 +304,13 @@ describe('W-12 · Share sheet · US-24', () => {
       expect(within(sheet).getByRole('button', { name: 'Descargar imagen' })).toBeDisabled();
     });
 
-    it('the identity screens keep their own card', async () => {
+    it('the identity screens keep the choice between the archetype, the badge and both', async () => {
       const sheet = await open(W09Archetype, /Compartir mi arquetipo/, 'W-09');
       expect(chosen(sheet)).toHaveTextContent('Mi arquetipo');
-      expect(within(sheet).queryByRole('radio', { name: 'Esta pantalla' })).toBeNull();
+      expect(
+        within(sheet).getAllByRole('radio', { name: /Mi arquetipo|Mi insignia|Los dos/ }),
+      ).toHaveLength(3);
+      expect(sheet).not.toHaveTextContent('Esta pantalla');
     });
   });
 });

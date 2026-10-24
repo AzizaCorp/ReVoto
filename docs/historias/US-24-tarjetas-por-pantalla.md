@@ -53,6 +53,7 @@
 
 - Cada pantalla tiene su paleta («wrapped»): `SLIDE_THEMES` en `components/organisms/IdentityCard/slideThemes.ts`.
 - RN-03: las barras de intermedias van rayadas y su etiqueta dice «int.»; las presidenciales, lisas y «pres.».
+- En W-03 a W-10 la hoja W-12 no muestra «Qué compartes»: indica «Esta pantalla · [nombre]» y solo deja elegir el formato. Las opciones «Mi arquetipo», «Mi insignia» y «Los dos» aparecen solo en W-09, W-09b y W-09c.
 - La tarjeta 1:1 conserva la cifra, la frase, el territorio y la fuente; muestra las barras solo cuando son 3 o menos.
 - El contenido sale de `pages/shared/slideCards.ts` (función pura y probada) y se dibuja con `SlideCard`.
 
