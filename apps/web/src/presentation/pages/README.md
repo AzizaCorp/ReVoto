@@ -24,7 +24,7 @@ Los nombres de archivos y componentes están en inglés; los textos que ve la pe
 | `W09cMyMunicipalityAndMe.tsx` | W-09c Mi municipio y yo                          | `NarrativeScreen`                | Could     |
 | `W10Summary.tsx`              | W-10 Tu resumen (cierre)                         | `NarrativeScreen`                | Must      |
 | `sheets/W11Source.tsx`        | W-11 Ficha de fuente                             | `SheetTemplate`                  | Must      |
-| `sheets/W12Share.tsx`         | W-12 Crear tarjeta                               | `SheetTemplate`                  | Must      |
+| `sheets/W12Share.tsx`         | W-12 Crear tarjeta (de cada pantalla, US-24)     | `SheetTemplate`                  | Must      |
 | `sheets/W13Settings.tsx`      | W-13 Ajustes de lectura                          | `SheetTemplate`                  | Must      |
 | `W15Lite.tsx`                 | W-15 Versión ligera                              | `LiteScreen`                     | Must      |
 | `W16OpenData.tsx`             | W-16 Datos abiertos                              | `UtilityScreen`                  | Should    |

@@ -119,7 +119,7 @@ export function W10Summary() {
         </Button>
       </div>
       <div className={[layout.narrowOnly, layout.fill].join(' ')}>{rows}</div>
-      <ShareAction what="both">Compartir mi resumen</ShareAction>
+      <ShareAction what="slide">Compartir mi resumen</ShareAction>
       <div className={layout.grid2}>
         <Button icon="download" onClick={() => nav.goTo('W-16')}>
           Datos abiertos

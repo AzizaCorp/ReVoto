@@ -26,6 +26,8 @@ export function shareBlocker(
     generation: number | null;
   },
 ): ShareBlocker | null {
+  // A screen card (US-24) checks its own figures in slideCards.ts.
+  if (what === 'slide') return null;
   const needsArchetype = what !== 'badge';
   const needsBadge = what !== 'archetype';
   if (!s.municipality) {

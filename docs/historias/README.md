@@ -28,6 +28,7 @@ Un archivo por historia del **User Story Backlog** de Notion. Cada archivo sigue
 | [US-21](./US-21-resumen-cifras.md) | Ver el resumen de cifras en una sola vista | E-03 | Could | 1 | Backlog sin capacidad | Sin asignar | — | In progress | HU-06 → RF-04 | — | Sin |
 | [US-22](./US-22-descarga-datos-abiertos.md) | Descargar los agregados en formato abierto | E-08 | Could | 1 | Backlog sin capacidad | Sin asignar | — | In progress | HU-17 → RF-14 | — | Sin |
 | [US-23](./US-23-urbano-rural.md) | Comparar secciones urbanas y rurales | E-03 | Could | 1 | Backlog sin capacidad | Sin asignar | — | Not started | HU-30 → RF-10 | — | Sin |
+| [US-24](./US-24-tarjetas-por-pantalla.md) | Compartir cada pantalla como tarjeta tipo «historias» | E-04 | Should | 3 | Sprint 4 (24-31 oct) | Angel | 27/10/2026 | In progress | HU-02 → RF-15 | D10 | Sin |
 
 ## Cobertura HU (SRS) → US
 

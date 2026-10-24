@@ -27,8 +27,11 @@ export type AuxiliaryViewId = 'W-15' | 'W-16' | 'W-17' | 'W-18' | 'W-19';
 export type ViewId = ScreenId | AuxiliaryViewId;
 /** Bottom sheets that open on top of any screen. */
 export type SheetId = 'W-11' | 'W-12' | 'W-13' | 'W-20';
-/** What the share sheet (W-12) starts with: the archetype, the badge or both cards. */
-export type ShareSubject = 'archetype' | 'badge' | 'both';
+/**
+ * What the share sheet (W-12) starts with: the card of the screen that opened it (US-24), or the
+ * archetype, the badge or both identity cards.
+ */
+export type ShareSubject = 'slide' | 'archetype' | 'badge' | 'both';
 
 const AUXILIARY: readonly AuxiliaryViewId[] = ['W-15', 'W-16', 'W-17', 'W-18', 'W-19'];
 
@@ -51,7 +54,7 @@ export interface Navigation {
   /** `null` at the ends (HU-10: no wrap-around). */
   next: (() => void) | null;
   previous: (() => void) | null;
-  /** `share` preselects the card when opening W-12 (W-09 → archetype, W-09b → badge, W-09c → both). */
+  /** `share` preselects the card when opening W-12; by default, the card of the current screen. */
   openSheet: (sheet: SheetId, options?: { share?: ShareSubject }) => void;
   /** Card chosen by the button that opened W-12. */
   shareSubject: ShareSubject;
@@ -95,7 +98,7 @@ export function NavigationProvider({
   );
   const [lastScreen, setLastScreen] = useState<ScreenId>(isScreen(current) ? current : 'W-01');
   const [sheet, setSheet] = useState<SheetId | null>(null);
-  const [shareSubject, setShareSubject] = useState<ShareSubject>('archetype');
+  const [shareSubject, setShareSubject] = useState<ShareSubject>('slide');
   const [returnTo, setReturnTo] = useState<ScreenId | null>(null);
   const [answersReturnTo, setAnswersReturnTo] = useState<ScreenId | null>(null);
   const [selected, setSelected] = useState<Territory>(NATIONAL);
@@ -155,7 +158,7 @@ export function NavigationProvider({
       next: nextId ? () => goTo(nextId) : null,
       previous: previousId ? () => goTo(previousId) : null,
       openSheet: (id, options) => {
-        setShareSubject(options?.share ?? 'archetype');
+        setShareSubject(options?.share ?? 'slide');
         setSheet(id);
       },
       shareSubject,

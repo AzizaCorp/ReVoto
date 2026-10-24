@@ -6,7 +6,7 @@ Micrositio de *storytelling* con datos de participación electoral federal en M�
 
 ## Qué hace
 
-ReVoto cuenta en una secuencia de pantallas cuánto vota tu municipio frente a tu entidad y al país. Eliges tu territorio (o sigues con cifras nacionales), respondes de forma opcional unas preguntas sobre ti y recorres las cifras como una historia. Al final puedes crear una tarjeta para compartir y descargar los datos abiertos.
+ReVoto cuenta en una secuencia de pantallas cuánto vota tu municipio frente a tu entidad y al país. Eliges tu territorio (o sigues con cifras nacionales), respondes de forma opcional unas preguntas sobre ti y recorres las cifras como una historia. Cada pantalla con cifras se puede compartir como tarjeta tipo «historias» (9:16) o publicación (1:1), y al final puedes descargar los datos abiertos.
 
 La secuencia tiene 13 pantallas: la portada y 12 pasos. El contador «Pantalla N de 12» y la barra de progreso se calculan a partir de la secuencia (decisión D-04 en `docs/diseno/arquitectura-informacion.md`).
 
@@ -28,7 +28,7 @@ La secuencia tiene 13 pantallas: la portada y 12 pasos. El contador «Pantalla N
 
 Fuera de la secuencia:
 
-- **Hojas inferiores:** W-11 Fuente, W-12 Compartir (tarjeta 9:16 o 1:1), W-13 Ajustes de lectura y W-20 Reporte de calidad y validación.
+- **Hojas inferiores:** W-11 Fuente, W-12 Compartir (la tarjeta de cada pantalla, el arquetipo o la insignia, en 9:16 o 1:1; US-24), W-13 Ajustes de lectura y W-20 Reporte de calidad y validación.
 - **Pantallas de consulta:** W-15 Versión ligera, W-16 Datos abiertos, W-17 Estados, W-18 Metodología y W-19 Diccionario de datos.
 
 Accesibilidad (RNF-07): cada gráfica tiene «Ver como tabla», hay lectura fácil, tamaño de texto (A- / A / A+), movimiento reducido y una versión ligera de solo texto y tablas. La navegación funciona con botones, teclado (← →) y deslizamiento horizontal.
