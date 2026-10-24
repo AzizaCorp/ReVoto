@@ -45,6 +45,17 @@ describe('Skeleton pages', () => {
     },
   );
 
+  it('W-16 downloads each table as CSV and JSON, and disables the missing ones', async () => {
+    const Page = PAGES['W-16'];
+    await withProviders(<Page />);
+    const csv = screen.getByRole('link', { name: 'Descargar Participación por territorio en CSV' });
+    expect(csv).toHaveAttribute('href', '/data/descargas/participacion.csv');
+    expect(csv).toHaveAttribute('download', 'revoto_participacion.csv');
+    expect(
+      screen.getByRole('button', { name: 'Descargar Arquetipos municipales en JSON' }),
+    ).toBeDisabled();
+  });
+
   it('W-02 offers a way back to the cover with the same ‹ › bar as the story (DEF-23)', async () => {
     window.location.hash = '#/W-02';
     const Page = PAGES['W-02'];
