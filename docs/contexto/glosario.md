@@ -11,7 +11,7 @@
 | **Elección presidencial** | 2012, 2018, 2024. |
 | **Sección electoral** | Unidad territorial mínima del INE. Solo se usa para calcular; nunca se publica (RN-02). |
 | **TIPOSEC** | Tipo de sección: urbana (U), rural (R) o mixta (M). |
-| **Conteo censal** | Dataset del INE (DECEYEC) con lista nominal y participación por sección, sexo y edad simple. |
+| **Conteo censal** | Conteos Censales de Participación Ciudadana (CCPC) del INE: dataset con lista nominal y participación por sección, sexo y edad simple. |
 | **Umbral RN-05** | Lista nominal mínima para publicar un agregado. |
 | **Arquetipo** | Descripción neutral del perfil de participación de un territorio (W-09, RN-07). |
 | **L0 a L4** | Capas de datos: fuentes, staging, normalizado, marts, publicación. |

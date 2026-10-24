@@ -32,7 +32,7 @@
   border-top: var(--rv-border-width) solid var(--rv-color-border);
 }
 .brand {
-  font-size: 15px;
+  font-size: calc(15px * var(--rv-text-scale));
   font-weight: var(--rv-weight-bold);
 }
 .nav {
@@ -44,7 +44,8 @@
   border: 0;
   background: none;
   color: var(--rv-color-brand-text);
-  font: var(--rv-weight-semibold) 13px/var(--rv-touch-target) var(--rv-font-system);
+  font: var(--rv-weight-semibold) calc(13px * var(--rv-text-scale))/var(--rv-touch-target)
+    var(--rv-font-system);
   text-decoration: underline;
   cursor: pointer;
 }
@@ -71,14 +72,14 @@
 .body table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: calc(14px * var(--rv-text-scale));
+  line-height: var(--rv-line-height);
 }
 .body caption {
   padding-bottom: var(--rv-space-1);
   text-align: left;
-  font-size: 13px;
-  line-height: 18px;
+  font-size: calc(13px * var(--rv-text-scale));
+  line-height: var(--rv-line-height);
   color: var(--rv-color-ink-2);
 }
 .body th,
@@ -89,7 +90,7 @@
 }
 .body thead th {
   background: var(--rv-color-fill-2);
-  font-size: 13px;
+  font-size: calc(13px * var(--rv-text-scale));
   font-weight: var(--rv-weight-semibold);
 }
 .wideOnly {
@@ -107,10 +108,10 @@
     min-height: 72px;
   }
   .brand {
-    font-size: 17px;
+    font-size: calc(17px * var(--rv-text-scale));
   }
   .link {
-    font-size: 14px;
+    font-size: calc(14px * var(--rv-text-scale));
   }
   .main {
     padding-block: var(--rv-space-4);

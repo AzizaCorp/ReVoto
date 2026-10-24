@@ -7,3 +7,8 @@
   justify-content: space-between;
   gap: var(--rv-space-1);
 }
+
+/* DEF-33: the source is named next to the figures, not only behind the «Fuente» button. */
+.source {
+  margin: 0;
+}

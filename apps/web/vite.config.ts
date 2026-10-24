@@ -2,9 +2,11 @@
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
+import { openDataPlugin } from './src/infrastructure/open-data/vitePlugin';
 
 export default defineConfig({
-  plugins: [react()],
+  // W-16: CSV and JSON downloads derived from public/data (dist/data/descargas/).
+  plugins: [react(), openDataPlugin(fileURLToPath(new URL('./public/data', import.meta.url)))],
   resolve: {
     // '@/domain', '@/application', '@/infrastructure', '@/presentation'
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },

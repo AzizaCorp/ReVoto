@@ -13,7 +13,7 @@ Los wireframes de baja fidelidad (lo-fi) resuelven **estructura, jerarquía y fl
 2. Probar el recorrido completo de portada a cierre antes de escribir código (US-04 · CA-1).
 3. Fijar el layout **mobile-first a 360 px** que después se refinará en Figma (US-04 · CA-3, SRS 9.3).
 
-**Fuera de alcance del lo-fi:** paleta de color definitiva, tipografía de marca, ilustración, logotipo (AP-01 aún abierto) y microanimaciones.
+**Fuera de alcance del lo-fi:** paleta de color definitiva, tipografía de marca, ilustración, logotipo (AP-01 se cerró después con «ReVoto» como nombre definitivo) y microanimaciones.
 
 ---
 
@@ -89,7 +89,7 @@ Todos están implementados en `design/wireframes/lofi.css`. Usa estas clases; no
 | Componente | Clase | Reglas |
 | --- | --- | --- |
 | Marco de pantalla | `.wf-frame` | 360 × 760, contiene `.wf-top`, `.wf-body`, `.wf-bottom` |
-| Barra de progreso | `.wf-progress` > `span` (`.on`) | 10 segmentos = 10 pantallas de la secuencia (RF-03) |
+| Barra de progreso | `.wf-progress` > `span` (`.on`) | Un segmento por pantalla después de la portada (12 hoy, D-04 de la arquitectura de información) (RF-03) |
 | Chip de territorio | `.wf-chip` | Muestra «Entidad · Municipio ▾»; abre W-02. «Nacional» si no se eligió |
 | Botón primario | `.wf-btn.primary` | Uno por pantalla como máximo. Alto 48 px |
 | Botón secundario | `.wf-btn` | Contorno. Alto 44–48 px |
@@ -148,7 +148,7 @@ Desplazamiento vertical permitido. Encabezado con «‹ Volver» y título; acci
 | Patrón | Regla | Requisito |
 | --- | --- | --- |
 | Avanzar / retroceder | Botones ‹ ›, deslizar horizontal, tocar mitad derecha/izquierda, flechas ← → | RF-02 |
-| Progreso | Segmento activo relleno; texto oculto «Pantalla 4 de 10» | RF-03, HU-14 |
+| Progreso | Segmento activo relleno; texto oculto «Pantalla 4 de 12» | RF-03, HU-14 |
 | Cambiar territorio | El chip abre W-02 desde cualquier pantalla y regresa a la misma | HU-28 |
 | Fuente | Botón «ⓘ Fuente» siempre en la zona inferior de pantallas con cifra | RF-12, RN-10 |
 | Compartir | Abre W-12; ofrece 9:16 / 1:1 y menú nativo si existe | RF-15 |
@@ -197,3 +197,4 @@ Cada pantalla debe llevar, en su lista de anotaciones, al menos:
 | # | Autor | Cambio | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel (con Claude) | Creación inicial para US-04 | 05/10/2026 |
+| 2 | Angel | AP-01 cerrado: «ReVoto» es el nombre definitivo | 23/10/2026 |

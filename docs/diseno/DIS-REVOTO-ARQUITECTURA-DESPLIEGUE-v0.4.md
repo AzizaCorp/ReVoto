@@ -384,6 +384,8 @@ public/data/
    └─ csv/participacion.csv            # datos abiertos (US-22)
 ```
 
+Además, cada `vite build` genera `dist/data/descargas/` a partir de `public/data/` (plugin `src/infrastructure/open-data/vitePlugin.ts`): tres tablas planas —participación por territorio, por edad y sexo, y arquetipos— en CSV (UTF-8 con BOM) y JSON, una fila por territorio y elección. Son las descargas de W-16 (DEF-38) y no cuentan en el presupuesto de la app porque viven bajo `data/`.
+
 Los esquemas de todos estos archivos están en `packages/contracts/schemas/` (`comun`, `manifest`, `nacional`, `entidades`, `entidad`, `municipio`, `calidad`, `geo`, `mapa`).
 
 El pipeline borra la versión anterior al exportar: en el repositorio solo existe la carpeta vigente, y las versiones anteriores quedan en el historial de Git.
@@ -395,7 +397,7 @@ El pipeline borra la versión anterior al exportar: en el repositorio solo exist
 {
   "version_datos": "20261012-a1b2c3d",
   "generado": "2026-10-12T18:30:00-06:00",
-  "fuente": "Conteos censales INE (DECEYEC), elecciones federales 2009–2024",
+  "fuente": "INE · CCPC, elecciones federales 2009–2024",
   "validacion": { "max_diferencia_pp": 0.31, "reporte": "pipeline/reportes/20261012.md" }
 }
 ```
@@ -404,7 +406,7 @@ El pipeline borra la versión anterior al exportar: en el repositorio solo exist
 // 20261012-a1b2c3d/entidad/14.json (recortado)
 {
   "territorio": { "nivel": "entidad", "cve": 14, "nombre": "Jalisco" },
-  "fuente": "Conteos censales INE (DECEYEC)",
+  "fuente": "INE · CCPC",
   "elecciones": [
     { "anio": 2024, "tipo": "presidencial", "participacion": 0.612, "lista_nominal": 6512345,
       "por_edad": { "18-24": 0.551, "25-34": 0.563, "35-44": 0.601, "45-59": 0.652, "60+": 0.668 },
@@ -471,8 +473,9 @@ export interface TurnoutRepository {
 | --- | --- |
 | `domain` | `turnout/Comparison`, `turnout/Insights`, `turnout/Scale` (cortes por cuantiles del mapa), `identity/ArchetypeProfile`, `quality/QualityReport` |
 | `application/use-cases` | `getTerritoryStory`, `compareTerritory`, `municipalityInsights` (lugar en la entidad, arquetipo, votos esperados), `getQualityReport`, `chooseTerritory` |
+| `infrastructure/open-data` | `buildOpenData.ts` (tablas de descarga a partir del L4) y `vitePlugin.ts` (las publica en el build y las sirve en `vite dev`) |
 | `infrastructure/static-json` | `JsonClient` (pide `manifest.json` sin caché y luego `/data/<version_datos>/…`; traduce fallas a error de datos, W-17), `mappers.ts` (DTO → dominio, RN-10), `topology.ts` (TopoJSON → anillos proyectados) y un repositorio `Json*Repository` por puerto |
-| `presentation` | `providers/Story` y la navegación, páginas W-01 a W-20, `share/exportCard.ts` (ADR-0006), organismo `ChoroplethMap` |
+| `presentation` | `providers/Story` y la navegación, páginas W-01 a W-20, `pages/shared/dataSource.ts` (fuente, cortes, umbral, reglas de calidad y auditoría de la copia, mismo texto que D06), `share/exportCard.ts` (ADR-0006), organismo `ChoroplethMap` |
 
 `src/main.tsx` crea los cuatro repositorios con el mismo `JsonClient` y los inyecta. Si algún día hay backend, se agregan adaptadores que implementen los mismos puertos y solo cambia ese archivo (sección 11).
 
@@ -781,3 +784,5 @@ Este documento se revisa al cierre de cada sprint y cada vez que cambie una deci
 | 2 | Angel Mauricio Ramirez | Estructura de monorepo (§7) y nota sobre RN-06 en el SQL vigente (§4.4) | 08/10/2026 |
 | 3 | Angel Mauricio Ramirez | Capas DDD en la app y monorepo mínimo (§6.1, §7, ADR-0003) | 08/10/2026 |
 | 4 | Angel Mauricio Ramirez | v0.4: puente v2 → L4 (§4.7), contrato extendido con geometría, mapa y calidad (§5), puertos y capas reales de la app (§6.1), nuevos riesgos y decisiones; ADR-0004 a ADR-0006 | 18/10/2026 |
+| 5 | Angel Mauricio Ramirez | Fuente de los ejemplos L4 (§5) citada como INE · CCPC en lugar de DECEYEC | 23/10/2026 |
+| 6 | Angel Mauricio Ramirez | Descargas de datos abiertos generadas en el build (§5.1) y capa `infrastructure/open-data` y `dataSource.ts` (§6.1) | 23/10/2026 |

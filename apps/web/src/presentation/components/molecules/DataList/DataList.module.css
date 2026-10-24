@@ -31,6 +31,9 @@
   text-transform: uppercase;
 }
 .value {
+  min-width: 0;
+  /* Long file paths break instead of leaving the card. */
+  overflow-wrap: anywhere;
   margin: 0;
   font-size: var(--rv-text-body);
   font-weight: var(--rv-weight-semibold);

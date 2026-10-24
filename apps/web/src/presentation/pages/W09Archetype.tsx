@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { ARCHETYPE_IDS, ARCHETYPES, type ArchetypeId } from '@/domain';
-import { ArchetypeCard, Button, Chip, ComparisonBar, Text } from '@/presentation/components';
+import { ARCHETYPES } from '@/domain';
+import { ArchetypeCard, Button, ComparisonBar, Text } from '@/presentation/components';
 import { place, points, pointsAbs } from '@/presentation/format';
 import { useMediaQuery } from '@/presentation/hooks/useMediaQuery';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import { useStoryData } from '@/presentation/providers/Story';
 import { DataStatus } from './shared/DataStatus';
+import { ShareAction } from './shared/ShareAction';
 import layout from './shared/Layout.module.css';
 import { archetypeStat, traitSentence } from './shared/storyFigures';
 import { StoryFrame } from './shared/StoryFrame';
@@ -16,13 +16,11 @@ export function W09Archetype() {
   const story = useStoryData();
   const wide = useMediaQuery('(min-width: 768px)');
   const profile = story?.profile?.archetype ?? null;
-  // Without a municipality (or with fewer than 5 elections) the five archetypes can be previewed.
-  const [preview, setPreview] = useState<ArchetypeId>('A1');
-  const archetype = profile?.archetype ?? preview;
   const t = nav.selected;
+  const municipality = t.level === 'municipality' ? t : null;
   return (
     <StoryFrame
-      pending={!profile}
+      pending={Boolean(municipality) && !story}
       label="Tu arquetipo"
       shareable={false}
       visualLeft
@@ -44,53 +42,34 @@ export function W09Archetype() {
               />
             </section>
           ) : (
-            <>
-              <Text variant="meta">
-                {t.level === 'municipality'
-                  ? `${t.name} tiene menos de 5 elecciones para calcular su arquetipo. Mira los cinco:`
-                  : 'Elige un municipio para conocer su arquetipo. Mientras, mira los cinco:'}
-              </Text>
-              <div
-                className={layout.row}
-                role="radiogroup"
-                aria-label="Vista previa de los arquetipos"
-              >
-                {ARCHETYPE_IDS.map((id) => (
-                  <Chip
-                    key={id}
-                    kind="filter"
-                    role="radio"
-                    pressed={id === preview}
-                    onClick={() => setPreview(id)}
-                  >
-                    {ARCHETYPES[id]}
-                  </Chip>
-                ))}
-              </div>
-            </>
+            <Text variant="meta">
+              {municipality
+                ? `${municipality.name} tiene menos de 5 elecciones para calcular su arquetipo.`
+                : 'Elige un municipio para conocer su arquetipo.'}
+            </Text>
           )}
-          <Button
-            variant="primary"
-            icon="share"
-            fullWidth="mobile"
-            onClick={() => nav.openSheet('W-12', { share: 'archetype' })}
-          >
-            Compartir mi arquetipo
-          </Button>
+          {municipality ? (
+            <ShareAction what="archetype">Compartir mi arquetipo</ShareAction>
+          ) : (
+            <Button variant="primary" icon="pin" fullWidth="mobile" onClick={nav.changeTerritory}>
+              Elegir municipio
+            </Button>
+          )}
         </>
       }
       visual={
+        // DEF-26: without an archetype the card invites to choose a municipality, never a sample.
         <ArchetypeCard
-          archetype={archetype}
+          archetype={profile?.archetype ?? null}
           format={wide ? 'story' : 'hero'}
-          {...(t.level === 'municipality' ? { place: place(t) } : {})}
+          {...(municipality ? { place: place(municipality) } : {})}
           {...(profile ? { stat: archetypeStat(profile) } : {})}
         />
       }
     >
       <Text variant="h1">
-        {profile && t.level === 'municipality'
-          ? `${t.name} es «${ARCHETYPES[archetype]}»`
+        {profile && municipality
+          ? `${municipality.name} es «${ARCHETYPES[profile.archetype]}»`
           : 'Tu municipio tiene personalidad'}
       </Text>
       <Text variant="lead">

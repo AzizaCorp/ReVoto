@@ -11,6 +11,7 @@ import {
 import { useMediaQuery } from '@/presentation/hooks/useMediaQuery';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import layout from './shared/Layout.module.css';
+import { DATA_COPY, ELECTIONS, QUALITY_RULES, SOURCE, THRESHOLD } from './shared/dataSource';
 import styles from './W18Methodology.module.css';
 
 interface Section {
@@ -27,11 +28,22 @@ const SECTIONS: readonly Section[] = [
     title: 'Fuente',
     icon: 'info',
     tone: 'brand',
-    body: 'Conteos censales de participación del INE (DECEYEC), elecciones federales 2009–2024. Versión de datos [AAAAMMDD-hash].',
+    body: (
+      <>
+        <p>
+          {SOURCE.name}, elecciones federales 2009–2024: {SOURCE.files}, {SOURCE.records}, revisados
+          el {SOURCE.audited}. Mapas y claves territoriales: {SOURCE.geography}.
+        </p>
+        <p>
+          Cada cifra corresponde a la jornada de su elección. Copia de datos del {DATA_COPY.date}.{' '}
+          {DATA_COPY.status}.
+        </p>
+      </>
+    ),
   },
   {
     id: 'formula',
-    title: 'Fórmula de participación · RN-01',
+    title: 'Fórmula de participación',
     icon: 'chart',
     tone: 'brand-strong',
     body: (
@@ -40,43 +52,101 @@ const SECTIONS: readonly Section[] = [
           Participación = <b>Votaron</b> ÷ (Lista nominal − Sin dato)
         </p>
         <p>Los registros sin dato no cuentan como abstención: se quitan del denominador.</p>
+        <div className={styles.scroll}>
+          <table className={styles.table}>
+            <caption>Registros sin dato y participación nacional por elección</caption>
+            <thead>
+              <tr>
+                <th scope="col">Elección</th>
+                <th scope="col">Jornada</th>
+                <th scope="col" className={styles.number}>
+                  Sin dato
+                </th>
+                <th scope="col" className={styles.number}>
+                  Participación
+                </th>
+                <th scope="col" className={styles.number}>
+                  Municipios con cifra
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {ELECTIONS.map((e) => (
+                <tr key={e.year}>
+                  <th scope="row">
+                    {e.year} · {e.type.toLowerCase()}
+                  </th>
+                  <td>{e.date}</td>
+                  <td className={styles.number}>{e.noData}</td>
+                  <td className={styles.number}>{e.turnout}</td>
+                  <td className={styles.number}>{e.municipalities}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </>
     ),
   },
   {
     id: 'exclusiones',
-    title: 'Qué se excluye · RN-06, RN-09',
+    title: 'Qué se excluye',
     icon: 'minus',
     tone: 'violet',
-    body: 'Registros sin dato de participación, sexo fuera de catálogo y edades fuera de 18–110 años. El reporte de calidad dice cuántos fueron.',
+    body: (
+      <>
+        <p>Reglas de calidad aplicadas y cuántos registros afectó cada una.</p>
+        <div className={styles.scroll}>
+          <table className={styles.table}>
+            <caption>Reglas de calidad</caption>
+            <thead>
+              <tr>
+                <th scope="col">Regla</th>
+                <th scope="col">Afectados</th>
+                <th scope="col">Qué hacemos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {QUALITY_RULES.map((r) => (
+                <tr key={r.id}>
+                  <th scope="row">{r.rule}</th>
+                  <td>{r.affected}</td>
+                  <td>{r.treatment}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
+    ),
   },
   {
     id: 'umbral',
-    title: 'Umbral de publicación · RN-05',
+    title: 'Umbral de publicación',
     icon: 'users',
     tone: 'indigo',
-    body: 'Un municipio con lista nominal menor a [umbral] no se publica: se muestra su entidad con una nota, para no identificar a grupos pequeños.',
+    body: `Una cifra con lista nominal menor a ${THRESHOLD} personas no se publica, para no identificar a grupos pequeños. Si es un municipio, se muestra su entidad con una nota; si es un grupo de edad o de sexo, se omite solo ese grupo.`,
   },
   {
     id: 'grupos',
-    title: 'Grupos de edad y tipo de elección · RN-03, RN-04',
+    title: 'Grupos de edad y tipo de elección',
     icon: 'calendar',
     tone: 'neutral',
-    body: 'Cinco grupos: 18–24, 25–34, 35–44, 45–59 y 60 +. Intermedias y presidenciales siempre se distinguen.',
+    body: 'Cinco grupos: 18–24, 25–34, 35–44, 45–59 y 60 + (hasta 110 años). La edad simple no se publica. Presidenciales (2012, 2018, 2024) e intermedias (2009, 2015, 2021) siempre se distinguen.',
   },
   {
     id: 'arquetipos',
     title: 'Arquetipos municipales',
     icon: 'star',
     tone: 'brand',
-    body: 'K-means con k = 5 sobre nivel, efecto presidencial, tendencia y volatilidad frente al país. Validado por bootstrap (ARI [—.—]).',
+    body: 'K-medias con k = 5 sobre cuatro rasgos de cada municipio frente al país: nivel, efecto presidencial, tendencia por década y volatilidad, en puntos. Se recortan a los percentiles 1–99 y se estandarizan; k = 5 tiene el BIC mínimo y su estabilidad por bootstrap da un ARI medio de 0.86. Solo se clasifican municipios con al menos 5 elecciones.',
   },
   {
     id: 'validacion',
     title: 'Validación',
     icon: 'check',
     tone: 'mint',
-    body: 'Cada cifra se compara con la publicada por el INE. Si alguna difiere más de 1 punto, no se publica (RF-23).',
+    body: 'Cada cifra se compara con la publicada por el INE y una diferencia mayor a 1 punto bloquea la publicación. En esta copia el cotejo aún está pendiente; la participación nacional coincide con la calculada en la auditoría de la fuente en las 6 elecciones.',
   },
 ];
 
@@ -126,7 +196,7 @@ export function W18Methodology() {
         />
       }
       title="Metodología"
-      lead="Cómo calculamos cada cifra de ReVoto. Corte [dd/mm/aaaa]."
+      lead={`Cómo calculamos cada cifra de ReVoto. Datos del ${DATA_COPY.date}.`}
       aside={desktop ? sections : undefined}
       columns="sidebar"
     >

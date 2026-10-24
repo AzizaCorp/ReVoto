@@ -1,3 +1,4 @@
+import { storyLength } from '@/domain';
 import ballotBox from '@/presentation/assets/illustration-ballot-box.svg';
 import blob from '@/presentation/assets/decor-blob.svg';
 import sparkle from '@/presentation/assets/decor-sparkle.svg';
@@ -51,7 +52,8 @@ export function W01Cover() {
       </h1>
       <Text variant="lead">
         <span className={styles.lead}>
-          Descubre en 10 pantallas cómo vota tu municipio frente al país. Sin datos personales.
+          Descubre en {storyLength(nav.sequence)} pantallas cómo vota tu municipio frente al país.
+          Sin datos personales.
         </span>
       </Text>
       {wide && <div className={styles.startWide}>{start}</div>}

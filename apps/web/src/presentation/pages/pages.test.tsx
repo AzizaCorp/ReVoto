@@ -1,5 +1,6 @@
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { type SheetId, type ViewId } from '@/presentation/providers/Navigation';
+import { memoryDependencies } from '@/test/memoryRepositories';
 import { renderWithApp } from '@/test/renderWithApp';
 import { PAGES, SHEETS } from '.';
 
@@ -32,9 +33,67 @@ describe('Skeleton pages', () => {
     },
   );
 
-  it('W-02 offers a way back to the cover', async () => {
+  it.each(['W-04', 'W-05', 'W-06', 'W-07'] as ViewId[])(
+    '%s shows its chart as a table in place, without switching to the lite version (DEF-24)',
+    async (id) => {
+      window.location.hash = `#/${id}`;
+      const Page = PAGES[id];
+      await withProviders(<Page />);
+      fireEvent.click(screen.getAllByRole('button', { name: 'Ver como tabla' })[0]!);
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(window.location.hash).toBe(`#/${id}`);
+      expect(screen.getByRole('button', { name: 'Ver como gráfica' })).toBeInTheDocument();
+    },
+  );
+
+  it('W-20 shows the audit of the copy while there is no calidad.json', async () => {
+    const Sheet = SHEETS['W-20'];
+    await renderWithApp(<Sheet />, {
+      ...memoryDependencies(),
+      quality: {
+        report: async () => ({
+          version: 'Sin versión publicada',
+          generatedAt: '',
+          source: 'INE · CCPC',
+          maxDifferencePoints: null,
+          checks: [],
+        }),
+      },
+    });
+    expect(screen.getByText('5 de 8')).toBeInTheDocument();
+    expect(screen.getByText(/Copia del 18\/10\/2026/)).toBeInTheDocument();
+    expect(screen.getByText('2,518 archivos validados')).toBeInTheDocument();
+    expect(screen.getByText(/Auditoría del 23\/10\/2026/)).toBeInTheDocument();
+  });
+
+  it('W-16 downloads each table as CSV and JSON, and disables the missing ones', async () => {
+    const Page = PAGES['W-16'];
+    await withProviders(<Page />);
+    const csv = screen.getByRole('link', { name: 'Descargar Participación por territorio en CSV' });
+    expect(csv).toHaveAttribute('href', '/data/descargas/participacion.csv');
+    expect(csv).toHaveAttribute('download', 'revoto_participacion.csv');
+    expect(
+      screen.getByRole('button', { name: 'Descargar Arquetipos municipales en JSON' }),
+    ).toBeDisabled();
+  });
+
+  it('W-02 offers a way back to the cover with the same ‹ › bar as the story (DEF-23)', async () => {
+    window.location.hash = '#/W-02';
     const Page = PAGES['W-02'];
     await withProviders(<Page />);
-    expect(screen.getByRole('button', { name: /inicio/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Pantalla anterior' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Continuar' })).toBeInTheDocument();
+  });
+
+  it('W-02b has the story bar: «Saltar» until an answer, then «Ver mis cifras» (DEF-23)', async () => {
+    window.location.hash = '#/W-02b';
+    const Page = PAGES['W-02b'];
+    await withProviders(<Page />);
+    expect(
+      screen.getByRole('navigation', { name: 'Navegación de la historia' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Saltar' })).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole('button', { name: '25–34' })[0]!);
+    expect(screen.getByRole('button', { name: 'Ver mis cifras' })).toBeInTheDocument();
   });
 });

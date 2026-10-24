@@ -24,6 +24,13 @@
   font-weight: var(--rv-weight-semibold);
   line-height: 1.3;
 }
+.detail {
+  display: block;
+  margin-top: var(--rv-space-05);
+  font-size: var(--rv-text-meta);
+  font-weight: var(--rv-weight-regular);
+  color: var(--rv-color-ink-2);
+}
 .reference {
   flex: none;
   font-size: var(--rv-text-label);

@@ -47,6 +47,10 @@
   flex-direction: column;
   gap: var(--rv-space-15);
 }
+/* Rows keep their height and the content scrolls, even with larger text (DEF-28). */
+.content > * {
+  flex-shrink: 0;
+}
 
 /* Tablet: sheet with 64 px margins. */
 @media (min-width: 768px) {

@@ -22,3 +22,22 @@
     scale: 1 1;
   }
 }
+/* Going back, the segment just left empties towards the left: the fill played in reverse. Its
+   resting state is empty, so with no animations (reduced motion, easy reading) it is simply off. */
+.leaving::after {
+  content: '';
+  display: block;
+  height: 100%;
+  background: currentColor;
+  transform-origin: left;
+  scale: 0 1;
+  animation: rv-empty var(--rv-duration-enter) var(--rv-easing);
+}
+@keyframes rv-empty {
+  from {
+    scale: 1 1;
+  }
+  to {
+    scale: 0 1;
+  }
+}

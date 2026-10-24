@@ -18,8 +18,14 @@ export {
   type PlaceInState,
 } from './use-cases/municipalityInsights';
 export { getQualityReport } from './use-cases/getQualityReport';
+export { stateExtremes, type StateExtreme, type StateExtremes } from './use-cases/stateExtremes';
 export { getTerritoryStory, type TerritoryStory } from './use-cases/getTerritoryStory';
-export type { OpenDataLinks, OpenDataRepository } from './ports/OpenDataRepository';
+export type {
+  DownloadLinks,
+  OpenDataLinks,
+  OpenDataRepository,
+  OpenDataset,
+} from './ports/OpenDataRepository';
 export type {
   GeographyRepository,
   MapArea,

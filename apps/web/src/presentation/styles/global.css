@@ -38,6 +38,18 @@ body {
   }
 }
 
+/* «Reducir movimiento» and «Lectura fácil» in W-13 (DEF-28): durations at 0 ms are not enough,
+   the stagger delays would still hide content for a moment. */
+:root[data-motion='reduced'] *,
+:root[data-motion='reduced'] *::before,
+:root[data-motion='reduced'] *::after,
+:root[data-reading='easy'] *,
+:root[data-reading='easy'] *::before,
+:root[data-reading='easy'] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
 /* PNG export of a card (share/exportCard.ts): every element drawn at its final state. */
 [data-exporting],
 [data-exporting] * {

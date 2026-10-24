@@ -18,6 +18,8 @@ export interface ButtonProps {
   compactIcon?: IconName;
   /** With `href` it renders as a link; otherwise as a button. */
   href?: string;
+  /** With `href`: saves the file with this name instead of opening it (W-16 downloads). */
+  download?: string;
   onClick?: () => void;
   disabled?: boolean;
   /** Takes the full available width; with `'mobile'`, only below 768 px. */
@@ -40,6 +42,7 @@ export function Button({
   trailingIcon,
   compactIcon,
   href,
+  download,
   onClick,
   disabled,
   fullWidth,
@@ -75,7 +78,7 @@ export function Button({
   );
   if (href) {
     return (
-      <a className={className} href={href} aria-label={label} onClick={onClick}>
+      <a className={className} href={href} download={download} aria-label={label} onClick={onClick}>
         {content}
       </a>
     );

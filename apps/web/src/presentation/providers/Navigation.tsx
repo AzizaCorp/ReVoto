@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -37,6 +38,8 @@ export interface Navigation {
   /** Last story screen visited (the lite version uses it to continue from there). */
   lastScreen: ScreenId;
   progress: Progress | null;
+  /** How the current screen was reached; the top bar plays its fill in reverse going back (DEF-29). */
+  direction: 'forward' | 'back';
   stepName: string | null;
   sheet: SheetId | null;
   /** Label of the chosen territory: «Ciudad de México · Iztacalco», «Jalisco» or «Nacional». */
@@ -57,6 +60,12 @@ export interface Navigation {
   changeTerritory: () => void;
   /** Leaves W-02: goes back to the screen of origin, or moves on if it was reached in order. */
   confirmTerritory: () => void;
+  /** Opens W-02b from «Cambiar respuestas» or «Responder ahora» and remembers the origin (DEF-25). */
+  editAnswers: () => void;
+  /** Screen W-02b will go back to, or null when it was reached in order. */
+  answersReturnTo: ScreenId | null;
+  /** Leaves W-02b: back to the screen of origin, or on to the next screen. */
+  doneAnswers: () => void;
 }
 
 const Context = createContext<Navigation | null>(null);
@@ -88,13 +97,27 @@ export function NavigationProvider({
   const [sheet, setSheet] = useState<SheetId | null>(null);
   const [shareSubject, setShareSubject] = useState<ShareSubject>('archetype');
   const [returnTo, setReturnTo] = useState<ScreenId | null>(null);
+  const [answersReturnTo, setAnswersReturnTo] = useState<ScreenId | null>(null);
   const [selected, setSelected] = useState<Territory>(NATIONAL);
 
-  const goTo = useCallback((id: ViewId) => {
-    setSheet(null);
-    setCurrent(id);
-    if (isScreen(id)) setLastScreen(id);
-  }, []);
+  const [direction, setDirection] = useState<'forward' | 'back'>('forward');
+  const currentRef = useRef(current);
+
+  const goTo = useCallback(
+    (id: ViewId) => {
+      const from = sequence.screens.indexOf(currentRef.current as ScreenId);
+      const to = sequence.screens.indexOf(id as ScreenId);
+      // The hash echo of a move lands on the same screen and keeps the direction.
+      if (to !== from) setDirection(from >= 0 && to >= 0 && to < from ? 'back' : 'forward');
+      currentRef.current = id;
+      setSheet(null);
+      setCurrent(id);
+      if (isScreen(id)) setLastScreen(id);
+      // Leaving «Sobre ti» by any other way forgets the pending return.
+      if (id !== 'W-02b') setAnswersReturnTo(null);
+    },
+    [sequence],
+  );
 
   // URL ↔ state
   useEffect(() => {
@@ -119,6 +142,7 @@ export function NavigationProvider({
       currentView: current,
       lastScreen,
       progress: inSequence ? progressOf(sequence, current) : null,
+      direction,
       stepName: isScreen(current) ? screenName(current) : null,
       sheet,
       territory:
@@ -145,8 +169,28 @@ export function NavigationProvider({
         setReturnTo(null);
         goTo(target);
       },
+      editAnswers: () => {
+        if (isScreen(current) && current !== 'W-02b') setAnswersReturnTo(current);
+        goTo('W-02b');
+      },
+      answersReturnTo,
+      doneAnswers: () => {
+        const target = answersReturnTo ?? nextOf(sequence, 'W-02b') ?? 'W-03';
+        goTo(target);
+      },
     };
-  }, [sequence, current, lastScreen, sheet, goTo, returnTo, selected, shareSubject]);
+  }, [
+    sequence,
+    current,
+    lastScreen,
+    direction,
+    sheet,
+    goTo,
+    returnTo,
+    answersReturnTo,
+    selected,
+    shareSubject,
+  ]);
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
