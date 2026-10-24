@@ -11,6 +11,7 @@ import {
 import { useAsync } from '@/presentation/hooks/useAsync';
 import { useDependencies } from '@/presentation/providers/Dependencies';
 import { useNavigation } from '@/presentation/providers/Navigation';
+import { DATA_COPY, SOURCE } from './shared/dataSource';
 import layout from './shared/Layout.module.css';
 
 type Link = 'csv' | 'national' | 'folder' | null;
@@ -21,7 +22,7 @@ const DATASETS: readonly [string, IconName, BubbleTone, Link, Link, string][] = 
     'brand',
     'csv',
     'folder',
-    'entidad/<entidad>.json y municipio/<entidad>/<municipio>.json',
+    'entidad/<entidad>.json y municipio/<entidad>/<cvegeo>_<municipio>.json',
   ],
   [
     'Participación por edad y sexo',
@@ -37,7 +38,7 @@ const DATASETS: readonly [string, IconName, BubbleTone, Link, Link, string][] = 
     'indigo',
     null,
     'folder',
-    'campo «arquetipo» de municipio/<entidad>/<municipio>.json',
+    'campo «arquetipo» de municipio/<entidad>/<cvegeo>_<municipio>.json',
   ],
 ];
 
@@ -57,7 +58,7 @@ export function W16OpenData() {
           : l.baseUrl;
   const date = l?.generatedAt
     ? new Date(l.generatedAt).toLocaleDateString('es-MX')
-    : '[dd/mm/aaaa]';
+    : DATA_COPY.date;
   return (
     <UtilityScreen
       top={
@@ -71,7 +72,7 @@ export function W16OpenData() {
       lead="Los mismos agregados que usa este sitio. Úsalos, verifícalos y cítalos."
     >
       {l ? (
-        <Pill number="Versión">{l.version ?? 'Sin versión publicada'}</Pill>
+        <Pill number="Versión">{l.version ?? `Copia del ${DATA_COPY.date} · exploratoria`}</Pill>
       ) : (
         <Pill tone="pending">{links.status === 'error' ? 'No disponible' : 'Cargando'}</Pill>
       )}
@@ -82,7 +83,7 @@ export function W16OpenData() {
             <div>
               <h2 className={layout.panelTitle}>{name}</h2>
               <Text variant="meta">
-                2009–2024 · corte {date} · {files}
+                2009–2024 · datos del {date} · {files}
               </Text>
             </div>
           </div>
@@ -104,8 +105,7 @@ export function W16OpenData() {
         Reporte de calidad y validación
       </Button>
       <Text variant="meta">
-        Licencia: [licencia] · Cita sugerida: ReVoto ([año]). Participación electoral 2009–2024 con
-        datos del INE.
+        Fuente: {SOURCE.name}. Código del sitio con licencia MIT. Cita sugerida: {SOURCE.citation}
       </Text>
     </UtilityScreen>
   );

@@ -4,6 +4,7 @@ import { useAsync } from '@/presentation/hooks/useAsync';
 import { useDependencies } from '@/presentation/providers/Dependencies';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import { useStoryData } from '@/presentation/providers/Story';
+import { DATA_COPY, SOURCE, electionDate } from '../shared/dataSource';
 import { YEAR } from '../shared/storyFigures';
 
 /** W-11 · Source sheet (RF-12, RN-10): territory, election and version of the figures shown. */
@@ -31,7 +32,11 @@ export function W11Source() {
           >
             Portal de datos abiertos del INE
           </Button>
-          <Button icon="copy" fullWidth>
+          <Button
+            icon="copy"
+            fullWidth
+            onClick={() => void navigator.clipboard?.writeText(SOURCE.citation).catch(() => {})}
+          >
             Copiar cita
           </Button>
         </>
@@ -42,12 +47,12 @@ export function W11Source() {
         items={[
           {
             term: 'Fuente',
-            value: 'INE · DECEYEC · Conteos censales de participación',
+            value: SOURCE.name,
             icon: 'info',
           },
           {
             term: 'Elección',
-            value: `Federal ${YEAR} y serie 2009–2024`,
+            value: `Federal ${YEAR} (jornada del ${electionDate(YEAR) ?? '—'}) y serie 2009–2024`,
             icon: 'calendar',
             tone: 'violet',
           },
@@ -60,10 +65,10 @@ export function W11Source() {
           {
             term: 'Versión de datos',
             value: l
-              ? [l.version ?? 'Sin versión publicada', l.generatedAt && date(l.generatedAt)]
-                  .filter(Boolean)
-                  .join(' · ')
-              : '[AAAAMMDD-hash]',
+              ? l.version
+                ? [l.version, l.generatedAt && date(l.generatedAt)].filter(Boolean).join(' · ')
+                : `Copia del ${DATA_COPY.date} · exploratoria`
+              : 'Cargando…',
             icon: 'calendar',
             tone: 'neutral',
           },

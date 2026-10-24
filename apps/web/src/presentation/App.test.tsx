@@ -123,8 +123,27 @@ describe('App · sequence engine', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Datos abiertos' }));
     fireEvent.click(screen.getByRole('button', { name: 'Diccionario de datos' }));
     expect(title()).toHaveTextContent('Diccionario de datos');
-    expect(
-      screen.getByRole('table', { name: /Participación por entidad y municipio/ }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('table', { name: /Participación por territorio/ })).toBeInTheDocument();
+  });
+
+  it('documents source, coverage, cut-off and quality of the published data (US-07)', () => {
+    window.location.hash = '#/W-19';
+    const { unmount } = render(<App />);
+    expect(screen.getByText(/INE · Conteos censales \(LN, SV, NS\)/)).toBeInTheDocument();
+    expect(screen.getByText(/2,451 municipios/)).toBeInTheDocument();
+    expect(screen.getByText(/Jornada de cada elección/)).toBeInTheDocument();
+    unmount();
+
+    window.location.hash = '#/W-18';
+    const { container } = render(<App />);
+    const noData = screen.getByRole('table', { name: /Registros sin dato/ });
+    expect(noData.querySelectorAll('tbody tr')).toHaveLength(6);
+    expect(noData).toHaveTextContent('6.83 %');
+    fireEvent.click(screen.getByRole('button', { name: /Qué se excluye/ }));
+    expect(screen.getByRole('table', { name: 'Reglas de calidad' })).toHaveTextContent(
+      '105 personas',
+    );
+    // No template placeholders left on the methodology.
+    expect(container.textContent).not.toMatch(/\[(umbral|dd\/mm\/aaaa|AAAAMMDD-hash|—\.—)\]/);
   });
 });

@@ -1,9 +1,18 @@
 import { getQualityReport } from '@/application';
 import { isPublishable, type QualityCheck } from '@/domain';
-import { Button, CheckList, Pill, SheetTemplate, StatCard, Text } from '@/presentation/components';
+import {
+  Button,
+  CheckList,
+  DataList,
+  Pill,
+  SheetTemplate,
+  StatCard,
+  Text,
+} from '@/presentation/components';
 import { useAsync } from '@/presentation/hooks/useAsync';
 import { useDependencies } from '@/presentation/providers/Dependencies';
 import { useNavigation } from '@/presentation/providers/Navigation';
+import { DATA_COPY, QUALITY_RULES } from '../shared/dataSource';
 import layout from '../shared/Layout.module.css';
 
 const countOf = (checks: readonly QualityCheck[], r: QualityCheck['result']) =>
@@ -52,7 +61,7 @@ export function W20Quality() {
       }
     >
       <div className={layout.row}>
-        <Pill number="Versión">{r?.version ?? '[AAAAMMDD-hash]'}</Pill>
+        <Pill number="Versión">{r?.version ?? `Copia del ${DATA_COPY.date}`}</Pill>
         {!r ? (
           <Pill tone="pending">{result.status === 'error' ? 'No disponible' : 'Cargando'}</Pill>
         ) : (
@@ -78,6 +87,13 @@ export function W20Quality() {
                 { text: 'Comparación con cifras oficiales', passed: null },
               ]
         }
+      />
+      <h3 className={layout.panelTitle}>Reglas de calidad y registros afectados</h3>
+      <DataList
+        items={QUALITY_RULES.map((q) => ({
+          term: q.rule,
+          value: `${q.affected} · ${q.treatment}`,
+        }))}
       />
       {r && <Text variant="meta">Fuente: {r.source}</Text>}
     </SheetTemplate>
