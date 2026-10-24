@@ -10,6 +10,7 @@ import {
   gap,
   NATIONAL,
   pointDifference,
+  screenName,
   turnoutIn,
   type BadgeId,
   type ElectionTurnout,
@@ -42,8 +43,8 @@ const AGES = ['18–24', '25–34', '35–44', '45–59', '60 +'] as const;
 export interface LiteContext {
   /** Moves inside the lite version. */
   show: (id: ScreenId) => void;
-  /** Screens after the cover, from the sequence (DEF-27). */
-  screens: number;
+  /** Screens after the cover, in order, from the sequence: the index of the cover (DEF-27). */
+  contents: readonly ScreenId[];
   /** Opens «Sobre ti» and remembers the screen to come back to (DEF-25). */
   editAnswers: () => void;
   /** Screen «Sobre ti» goes back to, or null when it was reached in order. */
@@ -162,19 +163,17 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
         body: (
           <>
             <p className={styles.intro}>
-              Descubre en {c.screens} pantallas cómo vota tu municipio frente al país. Sin datos
-              personales.
+              Descubre en {c.contents.length} pantallas cómo vota tu municipio frente al país. Sin
+              datos personales.
             </p>
-            <ol className={styles.toc}>
-              <li>Elige tu territorio</li>
-              <li>Así vota México</li>
-              <li>Tu territorio</li>
-              <li>15 años de elecciones</li>
-              <li>Tu generación</li>
-              <li>Mujeres y hombres</li>
-              <li>Tu lugar en tu entidad</li>
-              <li>Tu arquetipo, tu insignia y los dos juntos</li>
-              <li>Tu resumen</li>
+            <ol className={styles.toc} aria-label="Contenido">
+              {c.contents.map((id) => (
+                <li key={id}>
+                  <button type="button" className={styles.link} onClick={() => c.show(id)}>
+                    {screenName(id)}
+                  </button>
+                </li>
+              ))}
             </ol>
             <button type="button" className={styles.button} onClick={() => c.show('W-02')}>
               Empezar ›

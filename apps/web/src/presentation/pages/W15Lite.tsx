@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { next, previous, progress, storyLength, type ScreenId } from '@/domain';
+import { next, previous, progress, type ScreenId } from '@/domain';
 import { LiteScreen } from '@/presentation/components';
 import { useMediaQuery } from '@/presentation/hooks/useMediaQuery';
 import { useNavigation } from '@/presentation/providers/Navigation';
@@ -35,7 +35,7 @@ export function W15Lite() {
   };
   const step = liteStep(id, {
     show,
-    screens: storyLength(nav.sequence),
+    contents: nav.sequence.screens.slice(1),
     editAnswers: () => {
       if (id !== 'W-02b') setAnswersReturnTo(id);
       show('W-02b');
