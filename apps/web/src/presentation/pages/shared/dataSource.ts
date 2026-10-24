@@ -162,3 +162,62 @@ export const QUALITY_RULES: readonly QualityRule[] = [
     treatment: 'Sin cifra de participación',
   },
 ];
+
+export interface AuditCheck {
+  description: string;
+  result: 'passed' | 'pending' | 'failed';
+  detail: string;
+}
+
+/**
+ * Quality audit of this copy (RPT-CALIDAD-DATOS-REVOTO, 23/10/2026). W-20 shows it while the copy
+ * has no `calidad.json`; once the pipeline publishes one, its checks take precedence.
+ */
+export const AUDIT = {
+  date: '23/10/2026',
+  verdict:
+    'Publicable como versión exploratoria. Falta el cotejo contra las cifras oficiales del INE para aprobarla.',
+  checks: [
+    {
+      description: 'Conteos sin nulos, negativos, duplicados ni más votos que lista nominal',
+      result: 'passed',
+      detail: '0 incidencias en 706,806 registros revisados (Querétaro, 2009–2024)',
+    },
+    {
+      description: 'Lista nominal = votaron + no votaron + sin dato',
+      result: 'passed',
+      detail: '16 de 16 municipios de Ciudad de México, 2024',
+    },
+    {
+      description: 'Fórmula de participación: votaron ÷ (lista nominal − sin dato)',
+      result: 'passed',
+      detail:
+        'La participación nacional coincide con la auditoría de la fuente en las 6 elecciones',
+    },
+    {
+      description: 'Archivos conformes al contrato de datos',
+      result: 'passed',
+      detail: '2,518 archivos validados',
+    },
+    {
+      description: 'Peso de los archivos por consulta',
+      result: 'passed',
+      detail: 'Máximo 200 KB por entidad y 276 KB por mapa; el límite es 300 KB',
+    },
+    {
+      description: 'Diferencia contra las cifras oficiales del INE de 1 punto o menos',
+      result: 'pending',
+      detail: 'El cotejo aún no se ejecuta en esta copia',
+    },
+    {
+      description: 'Reglas de calidad con sus registros afectados',
+      result: 'pending',
+      detail: '8 de 10 con conteo; faltan edades fuera de rango y distrito local vacío',
+    },
+    {
+      description: 'Equivalencia de cada municipio entre INE e INEGI',
+      result: 'pending',
+      detail: '52 municipios sin clave INEGI y 1 archivo sin enlazar a su entidad',
+    },
+  ] as readonly AuditCheck[],
+} as const;

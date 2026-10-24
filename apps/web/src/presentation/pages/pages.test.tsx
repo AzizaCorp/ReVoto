@@ -1,5 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { type SheetId, type ViewId } from '@/presentation/providers/Navigation';
+import { memoryDependencies } from '@/test/memoryRepositories';
 import { renderWithApp } from '@/test/renderWithApp';
 import { PAGES, SHEETS } from '.';
 
@@ -44,6 +45,26 @@ describe('Skeleton pages', () => {
       expect(screen.getByRole('button', { name: 'Ver como gráfica' })).toBeInTheDocument();
     },
   );
+
+  it('W-20 shows the audit of the copy while there is no calidad.json', async () => {
+    const Sheet = SHEETS['W-20'];
+    await renderWithApp(<Sheet />, {
+      ...memoryDependencies(),
+      quality: {
+        report: async () => ({
+          version: 'Sin versión publicada',
+          generatedAt: '',
+          source: 'INE · CCPC',
+          maxDifferencePoints: null,
+          checks: [],
+        }),
+      },
+    });
+    expect(screen.getByText('5 de 8')).toBeInTheDocument();
+    expect(screen.getByText(/Copia del 18\/10\/2026/)).toBeInTheDocument();
+    expect(screen.getByText('2,518 archivos validados')).toBeInTheDocument();
+    expect(screen.getByText(/Auditoría del 23\/10\/2026/)).toBeInTheDocument();
+  });
 
   it('W-16 downloads each table as CSV and JSON, and disables the missing ones', async () => {
     const Page = PAGES['W-16'];

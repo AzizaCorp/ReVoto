@@ -5,6 +5,8 @@ export interface CheckItem {
   text: string;
   /** `null` while the pipeline has not run. */
   passed: boolean | null;
+  /** What was measured, under the check (e.g. «2,518 archivos validados»). */
+  detail?: string;
 }
 
 const STATUS = { true: 'Cumple', false: 'No cumple', null: 'Pendiente' } as const;
@@ -22,6 +24,7 @@ export function CheckList({ items }: { items: readonly CheckItem[] }) {
           />
           <span className={styles.text}>
             {c.text}
+            {c.detail && <span className={styles.detail}>{c.detail}</span>}
             <VisuallyHidden> · </VisuallyHidden>
           </span>
           <span className={styles.reference}>
