@@ -60,8 +60,9 @@
   | --- | --- | --- |
   | `fucsia` | #ff2d94 · #ff8cc6 · #ffd23f · #c8106e · #933d82 | «Compartir» de la barra superior y de la barra inferior en W-03 a W-08 |
   | `aurora` | #7b45d6 · #4b5fe0 · #c6f432 · #ff8cc6 | «Compartir mi arquetipo» (W-09) y «Compartir los dos» (W-09c) |
-  | `oro` | #ffd23f · #ff8a00 · #ff2d94 · #fff3d6 | «Compartir mi insignia» (W-09b) y «Compartir mi resumen» (W-10) |
+  | `oro` | #ffd23f · #ff8a00 · #ff2d94 · #fff3d6 | «Compartir mi insignia» (W-09b), «Compartir mi resumen» (W-10) y «Descubrir mi territorio» (W-01) |
 
+- En la portada (W-01) la urna, el fondo, la estrella y el destello flotan: solo se mueven en vertical unos pocos píxeles (`--rv-float-distance`, 6 px; la estrella y el destello giran ±6°), cada uno con su propio ritmo, para que nunca cambien el ancho ni el alto de la página.
 - La tarjeta 1:1 conserva la cifra, la frase, el territorio y la fuente; muestra las barras solo cuando son 3 o menos.
 - El contenido sale de `pages/shared/slideCards.ts` (función pura y probada) y se dibuja con `SlideCard`.
 

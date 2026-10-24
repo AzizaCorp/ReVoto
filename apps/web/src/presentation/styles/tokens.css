@@ -185,6 +185,12 @@
      spins from the start; a pop, a glow and a shine 2 s after the screen changes, then on a
      Fibonacci rhythm (atoms/Button/chromaBursts.ts). Colors from the design palette. ── */
   --rv-chroma-burst: 1800ms; /* = BURST_MS */
+  /* Float of the cover illustration (W-01): only vertical, a few pixels, so it never changes the
+     size of the page. */
+  --rv-float-distance: 6px;
+  --rv-float-distance-small: 4px;
+  --rv-float-tilt: 6deg;
+  --rv-float-duration: 6s;
   --rv-chroma-spin: 3200ms;
   --rv-chroma-border: 2px;
   --rv-chroma-pop-scale: 1.08;

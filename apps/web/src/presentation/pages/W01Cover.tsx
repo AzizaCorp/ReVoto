@@ -24,6 +24,7 @@ export function W01Cover() {
       size="large"
       trailingIcon="arrow"
       fullWidth="mobile"
+      chroma="oro"
       onClick={nav.next ?? undefined}
     >
       Descubrir mi territorio
