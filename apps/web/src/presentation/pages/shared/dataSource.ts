@@ -7,7 +7,7 @@
  */
 
 export const SOURCE = {
-  name: 'INE · DECEYEC · Conteos censales de participación ciudadana',
+  name: 'INE · Conteos Censales de Participación Ciudadana (CCPC)',
   citation:
     'ReVoto (2026). Participación electoral federal 2009–2024, con datos de los Conteos censales de participación ciudadana del INE.',
   files: '192 archivos (32 entidades × 6 elecciones)',

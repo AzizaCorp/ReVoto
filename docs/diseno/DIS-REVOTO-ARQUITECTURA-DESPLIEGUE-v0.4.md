@@ -395,7 +395,7 @@ El pipeline borra la versión anterior al exportar: en el repositorio solo exist
 {
   "version_datos": "20261012-a1b2c3d",
   "generado": "2026-10-12T18:30:00-06:00",
-  "fuente": "Conteos censales INE (DECEYEC), elecciones federales 2009–2024",
+  "fuente": "INE · CCPC, elecciones federales 2009–2024",
   "validacion": { "max_diferencia_pp": 0.31, "reporte": "pipeline/reportes/20261012.md" }
 }
 ```
@@ -404,7 +404,7 @@ El pipeline borra la versión anterior al exportar: en el repositorio solo exist
 // 20261012-a1b2c3d/entidad/14.json (recortado)
 {
   "territorio": { "nivel": "entidad", "cve": 14, "nombre": "Jalisco" },
-  "fuente": "Conteos censales INE (DECEYEC)",
+  "fuente": "INE · CCPC",
   "elecciones": [
     { "anio": 2024, "tipo": "presidencial", "participacion": 0.612, "lista_nominal": 6512345,
       "por_edad": { "18-24": 0.551, "25-34": 0.563, "35-44": 0.601, "45-59": 0.652, "60+": 0.668 },
