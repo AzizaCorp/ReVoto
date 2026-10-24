@@ -781,3 +781,4 @@ Este documento se revisa al cierre de cada sprint y cada vez que cambie una deci
 | 2 | Angel Mauricio Ramirez | Estructura de monorepo (§7) y nota sobre RN-06 en el SQL vigente (§4.4) | 08/10/2026 |
 | 3 | Angel Mauricio Ramirez | Capas DDD en la app y monorepo mínimo (§6.1, §7, ADR-0003) | 08/10/2026 |
 | 4 | Angel Mauricio Ramirez | v0.4: puente v2 → L4 (§4.7), contrato extendido con geometría, mapa y calidad (§5), puertos y capas reales de la app (§6.1), nuevos riesgos y decisiones; ADR-0004 a ADR-0006 | 18/10/2026 |
+| 5 | Angel Mauricio Ramirez | Fuente de los ejemplos L4 (§5) citada como INE · CCPC en lugar de DECEYEC | 23/10/2026 |
