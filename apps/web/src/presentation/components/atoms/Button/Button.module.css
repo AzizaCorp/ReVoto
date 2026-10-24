@@ -91,6 +91,19 @@
   border-color: var(--rv-color-border);
   color: var(--rv-color-muted);
 }
+/* Text links and small buttons (source label, chips) wrap instead of running off the screen with
+   larger text (DEF-28); the bar buttons keep one line. */
+.text,
+.small {
+  flex: 0 1 auto;
+  max-width: 100%;
+  white-space: normal;
+  line-height: var(--rv-line-height-title);
+  padding-block: var(--rv-space-05);
+}
+.text {
+  text-align: left;
+}
 .fullWidth {
   width: 100%;
 }

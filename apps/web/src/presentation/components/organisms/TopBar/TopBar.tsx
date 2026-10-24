@@ -1,11 +1,12 @@
 import { Button, IconButton, Logo } from '../../atoms';
-import { ProgressBar } from '../../molecules';
+import { ProgressBar, type ProgressDirection } from '../../molecules';
 import styles from './TopBar.module.css';
 
 export interface BarProgress {
   position: number;
   total: number;
   text: string;
+  direction?: ProgressDirection;
 }
 
 export interface TopBarProps {
@@ -46,14 +47,14 @@ export function TopBar({
       {progress && (
         <div className={styles.progress}>
           <ProgressBar {...progress} />
-          {stepName && (
+          {stepName && progress.position > 0 && (
             <span className={styles.step} aria-hidden="true">
-              Paso {progress.position} de {progress.total} · {stepName}
+              Pantalla {progress.position} de {progress.total} · {stepName}
             </span>
           )}
         </div>
       )}
-      {progress && (
+      {progress && progress.position > 0 && (
         <span className={styles.counter} aria-hidden="true">
           {progress.position}/{progress.total}
         </span>

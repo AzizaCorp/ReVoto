@@ -79,10 +79,11 @@ flowchart LR
 
 - Escala mínima 16 px; 20 px o más en lectura fácil (SRS §9.3).
 - Ningún significado solo por color; toda serie lleva etiqueta de valor.
-- AP-01 (nombre del producto) condiciona la portada y la tarjeta; se usa «ReVoto» como provisional.
+- AP-01 (nombre del producto) cerrado: «ReVoto» es el nombre definitivo (23/10/2026) y es el que llevan la portada, la tarjeta, el logotipo y el ícono de la pestaña.
 
 ---
 
 | # | Autor | Modificación | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel | Creación del archivo a partir del User Story Backlog de Notion y SRS-01 | 06/10/2026 |
+| 2 | Angel | AP-01 cerrado: «ReVoto» es el nombre definitivo | 23/10/2026 |

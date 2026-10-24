@@ -12,6 +12,7 @@ import { toLayer } from './topology';
  */
 export class JsonGeographyRepository implements GeographyRepository {
   private readonly layers = new Map<string, Promise<MapLayer>>();
+  private turnout?: Promise<ReadonlyMap<number, StateTurnoutPoint>>;
 
   constructor(
     private readonly client = new JsonClient(),
@@ -57,7 +58,16 @@ export class JsonGeographyRepository implements GeographyRepository {
     });
   }
 
-  async statesTurnout(): Promise<ReadonlyMap<number, StateTurnoutPoint>> {
+  statesTurnout(): Promise<ReadonlyMap<number, StateTurnoutPoint>> {
+    // W-03 asks twice (map and headline); read the 32 state files only once.
+    this.turnout ??= this.readStatesTurnout().catch((e: unknown) => {
+      this.turnout = undefined; // let a later visit retry
+      throw e;
+    });
+    return this.turnout;
+  }
+
+  private async readStatesTurnout(): Promise<ReadonlyMap<number, StateTurnoutPoint>> {
     const catalog = await this.files.catalog();
     const entries = await Promise.all(
       catalog.map(async (e) => {

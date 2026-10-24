@@ -4,7 +4,7 @@ Este archivo es el punto de partida para cualquier agente de IA (Claude Code, Co
 
 ## Qué es ReVoto
 
-Micrositio de *storytelling* con datos de **participación electoral federal en México (2009–2024)** para el **Hackathon INE 2026**. Es una secuencia de 10 pantallas tipo *stories*, mobile-first, que muestra cuánto vota el territorio del usuario, cómo cambió en el tiempo y cómo varía por edad y sexo.
+Micrositio de *storytelling* con datos de **participación electoral federal en México (2009–2024)** para el **Hackathon INE 2026**. Es una secuencia de pantallas tipo *stories* (la portada y 12 pantallas; el número sale de `domain/narrative`), mobile-first, que muestra cuánto vota el territorio del usuario, cómo cambió en el tiempo y cómo varía por edad y sexo.
 
 - **Entrega:** 31/10/2026. **Equipo:** Angel (Architecture owner, Program manager) y Kira (Team leader, QA). Ambos son Product owner.
 - **Organización:** MIWA. Los procesos siguen CMMI-DEV v1.3 adaptado a un equipo de dos personas.

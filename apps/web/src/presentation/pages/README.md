@@ -11,8 +11,8 @@ Los nombres de archivos y componentes están en inglés; los textos que ve la pe
 | Archivo                       | Wireframe                                        | Plantilla                        | Prioridad |
 | ----------------------------- | ------------------------------------------------ | -------------------------------- | --------- |
 | `W01Cover.tsx`                | W-01 Portada                                     | `NarrativeScreen` (sin progreso) | Must      |
-| `W02Territory.tsx`            | W-02 Elige tu territorio                         | `UtilityScreen`                  | Must      |
-| `W02bAboutYou.tsx`            | W-02b Sobre ti (subpantalla del paso 2)          | `UtilityScreen`                  | Could     |
+| `W02Territory.tsx`            | W-02 Elige tu territorio                         | `NarrativeScreen` (`StoryFrame`) | Must      |
+| `W02bAboutYou.tsx`            | W-02b Sobre ti                                   | `NarrativeScreen` (`StoryFrame`) | Could     |
 | `W03MexicoVoted.tsx`          | W-03 México votó                                 | `NarrativeScreen`                | Must      |
 | `W04YourTerritory.tsx`        | W-04 Tu territorio                               | `NarrativeScreen`                | Must      |
 | `W05FifteenYears.tsx`         | W-05 Quince años de elecciones                   | `NarrativeScreen`                | Must      |
@@ -20,8 +20,8 @@ Los nombres de archivos y componentes están en inglés; los textos que ve la pe
 | `W07WomenAndMen.tsx`          | W-07 Mujeres y hombres                           | `NarrativeScreen`                | Should    |
 | `W08YourPlace.tsx`            | W-08 Tu lugar en tu entidad                      | `NarrativeScreen`                | Could     |
 | `W09Archetype.tsx`            | W-09 El arquetipo de tu municipio                | `NarrativeScreen`                | Should    |
-| `W09bBadge.tsx`               | W-09b Tu insignia (subpantalla del paso 9)       | `NarrativeScreen`                | Could     |
-| `W09cMyMunicipalityAndMe.tsx` | W-09c Mi municipio y yo (subpantalla del paso 9) | `NarrativeScreen`                | Could     |
+| `W09bBadge.tsx`               | W-09b Tu insignia                                | `NarrativeScreen`                | Could     |
+| `W09cMyMunicipalityAndMe.tsx` | W-09c Mi municipio y yo                          | `NarrativeScreen`                | Could     |
 | `W10Summary.tsx`              | W-10 Tu resumen (cierre)                         | `NarrativeScreen`                | Must      |
 | `sheets/W11Source.tsx`        | W-11 Ficha de fuente                             | `SheetTemplate`                  | Must      |
 | `sheets/W12Share.tsx`         | W-12 Crear tarjeta                               | `SheetTemplate`                  | Must      |
@@ -36,9 +36,19 @@ Los nombres de archivos y componentes están en inglés; los textos que ve la pe
 - `index.ts` registra cada vista en `PAGES` y cada hoja en `SHEETS`. El **orden** lo decide
   `domain/narrative`; el registro solo dice qué componente dibuja cada id.
 - `shared/StoryFrame.tsx` une `NarrativeScreen` con el motor: barras, progreso, chip de
-  territorio, «Fuente», «Compartir» y ‹ ›.
+  territorio, «Fuente», «Compartir» y ‹ ›. Lo usan **todas** las pantallas de la secuencia,
+  W-02 y W-02b incluidas (DEF-23); `UtilityScreen` queda para W-16 a W-19.
+- El progreso cuenta cada pantalla después de la portada (12 hoy) y la portada, la versión
+  ligera y la píldora «N/12» toman el total de la secuencia (DEF-27).
+- «Cambiar respuestas» y «Responder ahora» abren W-02b con `nav.editAnswers`, que recuerda la
+  pantalla de origen; «Guardar y volver» regresa ahí (DEF-25).
+- Cada gráfica va dentro de `ChartTable` para verse como tabla en el mismo lugar (DEF-24).
+- `shared/dataSource.ts` concentra la fuente, las fechas de corte, el umbral, las reglas de
+  calidad y la auditoría de la copia de datos; lo leen W-11, W-16, W-18, W-19 y W-20 (mismo
+  texto que D06).
 - La URL refleja la vista (`#/W-03`), así funciona el botón «atrás» y se puede abrir una pantalla
-  directo. Flechas ← → y deslizar cambian de pantalla (`hooks/useNavigationShortcuts`).
+  directo. Flechas ← → y deslizar cambian de pantalla (`hooks/useNavigationShortcuts`, ver sus
+  reglas en `hooks/README.md`).
 - Las respuestas de W-02b viven en memoria (`providers/Profile.tsx`): no se guardan ni se envían.
 
 W-14 (lector de pantalla) no es una página: es un comportamiento que cumplen todas. Los estados de W-17 se muestran dentro de cada página con el organismo `StatusView`; `W17Estados` solo los reúne para revisarlos.

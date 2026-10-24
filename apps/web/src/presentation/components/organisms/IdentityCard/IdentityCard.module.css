@@ -240,8 +240,23 @@
   color: var(--card-ink);
   opacity: 0.8;
 }
+.compare .hint {
+  align-self: center;
+  justify-self: start;
+  padding: calc(6 * var(--u)) calc(10 * var(--u));
+  border: calc(1.5 * var(--u)) dashed color-mix(in srgb, var(--card-ink) 45%, transparent);
+  border-radius: calc(10 * var(--u));
+  font-family: inherit;
+  font-size: calc(13 * var(--u));
+  font-weight: var(--rv-weight-semibold);
+  white-space: normal;
+  color: var(--card-ink);
+}
 .post .compare b {
   font-size: calc(22 * var(--u));
+}
+.post .compare .hint {
+  font-size: calc(11 * var(--u));
 }
 .post .compare .generation {
   font-size: calc(15 * var(--u));

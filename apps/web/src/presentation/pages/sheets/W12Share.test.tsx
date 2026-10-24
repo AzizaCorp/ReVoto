@@ -9,7 +9,7 @@ import { W09Archetype } from '../W09Archetype';
 import { W09bBadge } from '../W09bBadge';
 import { W09cMyMunicipalityAndMe } from '../W09cMyMunicipalityAndMe';
 import type * as ExportCard from '@/presentation/share/exportCard';
-import { W12Share } from './W12Share';
+import { shareBlocker, W12Share } from './W12Share';
 
 const exporter = vi.hoisted(() => ({
   cardToPng: vi.fn(async () => new Blob(['png'], { type: 'image/png' })),
@@ -118,5 +118,121 @@ describe('W-12 · Share sheet', () => {
     expect(within(sheet).queryByRole('figure')).toBeNull();
     expect(sheet).toHaveTextContent('Elige un municipio para crear la tarjeta de su arquetipo.');
     expect(within(sheet).getByRole('button', { name: 'Descargar imagen' })).toBeDisabled();
+  });
+
+  it('without a municipality the badge card asks for one instead of «—.— de 3» (DEF-26)', async () => {
+    function NoTerritory() {
+      const { answer } = useProfile();
+      useEffect(() => {
+        answer('age', '18–24');
+        for (const k of ['voted2018', 'voted2021', 'voted2024'] as const) answer(k, 'Sí');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+      return <W12Share />;
+    }
+    await renderWithApp(<NoTerritory />);
+    await act(async () => {});
+    const sheet = screen.getByRole('dialog', { name: 'Comparte este dato' });
+    fireEvent.click(within(sheet).getByRole('radio', { name: 'Mi insignia' }));
+    expect(within(sheet).queryByRole('figure')).toBeNull();
+    expect(sheet).not.toHaveTextContent('—.— de 3');
+    expect(sheet).toHaveTextContent('Elige un municipio para comparar tu insignia');
+    expect(within(sheet).getByRole('button', { name: 'Elegir municipio' })).toBeInTheDocument();
+    expect(within(sheet).getByRole('button', { name: 'Descargar imagen' })).toBeDisabled();
+  });
+});
+
+describe('Share buttons without a municipality (DEF-26)', () => {
+  function Answered({ Page }: { Page: () => React.JSX.Element }) {
+    const { answer } = useProfile();
+    useEffect(() => {
+      answer('age', '25–34');
+      for (const k of ['voted2018', 'voted2021', 'voted2024'] as const) answer(k, 'Sí');
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    return <Page />;
+  }
+
+  it.each([
+    ['W-09', W09Archetype, /Compartir mi arquetipo/],
+    ['W-09b', W09bBadge, /Compartir mi insignia/],
+    ['W-09c', W09cMyMunicipalityAndMe, /Compartir los dos/],
+  ] as const)(
+    '%s asks for a municipality instead of sharing a card with placeholders',
+    async (_, Page, share) => {
+      const { container } = await renderWithApp(<Answered Page={Page} />);
+      await act(async () => {});
+      expect(screen.queryByRole('button', { name: share })).toBeNull();
+      expect(
+        screen.getByRole('button', {
+          name: /^(Elige tu municipio para compartir|Elegir municipio)$/,
+        }),
+      ).toBeInTheDocument();
+      for (const f of container.querySelectorAll('figure')) {
+        expect(f.textContent).not.toMatch(/\[|—\.—/);
+      }
+    },
+  );
+});
+
+describe('W-09 without a municipality', () => {
+  it('shows the «elige tu municipio» card instead of a sample archetype', async () => {
+    await renderWithApp(<W09Archetype />);
+    await act(async () => {});
+    const card = screen.getByRole('figure');
+    expect(card).toHaveTextContent('¿Cuál es el de tu municipio?');
+    expect(card).not.toHaveTextContent('Siempre presente');
+    expect(screen.queryByRole('radiogroup', { name: /Vista previa/ })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Elegir municipio' })).toBeInTheDocument();
+  });
+});
+
+describe('W-09c without a municipality', () => {
+  it('with answers: the card waits for the municipality and offers to choose it', async () => {
+    function Answered() {
+      const { answer } = useProfile();
+      useEffect(() => {
+        answer('age', '25–34');
+        for (const k of ['voted2018', 'voted2021', 'voted2024'] as const) answer(k, 'Sí');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+      return <W09cMyMunicipalityAndMe />;
+    }
+    await renderWithApp(<Answered />);
+    await act(async () => {});
+    expect(
+      screen.getByText(/Tu insignia ya tiene su mitad. Elige tu municipio/),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('figure')).toHaveTextContent('Falta tu municipio');
+    expect(screen.getByRole('button', { name: /Tu municipio: elígelo/ })).toBeInTheDocument();
+  });
+
+  it('without answers: both halves wait and nothing is shared', async () => {
+    await renderWithApp(<W09cMyMunicipalityAndMe />);
+    await act(async () => {});
+    expect(screen.getByRole('figure')).toHaveTextContent('Faltan las dos mitades de la tarjeta.');
+    expect(screen.queryByRole('button', { name: /Compartir/ })).toBeNull();
+  });
+});
+
+describe('shareBlocker', () => {
+  const ready = { municipality: 'Iztacalco', archetype: true, badge: true, generation: 1.8 };
+
+  it('lets every card through when all its figures exist', () => {
+    for (const what of ['archetype', 'badge', 'both'] as const) {
+      expect(shareBlocker(what, ready)).toBeNull();
+    }
+  });
+
+  it('asks for a municipality before anything else', () => {
+    for (const what of ['archetype', 'badge', 'both'] as const) {
+      expect(shareBlocker(what, { ...ready, municipality: null })?.fix).toBe('territory');
+    }
+  });
+
+  it('asks for the answers when the badge or the age is missing', () => {
+    expect(shareBlocker('badge', { ...ready, badge: false })?.fix).toBe('answer');
+    expect(shareBlocker('both', { ...ready, generation: null })?.text).toMatch(/Dinos tu edad/);
+    expect(shareBlocker('archetype', { ...ready, badge: false, generation: null })).toBeNull();
   });
 });

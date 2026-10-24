@@ -89,9 +89,18 @@ export const memoryOpenDataRepository = (): OpenDataRepository => ({
   links: async () => ({
     version: '20261013-abcdef0',
     generatedAt: '2026-10-13T16:00:00-06:00',
-    turnoutCsv: '/data/20261013-abcdef0/csv/participacion.csv',
+    downloads: {
+      turnout: {
+        csv: '/data/descargas/participacion.csv',
+        json: '/data/descargas/participacion.json',
+      },
+      ageSex: {
+        csv: '/data/descargas/participacion_edad_sexo.csv',
+        json: '/data/descargas/participacion_edad_sexo.json',
+      },
+      archetypes: { csv: null, json: null },
+    },
     nationalJson: '/data/20261013-abcdef0/nacional.json',
-    baseUrl: '/data/20261013-abcdef0/',
   }),
 });
 

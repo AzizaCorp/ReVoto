@@ -7,3 +7,4 @@ export * from './IdentityCard';
 export * from './ShareCard';
 export * from './StatusView';
 export * from './TopBar';
+export * from './ChartTable';

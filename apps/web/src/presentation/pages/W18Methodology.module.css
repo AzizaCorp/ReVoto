@@ -14,6 +14,41 @@
 .sections p {
   margin: 0;
 }
+/* Tables of the methodology (US-07 CA-02, CA-03): they scroll sideways inside the card. */
+.scroll {
+  overflow-x: auto;
+  margin-top: var(--rv-space-15);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--rv-text-meta);
+}
+.table caption {
+  padding-bottom: var(--rv-space-1);
+  text-align: left;
+  font-weight: var(--rv-weight-semibold);
+  color: var(--rv-color-ink-2);
+}
+.table th,
+.table td {
+  padding: var(--rv-space-1);
+  border-top: var(--rv-border-width) solid var(--rv-color-border);
+  text-align: left;
+  vertical-align: top;
+}
+.table thead th {
+  color: var(--rv-color-ink-2);
+  font-weight: var(--rv-weight-semibold);
+}
+.table tbody th {
+  font-weight: var(--rv-weight-medium);
+}
+.number {
+  text-align: right !important;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
 .toc ol {
   display: flex;
   flex-direction: column;

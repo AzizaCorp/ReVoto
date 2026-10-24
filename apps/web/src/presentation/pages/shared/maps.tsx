@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NATIONAL, type ElectionYear, type Territory } from '@/domain';
-import { Button, ChoroplethMap, Slot } from '@/presentation/components';
+import { Button, ChartTable, ChoroplethMap, Slot } from '@/presentation/components';
 import { percent } from '@/presentation/format';
 import { useAsync } from '@/presentation/hooks/useAsync';
 import { useDependencies } from '@/presentation/providers/Dependencies';
@@ -10,6 +10,13 @@ import styles from './maps.module.css';
 const CREDIT = 'Geometría: marco geoestadístico INEGI';
 const pct = (v: number | null | undefined) =>
   v === null || v === undefined ? 'sin dato' : percent(v);
+
+/** Table rows of a map, highest turnout first; areas without data go last (DEF-24). */
+function byTurnout(rows: readonly [string, number | null][]): [string, string][] {
+  return [...rows]
+    .sort(([a, x], [b, y]) => (y ?? -1) - (x ?? -1) || a.localeCompare(b, 'es'))
+    .map(([name, v]) => [name, pct(v)]);
+}
 
 /**
  * W-03 · The 32 states colored by turnout in one election. Touching a state opens the map of its
@@ -54,25 +61,37 @@ export function CountryMap({
     );
   }
   return (
-    <ChoroplethMap
-      layer={layer}
-      valueOf={(id) => points.get(Number(id))?.turnout[year] ?? null}
-      label={`Mapa de México: participación por entidad en la elección ${typeName} ${year}`}
-      legendTitle={`Participación · ${typeName} ${year}`}
-      format={percent}
-      tooltip={(id) => {
-        const p = points.get(Number(id));
-        return p
-          ? {
-              title: p.name,
-              detail: `Participación ${pct(p.turnout[year])} · toca para ver sus municipios`,
-            }
-          : null;
+    <ChartTable
+      table={{
+        caption: `Participación por entidad · elección ${typeName} ${year}`,
+        head: ['Entidad', 'Participación'],
+        rows: byTurnout([...points.values()].map((p) => [p.name, p.turnout[year] ?? null])),
+        ...(highlight !== null && points.get(highlight)
+          ? { highlight: points.get(highlight)?.name }
+          : {}),
       }}
-      highlight={highlight === null ? null : String(highlight)}
-      onSelect={(id) => setOpen(Number(id))}
-      credit={CREDIT}
-    />
+    >
+      <ChoroplethMap
+        layer={layer}
+        valueOf={(id) => points.get(Number(id))?.turnout[year] ?? null}
+        label={`Mapa de México: participación por entidad en la elección ${typeName} ${year}`}
+        legendTitle={`Participación · ${typeName} ${year}`}
+        format={percent}
+        tooltip={(id) => {
+          const p = points.get(Number(id));
+          return p
+            ? {
+                title: p.name,
+                detail: `Participación ${pct(p.turnout[year])} · toca para ver sus municipios`,
+              }
+            : null;
+        }}
+        highlight={highlight === null ? null : String(highlight)}
+        onSelect={(id) => setOpen(Number(id))}
+        zoomable
+        credit={CREDIT}
+      />
+    </ChartTable>
   );
 }
 
@@ -108,25 +127,38 @@ function MunicipalitiesOf({
       <Button size="small" icon="back" onClick={onBack}>
         Volver a México
       </Button>
-      <ChoroplethMap
-        layer={layer}
-        valueOf={(id) => {
-          const m = byKey.get(id);
-          return m && !m.suppressed ? (m.turnout[year] ?? null) : null;
+      <ChartTable
+        table={{
+          caption: `Participación por municipio · ${stateName} · ${year}`,
+          head: ['Municipio', 'Participación'],
+          rows: byTurnout(
+            overview.municipalities.map((m) => [
+              m.municipality.name,
+              m.suppressed ? null : (m.turnout[year] ?? null),
+            ]),
+          ),
         }}
-        label={`Mapa de ${stateName}: participación por municipio en ${year}`}
-        legendTitle={`Participación en ${stateName} · ${year}`}
-        format={percent}
-        tooltip={(id) => {
-          const m = byKey.get(id);
-          return m
-            ? { title: m.municipality.name, detail: `Participación ${pct(m.turnout[year])}` }
-            : null;
-        }}
-        highlight={null}
-        zoomable
-        credit={CREDIT}
-      />
+      >
+        <ChoroplethMap
+          layer={layer}
+          valueOf={(id) => {
+            const m = byKey.get(id);
+            return m && !m.suppressed ? (m.turnout[year] ?? null) : null;
+          }}
+          label={`Mapa de ${stateName}: participación por municipio en ${year}`}
+          legendTitle={`Participación en ${stateName} · ${year}`}
+          format={percent}
+          tooltip={(id) => {
+            const m = byKey.get(id);
+            return m
+              ? { title: m.municipality.name, detail: `Participación ${pct(m.turnout[year])}` }
+              : null;
+          }}
+          highlight={null}
+          zoomable
+          credit={CREDIT}
+        />
+      </ChartTable>
     </div>
   );
 }
@@ -166,33 +198,48 @@ export function StateMap({
   );
   const own = territory.level === 'municipality' ? territory.key : null;
   const stateName = territory.level === 'municipality' ? territory.stateName : territory.name;
+  const ownName = territory.level === 'municipality' ? territory.name : undefined;
   return (
-    <ChoroplethMap
-      layer={layer.data}
-      valueOf={(id) => {
-        const m = byCode.get(id);
-        return m && !m.suppressed ? (m.turnout[year] ?? null) : null;
+    <ChartTable
+      table={{
+        caption: `Participación por municipio · ${stateName} · ${year}`,
+        head: ['Municipio', 'Participación'],
+        rows: byTurnout(
+          [...byCode.values()].map((m) => [
+            m.municipality.name,
+            m.suppressed ? null : (m.turnout[year] ?? null),
+          ]),
+        ),
+        ...(ownName ? { highlight: ownName } : {}),
       }}
-      label={`Mapa de ${stateName}: participación por municipio en ${year}`}
-      legendTitle={`Participación en ${stateName} · ${year}`}
-      format={percent}
-      tooltip={(id) => {
-        const m = byCode.get(id);
-        return m
-          ? {
-              title: m.municipality.name,
-              detail: m.suppressed
-                ? 'Menos de 50 personas en lista (RN-05)'
-                : `Participación ${pct(m.turnout[year])}`,
-            }
-          : null;
-      }}
-      highlight={own}
-      outlined={story?.profile?.neighbours ?? []}
-      zoomable
-      size="compact"
-      credit={CREDIT}
-    />
+    >
+      <ChoroplethMap
+        layer={layer.data}
+        valueOf={(id) => {
+          const m = byCode.get(id);
+          return m && !m.suppressed ? (m.turnout[year] ?? null) : null;
+        }}
+        label={`Mapa de ${stateName}: participación por municipio en ${year}`}
+        legendTitle={`Participación en ${stateName} · ${year}`}
+        format={percent}
+        tooltip={(id) => {
+          const m = byCode.get(id);
+          return m
+            ? {
+                title: m.municipality.name,
+                detail: m.suppressed
+                  ? 'Menos de 50 personas en la lista nominal'
+                  : `Participación ${pct(m.turnout[year])}`,
+              }
+            : null;
+        }}
+        highlight={own}
+        outlined={story?.profile?.neighbours ?? []}
+        zoomable
+        size="compact"
+        credit={CREDIT}
+      />
+    </ChartTable>
   );
 }
 
@@ -225,6 +272,7 @@ export function StatesPicker({
       highlight={selected === null ? null : String(selected)}
       onSelect={(id) => onSelect(Number(id))}
       picker
+      zoomable
     />
   );
 }
