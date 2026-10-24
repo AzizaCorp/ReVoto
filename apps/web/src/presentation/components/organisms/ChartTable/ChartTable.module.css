@@ -1,0 +1,62 @@
+/* Only tokens from presentation/styles/tokens.css: no literal values. */
+.chartTable {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rv-space-1);
+  width: 100%;
+  min-width: 0;
+}
+.toggle {
+  display: flex;
+  justify-content: flex-end;
+}
+.view {
+  min-width: 0;
+}
+/* Wide tables scroll sideways inside the card; the story swipe leaves them alone (DEF-30). */
+.scroll {
+  overflow: auto;
+  max-height: var(--rv-table-max-height);
+  background: var(--rv-color-paper);
+  border: var(--rv-border-width) solid var(--rv-color-border);
+  border-radius: var(--rv-radius-card);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--rv-text-body);
+  color: var(--rv-color-ink);
+}
+.caption {
+  padding: var(--rv-space-2) var(--rv-space-2) var(--rv-space-1);
+  text-align: left;
+  font-size: var(--rv-text-meta);
+  font-weight: var(--rv-weight-semibold);
+  color: var(--rv-color-ink-2);
+}
+.table th,
+.table td {
+  padding: var(--rv-space-1) var(--rv-space-2);
+  border-top: var(--rv-border-width) solid var(--rv-color-border);
+  text-align: left;
+  white-space: nowrap;
+}
+.table thead th {
+  font-size: var(--rv-text-meta);
+  font-weight: var(--rv-weight-semibold);
+  color: var(--rv-color-ink-2);
+}
+.table tbody th {
+  font-weight: var(--rv-weight-medium);
+  white-space: normal;
+}
+.number {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
+.me {
+  background: var(--rv-color-brand-soft);
+}
+.me th {
+  font-weight: var(--rv-weight-bold);
+}

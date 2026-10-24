@@ -11,53 +11,46 @@ import {
 import { useAsync } from '@/presentation/hooks/useAsync';
 import { useDependencies } from '@/presentation/providers/Dependencies';
 import { useNavigation } from '@/presentation/providers/Navigation';
+import type { OpenDataset } from '@/application';
+import { DATA_COPY, SOURCE } from './shared/dataSource';
 import layout from './shared/Layout.module.css';
 
-type Link = 'csv' | 'national' | 'folder' | null;
-const DATASETS: readonly [string, IconName, BubbleTone, Link, Link, string][] = [
+const DATASETS: readonly [OpenDataset, string, IconName, BubbleTone, string, string][] = [
   [
-    'Participación por entidad y municipio',
+    'turnout',
+    'Participación por territorio',
     'pin',
     'brand',
-    'csv',
-    'folder',
-    'entidad/<entidad>.json y municipio/<entidad>/<municipio>.json',
+    'participacion',
+    'Una fila por territorio y elección: el país, 32 entidades y 2,450 municipios, con lista nominal y participación.',
   ],
   [
+    'ageSex',
     'Participación por edad y sexo',
     'users',
     'violet',
-    'csv',
-    'national',
-    'por_edad y por_sexo en nacional.json, entidad/ y municipio/',
+    'participacion_edad_sexo',
+    'Una fila por territorio, elección y grupo: 5 grupos de edad y 2 sexos.',
   ],
   [
+    'archetypes',
     'Arquetipos municipales',
     'star',
     'indigo',
-    null,
-    'folder',
-    'campo «arquetipo» de municipio/<entidad>/<municipio>.json',
+    'arquetipos_municipales',
+    'Una fila por municipio con su arquetipo y sus cuatro rasgos en puntos.',
   ],
 ];
 
-/** W-16 · Open data (US-22). Links to the files of the current data version. */
+/** W-16 · Open data (US-22). CSV and JSON downloads of the current data copy. */
 export function W16OpenData() {
   const nav = useNavigation();
   const { openData } = useDependencies();
   const links = useAsync(() => openData.links(), [openData]);
   const l = links.status === 'ready' ? links.data : null;
-  const url = (k: Link) =>
-    !l || !k
-      ? undefined
-      : k === 'csv'
-        ? (l.turnoutCsv ?? undefined)
-        : k === 'national'
-          ? l.nationalJson
-          : l.baseUrl;
   const date = l?.generatedAt
     ? new Date(l.generatedAt).toLocaleDateString('es-MX')
-    : '[dd/mm/aaaa]';
+    : DATA_COPY.date;
   return (
     <UtilityScreen
       top={
@@ -71,31 +64,53 @@ export function W16OpenData() {
       lead="Los mismos agregados que usa este sitio. Úsalos, verifícalos y cítalos."
     >
       {l ? (
-        <Pill number="Versión">{l.version ?? 'Sin versión publicada'}</Pill>
+        <Pill number="Versión">{l.version ?? `Copia del ${DATA_COPY.date} · exploratoria`}</Pill>
       ) : (
         <Pill tone="pending">{links.status === 'error' ? 'No disponible' : 'Cargando'}</Pill>
       )}
-      {DATASETS.map(([name, icon, tone, csv, json, files]) => (
-        <section key={name} className={layout.panel}>
-          <div className={layout.row}>
-            <IconBubble icon={icon} tone={tone} size={36} />
-            <div>
-              <h2 className={layout.panelTitle}>{name}</h2>
-              <Text variant="meta">
-                2009–2024 · corte {date} · {files}
-              </Text>
+      {DATASETS.map(([key, name, icon, tone, file, rows]) => {
+        const d = l?.downloads[key];
+        return (
+          <section key={key} className={layout.panel}>
+            <div className={layout.row}>
+              <IconBubble icon={icon} tone={tone} size={36} />
+              <div>
+                <h2 className={layout.panelTitle}>{name}</h2>
+                <Text variant="meta">
+                  2009–2024 · datos del {date} · {rows}
+                </Text>
+              </div>
             </div>
-          </div>
-          <div className={layout.grid2}>
-            <Button size="small" icon="download" href={url(csv)} disabled={!url(csv)}>
-              CSV
-            </Button>
-            <Button size="small" icon="download" href={url(json)} disabled={!url(json)}>
-              JSON
-            </Button>
-          </div>
-        </section>
-      ))}
+            <div className={layout.grid2}>
+              <Button
+                size="small"
+                icon="download"
+                href={d?.csv ?? undefined}
+                download={`revoto_${file}.csv`}
+                disabled={!d?.csv}
+                label={`Descargar ${name} en CSV`}
+              >
+                CSV
+              </Button>
+              <Button
+                size="small"
+                icon="download"
+                href={d?.json ?? undefined}
+                download={`revoto_${file}.json`}
+                disabled={!d?.json}
+                label={`Descargar ${name} en JSON`}
+              >
+                JSON
+              </Button>
+            </div>
+          </section>
+        );
+      })}
+      {l && Object.values(l.downloads).some((d) => !d.csv || !d.json) && (
+        <Text variant="meta">
+          Los archivos que no se pueden descargar aún no se publican en esta copia.
+        </Text>
+      )}
       <div className={layout.grid2}>
         <Button onClick={() => nav.goTo('W-19')}>Diccionario de datos</Button>
         <Button onClick={() => nav.goTo('W-18')}>Metodología</Button>
@@ -104,8 +119,7 @@ export function W16OpenData() {
         Reporte de calidad y validación
       </Button>
       <Text variant="meta">
-        Licencia: [licencia] · Cita sugerida: ReVoto ([año]). Participación electoral 2009–2024 con
-        datos del INE.
+        Fuente: {SOURCE.name}. Código del sitio con licencia MIT. Cita sugerida: {SOURCE.citation}
       </Text>
     </UtilityScreen>
   );

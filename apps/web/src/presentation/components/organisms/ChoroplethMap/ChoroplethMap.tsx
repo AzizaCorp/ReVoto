@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type PointerEvent, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent, type KeyboardEvent } from 'react';
 import { classOf, quantileBreaks } from '@/domain';
 import { Icon } from '../../atoms';
 import styles from './ChoroplethMap.module.css';
@@ -74,6 +74,10 @@ export function ChoroplethMap({
     null,
   );
   const svg = useRef<SVGSVGElement>(null);
+  // Active pointers and the pinch in progress (DEF-31: two-finger zoom on mobile).
+  const pointers = useRef(new Map<number, { x: number; y: number }>());
+  const pinch = useRef<{ dist: number; view: typeof view; cx: number; cy: number } | null>(null);
+  const pinched = useRef(false);
 
   const drawn = useMemo(
     () =>
@@ -119,23 +123,78 @@ export function ChoroplethMap({
   const shown = hover ?? highlight;
   const tip = shown && tooltip ? tooltip(shown) : null;
 
-  const zoom = (factor: number) =>
-    setView((v) => {
-      const w = Math.min(WIDTH, Math.max(WIDTH / 16, v.w / factor));
-      const h = (w / WIDTH) * height;
-      const cx = v.x + v.w / 2;
-      const cy = v.y + v.h / 2;
-      return { x: cx - w / 2, y: cy - h / 2, w, h };
-    });
+  /** Zooms by `factor` keeping the point (ax, ay) of the map in place (the centre by default). */
+  const zoomAround = (v: typeof view, factor: number, ax = v.x + v.w / 2, ay = v.y + v.h / 2) => {
+    const w = Math.min(WIDTH, Math.max(WIDTH / 16, v.w / factor));
+    if (w === WIDTH) return home;
+    const k = w / v.w;
+    const h = (w / WIDTH) * height;
+    return { x: ax - (ax - v.x) * k, y: ay - (ay - v.y) * k, w, h };
+  };
+  const zoom = (factor: number) => setView((v) => zoomAround(v, factor));
+  /** Map coordinates (viewBox) of a point on the screen. */
+  const toMap = (clientX: number, clientY: number, v: typeof view) => {
+    const r = svg.current?.getBoundingClientRect();
+    if (!r || !r.width || !r.height) return { x: v.x + v.w / 2, y: v.y + v.h / 2 };
+    // preserveAspectRatio="xMidYMid meet": one scale for both axes, content centred.
+    const s = Math.min(r.width / v.w, r.height / v.h);
+    const ox = (r.width - v.w * s) / 2;
+    const oy = (r.height - v.h * s) / 2;
+    return { x: v.x + (clientX - r.left - ox) / s, y: v.y + (clientY - r.top - oy) / s };
+  };
+  const distance = () => {
+    const [a, b] = [...pointers.current.values()];
+    return a && b ? Math.hypot(a.x - b.x, a.y - b.y) : 0;
+  };
+
+  // Trackpad pinch and Ctrl + wheel on desktop. Native listener: React's wheel is passive.
+  useEffect(() => {
+    const el = svg.current;
+    if (!el || !zoomable) return;
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      setView((v) => {
+        const p = toMap(e.clientX, e.clientY, v);
+        return zoomAround(v, Math.exp(-e.deltaY / 200), p.x, p.y);
+      });
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoomable, height]);
 
   const idAt = (target: EventTarget | null) =>
     target instanceof Element ? (target.getAttribute('data-id') ?? null) : null;
 
   const onPointerDown = (e: PointerEvent<SVGSVGElement>) => {
-    if (!zoomable || view.w === WIDTH) return;
+    if (!zoomable) return;
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.current.size === 2) {
+      const [a, b] = [...pointers.current.values()] as [
+        { x: number; y: number },
+        { x: number; y: number },
+      ];
+      const c = toMap((a.x + b.x) / 2, (a.y + b.y) / 2, view);
+      pinch.current = { dist: distance(), view, cx: c.x, cy: c.y };
+      pinched.current = true;
+      drag.current = null;
+      return;
+    }
+    pinched.current = false;
+    if (view.w === WIDTH) return;
     drag.current = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, moved: false };
   };
   const onPointerMove = (e: PointerEvent<SVGSVGElement>) => {
+    if (pointers.current.has(e.pointerId)) {
+      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    }
+    const p = pinch.current;
+    if (p && pointers.current.size === 2) {
+      const d = distance();
+      if (d > 0 && p.dist > 0) setView(zoomAround(p.view, d / p.dist, p.cx, p.cy));
+      return;
+    }
     const d = drag.current;
     if (d && svg.current) {
       const k = view.w / svg.current.getBoundingClientRect().width;
@@ -148,8 +207,15 @@ export function ChoroplethMap({
     setHover(idAt(e.target));
   };
   const onPointerUp = (e: PointerEvent<SVGSVGElement>) => {
+    pointers.current.delete(e.pointerId);
+    if (pointers.current.size < 2) pinch.current = null;
     const d = drag.current;
     drag.current = null;
+    // A pinch is not a tap: lifting the fingers never selects an area.
+    if (pinched.current) {
+      if (pointers.current.size === 0) pinched.current = false;
+      return;
+    }
     if (d?.moved) return;
     const id = idAt(e.target);
     if (id && onSelect) onSelect(id);
@@ -171,13 +237,22 @@ export function ChoroplethMap({
           viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`}
           preserveAspectRatio="xMidYMid meet"
           role={onSelect ? 'group' : 'img'}
+          // Its pan and pinch are not story swipes (useNavigationShortcuts).
+          data-gesture={zoomable ? 'map' : undefined}
           aria-label={label}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
-          onPointerLeave={() => {
+          onPointerCancel={(e) => {
+            pointers.current.delete(e.pointerId);
+            pinch.current = null;
             drag.current = null;
-            setHover(null);
+          }}
+          onPointerLeave={(e) => {
+            if (e.pointerType === 'mouse') {
+              drag.current = null;
+              setHover(null);
+            }
           }}
         >
           {paths.map((p) => {
@@ -221,25 +296,39 @@ export function ChoroplethMap({
             </button>
           </div>
         )}
-        {/* Visual aid on hover: the same figures are in the page text and in the lite version. */}
-        {tip && (
-          <div className={styles.tip} aria-hidden="true">
-            <b>{tip.title}</b>
-            <span>
-              <i
-                style={{
-                  background: fill(
-                    shown ? (valueById.get(shown) ?? null) : null,
-                    shown ?? undefined,
-                  ),
-                }}
-              />
-              {tip.detail}
-            </span>
-          </div>
-        )}
         {credit && <span className={styles.credit}>{credit}</span>}
       </div>
+      {/* DEF-31: the card of the area lives under the map, so it never covers small states. The
+          same figures are in the page text and in the lite version. */}
+      {tooltip && (
+        <div className={styles.tip} aria-hidden="true">
+          {tip ? (
+            <>
+              <b>{tip.title}</b>
+              <span>
+                <i
+                  style={{
+                    background: fill(
+                      shown ? (valueById.get(shown) ?? null) : null,
+                      shown ?? undefined,
+                    ),
+                  }}
+                />
+                {tip.detail}
+              </span>
+            </>
+          ) : (
+            <span>
+              {picker
+                ? 'Toca una entidad para elegirla.'
+                : onSelect
+                  ? 'Toca una entidad para ver sus municipios.'
+                  : 'Toca un municipio para ver su cifra.'}
+              {zoomable && ' Usa dos dedos o + para acercar.'}
+            </span>
+          )}
+        </div>
+      )}
       {!picker && (
         <figcaption className={styles.legend}>
           <span className={styles.legendTitle}>{legendTitle}</span>
@@ -254,7 +343,7 @@ export function ChoroplethMap({
           </span>
           {values.some((v) => v === null) && (
             <span className={styles.empty}>
-              <i /> Sin dato o con menos de 50 personas en lista (RN-05)
+              <i /> Sin dato o con menos de 50 personas en la lista nominal
             </span>
           )}
         </figcaption>

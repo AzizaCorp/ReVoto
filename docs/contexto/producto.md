@@ -1,10 +1,10 @@
 # Producto · ReVoto
 
-> Nombre provisional (AP-01). Fuente: SRS Hackathon INE, `docs/diseno/arquitectura-informacion.md`.
+> Nombre definitivo: ReVoto (AP-01 cerrado). Fuente: SRS Hackathon INE, `docs/diseno/arquitectura-informacion.md`.
 
 ## Problema y propuesta
 
-Los datos de participación electoral del INE son públicos pero difíciles de leer. ReVoto los cuenta en **10 pantallas tipo *stories*** en el celular: cuánto votó México, cuánto votó tu territorio, cómo cambió de 2009 a 2024 y cómo varía por edad y sexo. Cada cifra muestra su territorio, periodo y fuente.
+Los datos de participación electoral del INE son públicos pero difíciles de leer. ReVoto los cuenta en **una secuencia de pantallas tipo *stories*** en el celular (la portada y 12 pantallas): cuánto votó México, cuánto votó tu territorio, cómo cambió de 2009 a 2024 y cómo varía por edad y sexo. Cada cifra muestra su territorio, periodo y fuente.
 
 ## Usuarios
 

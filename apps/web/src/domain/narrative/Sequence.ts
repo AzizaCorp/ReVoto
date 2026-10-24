@@ -1,11 +1,11 @@
 /**
  * Narrative sequence (RF-01 to RF-03, HU-31). Fixed order from W-01 to W-10.
  *
- * A **step** is one idea of the story; the progress indicator counts steps and never goes past 10
- * (RF-01, US-09 CA-03). Some steps have optional **sub-screens** that share their number:
- * W-02b (Sobre ti) in step 2, and W-09b (Tu insignia) and W-09c (Mi municipio y yo) in step 9.
- * Should/Could screens can be removed and the sequence shrinks without breaking the progress
- * (SRS 10.3). Screen names are shown to people, so they stay in Spanish.
+ * The progress counts **screens**, not steps: every screen after the cover moves it one place, so
+ * the sub-screens W-02b, W-09b and W-09c advance it too (DEF-27). The total is derived from the
+ * sequence, so adding or removing a screen updates the cover copy, the pills and the bar on its own
+ * (SRS 10.3). `step` groups screens into ideas of the story for the lite version's index. Screen
+ * names are shown to people, so they stay in Spanish.
  */
 export const SCREENS = [
   { id: 'W-01', step: 1, name: 'Inicio', priority: 'must' },
@@ -24,9 +24,6 @@ export const SCREENS = [
 ] as const;
 
 export type ScreenId = (typeof SCREENS)[number]['id'];
-
-/** Maximum number of steps in the story (RF-01). */
-export const MAX_STEPS = 10;
 
 export interface Sequence {
   readonly screens: readonly ScreenId[];
@@ -52,13 +49,13 @@ export function createSequence(exclude: readonly ScreenId[] = []): Sequence {
   return { screens: SCREENS.map((s) => s.id).filter((id) => !exclude.includes(id)) };
 }
 
-/** Distinct steps left in the sequence, in order. */
-function steps(s: Sequence): number[] {
-  return [...new Set(s.screens.map((id) => definition(id).step))];
+/** Screens of the story after the cover: the number the cover promises («Descubre en N pantallas»). */
+export function storyLength(s: Sequence): number {
+  return s.screens.length - 1;
 }
 
 export interface Progress {
-  /** Step number (1…total). Sub-screens share the number of their step. */
+  /** Screen number after the cover (1…total); the cover is 0. */
   readonly position: number;
   readonly total: number;
   /** Text for the aria-live region (HU-14), shown to people in Spanish. */
@@ -66,11 +63,10 @@ export interface Progress {
 }
 
 export function progress(s: Sequence, current: ScreenId): Progress {
-  if (!s.screens.includes(current)) throw new Error(`${current} is not part of the sequence`);
-  const list = steps(s);
-  const position = list.indexOf(definition(current).step) + 1;
-  const total = list.length;
-  return { position, total, text: `Pantalla ${position} de ${total}` };
+  const position = s.screens.indexOf(current);
+  if (position < 0) throw new Error(`${current} is not part of the sequence`);
+  const total = storyLength(s);
+  return { position, total, text: position === 0 ? 'Portada' : `Pantalla ${position} de ${total}` };
 }
 
 /** No auto-advance and no wrap-around (HU-10): at the ends it returns null. */

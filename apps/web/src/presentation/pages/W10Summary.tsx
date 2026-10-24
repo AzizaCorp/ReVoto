@@ -12,6 +12,7 @@ import { useProfile } from '@/presentation/providers/Profile';
 import { useStoryData } from '@/presentation/providers/Story';
 import layout from './shared/Layout.module.css';
 import { breakdown, placeOf, YEAR } from './shared/storyFigures';
+import { ShareAction } from './shared/ShareAction';
 import { StoryFrame } from './shared/StoryFrame';
 
 type Row = readonly [string | null, string, IconName, BubbleTone, ViewId];
@@ -109,19 +110,16 @@ export function W10Summary() {
         <Button size="small" icon="pin" onClick={() => nav.goTo('W-09')}>
           {archetype ? `Tu municipio: «${ARCHETYPES[archetype]}»` : 'Tu municipio: sin arquetipo'}
         </Button>
-        <Button size="small" icon="star" onClick={() => nav.goTo(badge ? 'W-09b' : 'W-02b')}>
+        <Button
+          size="small"
+          icon="star"
+          onClick={badge ? () => nav.goTo('W-09b') : nav.editAnswers}
+        >
           {badge ? `Tú: «${BADGES[badge]}»` : 'Tú: responde «Sobre ti»'}
         </Button>
       </div>
       <div className={[layout.narrowOnly, layout.fill].join(' ')}>{rows}</div>
-      <Button
-        variant="primary"
-        icon="share"
-        fullWidth="mobile"
-        onClick={() => nav.openSheet('W-12', { share: 'both' })}
-      >
-        Compartir mi resumen
-      </Button>
+      <ShareAction what="both">Compartir mi resumen</ShareAction>
       <div className={layout.grid2}>
         <Button icon="download" onClick={() => nav.goTo('W-16')}>
           Datos abiertos

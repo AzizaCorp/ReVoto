@@ -88,12 +88,13 @@ export function BottomBar({
           )}
           {onNext ? (
             <Button
-              collapsible
+              // A custom label («Continuar», «Saltar») says what happens: it never collapses.
+              collapsible={nextLabel === 'Siguiente'}
               variant={dark ? 'brand' : 'primary'}
               trailingIcon="arrow"
               compactIcon="chev"
               onClick={onNext}
-              label="Pantalla siguiente"
+              label={nextLabel === 'Siguiente' ? 'Pantalla siguiente' : nextLabel}
             >
               {nextLabel}
             </Button>

@@ -5,3 +5,10 @@
   height: 100%;
   min-height: 0;
 }
+
+/* The «Volver a México» button takes a row: the drilled map is that much shorter. */
+@media (min-width: 768px) {
+  .drill svg {
+    max-height: min(66vh, calc(100dvh - 450px));
+  }
+}

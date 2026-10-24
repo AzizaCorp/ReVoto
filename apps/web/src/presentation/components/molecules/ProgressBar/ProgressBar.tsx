@@ -1,19 +1,30 @@
 import { ProgressSegment, VisuallyHidden } from '../../atoms';
 import styles from './ProgressBar.module.css';
 
+export type ProgressDirection = 'forward' | 'back';
+
 export interface ProgressBarProps {
   position: number;
   total: number;
-  /** Full text for screen readers, e.g. «Pantalla 3 de 10: Así vota México». */
+  /** Text from the domain (`progress().text`), e.g. «Pantalla 3 de 12». */
   text: string;
+  /** How the person arrived: going back plays the fill in reverse (DEF-29). */
+  direction?: ProgressDirection;
 }
 
-/** Ten segments; the newest one fills in (board C-02 «ProgressBar»). */
-export function ProgressBar({ position, total, text }: ProgressBarProps) {
+/** One segment per screen after the cover; the newest one fills in (board C-02 «ProgressBar»). */
+export function ProgressBar({ position, total, text, direction = 'forward' }: ProgressBarProps) {
+  const back = direction === 'back';
   return (
-    <div className={styles.progressBar}>
+    <div className={styles.progressBar} data-direction={direction}>
       {Array.from({ length: total }, (_, i) => (
-        <ProgressSegment key={i} active={i < position} current={i === position - 1} />
+        <ProgressSegment
+          key={i}
+          active={i < position}
+          current={i === position - 1}
+          still={back}
+          leaving={back && i === position}
+        />
       ))}
       <VisuallyHidden>{text}</VisuallyHidden>
     </div>

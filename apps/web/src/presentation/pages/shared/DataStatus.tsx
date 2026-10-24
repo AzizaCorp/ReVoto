@@ -16,8 +16,8 @@ export function DataStatus() {
   if (story.status === 'ready' && story.data.notice) {
     return (
       <Notice tone="threshold" title={`Mostramos ${story.data.own.territory.name}`}>
-        Tu municipio tiene menos de 50 personas en la lista nominal; sus cifras no se publican
-        (RN-05).
+        Tu municipio tiene menos de 50 personas en la lista nominal; sus cifras no se publican para
+        proteger la privacidad.
       </Notice>
     );
   }

@@ -1,4 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react';
+import { createSequence } from '@/domain';
+import { memoryDependencies } from '@/test/memoryRepositories';
 import { renderWithApp } from '@/test/renderWithApp';
 import { W15Lite } from './W15Lite';
 
@@ -20,7 +22,35 @@ describe('W-15 · Lite version', () => {
     next(); // W-03
     expect(heading()).toBe('Así vota México');
     expect(screen.getByRole('table', { name: /Participación nacional/ })).toBeInTheDocument();
-    expect(screen.getByText(/Pantalla 3 de 10 · México/)).toBeInTheDocument();
+    expect(screen.getByText(/Pantalla 3 de 12 · México/)).toBeInTheDocument();
+  });
+
+  it('goes back to the screen of origin after editing the answers (DEF-25)', async () => {
+    window.location.hash = '#/W-09b';
+    await renderLite();
+    expect(heading()).toBe('Aún sin insignia');
+    fireEvent.click(screen.getByRole('button', { name: /Responder/ }));
+    expect(heading()).toBe('Cuéntanos de ti');
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar y volver ›' }));
+    expect(heading()).toBe('Aún sin insignia');
+  });
+
+  it('builds the index of the cover from the sequence and jumps to a screen', async () => {
+    await renderLite();
+    const index = screen.getByRole('list', { name: 'Contenido' });
+    expect(index.querySelectorAll('li')).toHaveLength(12);
+    expect(screen.getByText(/Descubre en 12 pantallas/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Tu generación' }));
+    expect(screen.getByText(/Pantalla 6 de 12/)).toBeInTheDocument();
+  });
+
+  it('updates the index when a screen leaves the sequence', async () => {
+    const short = createSequence(['W-07', 'W-08']);
+    await renderWithApp(<W15Lite />, memoryDependencies(), short);
+    const index = screen.getByRole('list', { name: 'Contenido' });
+    expect(index.querySelectorAll('li')).toHaveLength(10);
+    expect(screen.queryByRole('button', { name: 'Mujeres y hombres' })).toBeNull();
+    expect(screen.getByText(/Descubre en 10 pantallas/)).toBeInTheDocument();
   });
 
   it('ends at the summary with «Fin» and no images', async () => {

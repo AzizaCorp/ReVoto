@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { latestOfType, type ElectionType } from '@/domain';
+import { stateExtremes } from '@/application';
+import { latestOfType, type ElectionType, type ElectionYear } from '@/domain';
 import { SegmentedControl, StatCard, Text } from '@/presentation/components';
 import { count, percent, PENDING } from '@/presentation/format';
+import { useAsync } from '@/presentation/hooks/useAsync';
+import { useDependencies } from '@/presentation/providers/Dependencies';
 import { useStoryData } from '@/presentation/providers/Story';
 import { DataStatus } from './shared/DataStatus';
 import { CountryMap } from './shared/maps';
@@ -48,6 +51,7 @@ export function W03MexicoVoted() {
         Cada entidad, coloreada según su participación en la elección federal {year}. Toca una para
         ver sus municipios.
       </Text>
+      {e && <Extremes year={e.election.year} />}
       <SegmentedControl
         label="Tipo de elección"
         options={TYPES}
@@ -56,5 +60,20 @@ export function W03MexicoVoted() {
       />
       <DataStatus />
     </StoryFrame>
+  );
+}
+
+/** One sentence with the highest and lowest state, so the main contrast is read, not inferred. */
+function Extremes({ year }: { year: ElectionYear }) {
+  const { geography } = useDependencies();
+  const data = useAsync(() => geography.statesTurnout(), [geography]);
+  const r = data.status === 'ready' ? stateExtremes(data.data, year) : null;
+  if (!r) return null;
+  return (
+    <Text variant="body">
+      En {year}, <strong>{r.highest.name}</strong> tuvo la participación más alta (
+      {percent(r.highest.turnout)}) y <strong>{r.lowest.name}</strong> la más baja (
+      {percent(r.lowest.turnout)}).
+    </Text>
   );
 }

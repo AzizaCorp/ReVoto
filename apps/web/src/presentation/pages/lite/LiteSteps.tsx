@@ -10,6 +10,7 @@ import {
   gap,
   NATIONAL,
   pointDifference,
+  screenName,
   turnoutIn,
   type BadgeId,
   type ElectionTurnout,
@@ -42,6 +43,12 @@ const AGES = ['18–24', '25–34', '35–44', '45–59', '60 +'] as const;
 export interface LiteContext {
   /** Moves inside the lite version. */
   show: (id: ScreenId) => void;
+  /** Screens after the cover, in order, from the sequence: the index of the cover (DEF-27). */
+  contents: readonly ScreenId[];
+  /** Opens «Sobre ti» and remembers the screen to come back to (DEF-25). */
+  editAnswers: () => void;
+  /** Screen «Sobre ti» goes back to, or null when it was reached in order. */
+  answersReturnTo: ScreenId | null;
   /** Leaves the lite version for an auxiliary view (open data, methodology). */
   open: (view: 'W-16' | 'W-18') => void;
   /** Tablet and desktop: the 15-year table adds the state column (board TL05/DL05). */
@@ -64,7 +71,7 @@ const expectedOf = (c: LiteContext) => {
 };
 
 export interface LiteStep {
-  /** Short name after «Pantalla N de 10». */
+  /** Short name after «Pantalla N de 12». */
   label: string;
   title: string;
   /** Shows «[Municipio], [Entidad] · cambiar» (from W-03 on). */
@@ -156,18 +163,17 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
         body: (
           <>
             <p className={styles.intro}>
-              Descubre en 10 pantallas cómo vota tu municipio frente al país. Sin datos personales.
+              Descubre en {c.contents.length} pantallas cómo vota tu municipio frente al país. Sin
+              datos personales.
             </p>
-            <ol className={styles.toc}>
-              <li>Elige tu territorio</li>
-              <li>Así vota México</li>
-              <li>Tu territorio</li>
-              <li>15 años de elecciones</li>
-              <li>Tu generación</li>
-              <li>Mujeres y hombres</li>
-              <li>Tu lugar en tu entidad</li>
-              <li>Tu arquetipo, tu insignia y los dos juntos</li>
-              <li>Tu resumen</li>
+            <ol className={styles.toc} aria-label="Contenido">
+              {c.contents.map((id) => (
+                <li key={id}>
+                  <button type="button" className={styles.link} onClick={() => c.show(id)}>
+                    {screenName(id)}
+                  </button>
+                </li>
+              ))}
             </ol>
             <button type="button" className={styles.button} onClick={() => c.show('W-02')}>
               Empezar ›
@@ -220,9 +226,19 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
                 </div>
               </fieldset>
             ))}
-            <button type="button" className={styles.strongLink} onClick={() => c.show('W-03')}>
-              Saltar
-            </button>
+            {c.answersReturnTo ? (
+              <button
+                type="button"
+                className={styles.button}
+                onClick={() => c.answersReturnTo && c.show(c.answersReturnTo)}
+              >
+                Guardar y volver ›
+              </button>
+            ) : (
+              <button type="button" className={styles.strongLink} onClick={() => c.show('W-03')}>
+                Saltar
+              </button>
+            )}
           </>
         ),
       };
@@ -318,13 +334,13 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
       const diff = pres !== null && mid !== null ? pointDifference(pres, mid) : null;
       const wideState = c.wide && st;
       return {
-        label: '15 años',
+        label: '2009–2024',
         title:
           diff === null
             ? '[Mensaje sobre presidenciales e intermedias]'
             : diff >= 0
-              ? `En presidenciales se vota ${pointsAbs(diff)} más que en intermedias`
-              : `En intermedias se vota ${pointsAbs(diff)} más que en presidenciales`,
+              ? `De 2009 a 2024, en presidenciales se vota ${pointsAbs(diff)} más que en intermedias`
+              : `De 2009 a 2024, en intermedias se vota ${pointsAbs(diff)} más que en presidenciales`,
         territory: true,
         source: true,
         body: (
@@ -351,7 +367,10 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
               items={[
                 ['Promedio presidencial', pres === null ? P : pct(pres)],
                 ['Promedio intermedia', mid === null ? P : pct(mid)],
-                ['De 2018 a 2024', change === null ? '± —.— pts' : points(change)],
+                [
+                  'Cambio entre las dos últimas presidenciales',
+                  change === null ? '± —.— pts' : points(change),
+                ],
               ]}
             />
           </>
@@ -377,11 +396,17 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
           <>
             <LiteTable
               caption={`Participación por grupo de edad · ${YEAR}`}
-              head={['Grupo de edad', b ? b.territory.name : 'Territorio', 'Nacional']}
+              head={
+                b?.territory.level === 'national'
+                  ? ['Grupo de edad', 'Nacional']
+                  : ['Grupo de edad', b ? b.territory.name : 'Territorio', 'Nacional']
+              }
               rows={AGE_GROUPS.map((a, i) => [
                 AGES[i]!,
                 byAge[a] === undefined ? P : pct(byAge[a]),
-                n?.byAge[a] === undefined ? P : pct(n.byAge[a]),
+                ...(b?.territory.level === 'national'
+                  ? []
+                  : [n?.byAge[a] === undefined ? P : pct(n.byAge[a])]),
               ])}
             />
             <p className={styles.big}>
@@ -425,7 +450,9 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
             <p className={styles.big}>
               Diferencia entre mujeres y hombres: {g === null ? '—.— pts' : points(g)}
             </p>
-            <p className={styles.note}>Se excluyen registros con sexo fuera de catálogo (RN-06).</p>
+            <p className={styles.note}>
+              No se cuentan los registros sin sexo registrado como hombre o mujer.
+            </p>
           </>
         ),
       };
@@ -549,7 +576,7 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
               ]}
               highlight="Tú"
             />
-            <button type="button" className={styles.strongLink} onClick={() => c.show('W-02b')}>
+            <button type="button" className={styles.strongLink} onClick={c.editAnswers}>
               Cambiar respuestas
             </button>
           </>
@@ -567,7 +594,7 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
               ]}
               highlight="Tú"
             />
-            <button type="button" className={styles.button} onClick={() => c.show('W-02b')}>
+            <button type="button" className={styles.button} onClick={c.editAnswers}>
               Responder «Sobre ti»
             </button>
           </>
@@ -597,7 +624,7 @@ export function liteStep(id: ScreenId, c: LiteContext): LiteStep {
                 {crossing?.phrase ?? 'Elige un municipio con arquetipo para ver el cruce.'}
               </p>
             ) : (
-              <button type="button" className={styles.strongLink} onClick={() => c.show('W-02b')}>
+              <button type="button" className={styles.strongLink} onClick={c.editAnswers}>
                 Responder «Sobre ti» para completar la tarjeta
               </button>
             )}
