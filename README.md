@@ -2,7 +2,7 @@
 
 Micrositio de *storytelling* con datos de participación electoral federal en México (2009–2024). Hackathon INE 2026 · MIWA.
 
-> Nombre provisional (AP-01). Datos: INE · Conteos Censales de Participación Ciudadana (CCPC). No pedimos datos personales.
+> Datos: INE · Conteos Censales de Participación Ciudadana (CCPC). No pedimos datos personales.
 
 ## Qué hace
 

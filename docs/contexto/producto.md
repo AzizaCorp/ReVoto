@@ -1,6 +1,6 @@
 # Producto · ReVoto
 
-> Nombre provisional (AP-01). Fuente: SRS Hackathon INE, `docs/diseno/arquitectura-informacion.md`.
+> Nombre definitivo: ReVoto (AP-01 cerrado). Fuente: SRS Hackathon INE, `docs/diseno/arquitectura-informacion.md`.
 
 ## Problema y propuesta
 

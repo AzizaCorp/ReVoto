@@ -13,7 +13,7 @@ Los wireframes de baja fidelidad (lo-fi) resuelven **estructura, jerarquía y fl
 2. Probar el recorrido completo de portada a cierre antes de escribir código (US-04 · CA-1).
 3. Fijar el layout **mobile-first a 360 px** que después se refinará en Figma (US-04 · CA-3, SRS 9.3).
 
-**Fuera de alcance del lo-fi:** paleta de color definitiva, tipografía de marca, ilustración, logotipo (AP-01 aún abierto) y microanimaciones.
+**Fuera de alcance del lo-fi:** paleta de color definitiva, tipografía de marca, ilustración, logotipo (AP-01 se cerró después con «ReVoto» como nombre definitivo) y microanimaciones.
 
 ---
 
@@ -197,3 +197,4 @@ Cada pantalla debe llevar, en su lista de anotaciones, al menos:
 | # | Autor | Cambio | Fecha |
 | --- | --- | --- | --- |
 | 1 | Angel (con Claude) | Creación inicial para US-04 | 05/10/2026 |
+| 2 | Angel | AP-01 cerrado: «ReVoto» es el nombre definitivo | 23/10/2026 |

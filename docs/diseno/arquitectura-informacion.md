@@ -140,6 +140,6 @@ Orden de lectura fijo (también orden de foco):
 | D-02 | El resumen (HU-06) funciona como pantalla de cierre, no como vista aparte. | Una pantalla menos que construir. |
 | D-03 | Las hojas inferiores no cuentan como pantallas de la secuencia. | El progreso no cambia al abrir Fuente/Compartir. |
 | D-04 | El progreso cuenta cada pantalla después de la portada, subpantallas incluidas (W-02b, W-09b, W-09c), y el total sale de la secuencia (DEF-27, 23/10/2026). Cambia RF-01 / HU-31 · CA-03 de «máximo 10 pasos» a «cada pantalla cuenta». | La portada, el progreso y la versión ligera dicen 12 pantallas; quitar o agregar una pantalla actualiza todo. |
-| AP-01 | Nombre del producto: se usa «ReVoto» como provisional. | Portada y tarjeta. |
+| AP-01 | ~~Nombre del producto: se usa «ReVoto» como provisional.~~ Cerrado: «ReVoto» es el nombre definitivo (23/10/2026). | Portada, tarjeta, logotipo e ícono de la pestaña. |
 | AP-05 | Catálogo de arquetipos sin definir: W-09 usa texto de ejemplo. | Revisión de neutralidad. |
 | AP-06 | Las 5 cifras del resumen son propuesta: nacional, territorio, cambio 2009→2024, brecha generacional, brecha por sexo. | W-10. |
