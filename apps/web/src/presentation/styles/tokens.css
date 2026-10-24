@@ -182,8 +182,8 @@
   --rv-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* ── Chroma of the share buttons (US-24): a «legendary» gradient border that spins, a glow and
-     a shine, 0.5 s after the screen changes. Colors from the design palette. ── */
-  --rv-chroma-delay: 500ms;
+     a shine, 2 s after the screen changes. Colors from the design palette. ── */
+  --rv-chroma-delay: 2000ms;
   --rv-chroma-burst: 1800ms;
   --rv-chroma-spin: 3200ms;
   --rv-chroma-border: 2px;

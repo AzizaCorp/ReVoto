@@ -34,7 +34,7 @@ export interface ButtonProps {
    */
   collapsible?: boolean | 'mobile' | 'narrow';
   /**
-   * Draws attention to the button: a spinning gradient border, a glow and a shine that play 0.5 s
+   * Draws attention to the button: a spinning gradient border, a glow and a shine that play 2 s
    * after the screen appears (it remounts on every screen). Static under reduced motion.
    */
   chroma?: ButtonChroma;
