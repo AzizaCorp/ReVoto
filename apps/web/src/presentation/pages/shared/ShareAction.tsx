@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Button, type ButtonChroma } from '@/presentation/components';
 import { useNavigation, type ShareSubject } from '@/presentation/providers/Navigation';
 import { useShareBlocker } from './shareBlocker';
+import styles from './ShareAction.module.css';
 
 /**
  * The «Compartir…» button of W-09, W-09b, W-09c and W-10. When the card would miss a figure
@@ -23,16 +24,20 @@ export function ShareAction({
   const nav = useNavigation();
   const blocker = useShareBlocker(what);
   if (!blocker) {
+    // Wrapped: the entrance stagger of the screen (`.text > *`) animates the wrapper, never the
+    // button, so it cannot replace the chroma animation (US-24).
     return (
-      <Button
-        variant="primary"
-        icon="share"
-        fullWidth={fullWidth}
-        chroma={chroma}
-        onClick={() => nav.openSheet('W-12', { share: what })}
-      >
-        {children}
-      </Button>
+      <div className={[styles.action, fullWidth ? '' : styles.inline].join(' ')}>
+        <Button
+          variant="primary"
+          icon="share"
+          fullWidth={fullWidth}
+          chroma={chroma}
+          onClick={() => nav.openSheet('W-12', { share: what })}
+        >
+          {children}
+        </Button>
+      </div>
     );
   }
   if (blocker.fix === 'territory') {

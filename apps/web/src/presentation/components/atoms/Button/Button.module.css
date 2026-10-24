@@ -138,7 +138,8 @@
   }
 }
 
-/* Chroma (US-24): only tokens. The fill of each variant stays inside a gradient border whose band
+/* Chroma (US-24): only tokens. `.button.chroma` outranks the entrance rules of the templates
+   (`.text > *`), which would otherwise replace these animations. The fill of each variant stays inside a gradient border whose band
    of light spins from the start. The pop, the glow and the shine play while .burst is on: the
    button adds it 2 s after the screen appears and then on a Fibonacci rhythm (chromaBursts.ts).
    global.css stops every animation under reduced motion and easy reading: the border stays. */
@@ -147,7 +148,7 @@
   inherits: false;
   initial-value: 0deg;
 }
-.chroma {
+.button.chroma {
   --chroma-fill: var(--rv-color-paper);
   position: relative;
   isolation: isolate;
@@ -159,7 +160,7 @@
   box-shadow: 0 0 var(--rv-space-1) var(--chroma-glow);
   animation: rv-chroma-spin var(--rv-chroma-spin) linear infinite;
 }
-.chroma.burst {
+.button.chroma.burst {
   animation:
     rv-chroma-spin var(--rv-chroma-spin) linear infinite,
     rv-chroma-pop var(--rv-duration-pop) var(--rv-easing-spring) 1,
@@ -183,7 +184,7 @@
   translate: -120% 0;
   pointer-events: none;
 }
-.chroma.burst::after {
+.button.chroma.burst::after {
   animation: rv-chroma-shine var(--rv-chroma-burst) var(--rv-easing) 1;
 }
 .fucsia {
