@@ -54,6 +54,14 @@
 - Cada pantalla tiene su paleta («wrapped»): `SLIDE_THEMES` en `components/organisms/IdentityCard/slideThemes.ts`.
 - RN-03: las barras de intermedias van rayadas y su etiqueta dice «int.»; las presidenciales, lisas y «pres.».
 - En W-03 a W-10 la hoja W-12 no muestra «Qué compartes»: indica «Esta pantalla · [nombre]» y solo deja elegir el formato. Las opciones «Mi arquetipo», «Mi insignia» y «Los dos» aparecen solo en W-09, W-09b y W-09c.
+- Los botones de compartir llaman la atención con un efecto «cromado» (`Button chroma`): un borde degradado que gira, un destello y un brillo que se reproducen 0.5 s después de cambiar de pantalla (`--rv-chroma-delay`). Con «Reducir movimiento», «Lectura fácil» o `prefers-reduced-motion` no se anima: queda solo el borde de color.
+
+  | Variante | Colores (paleta del diseño) | Dónde |
+  | --- | --- | --- |
+  | `fucsia` | #ff2d94 · #ff8cc6 · #ffd23f · #c8106e · #933d82 | «Compartir» de la barra superior y de la barra inferior en W-03 a W-08 |
+  | `aurora` | #7b45d6 · #4b5fe0 · #c6f432 · #ff8cc6 | «Compartir mi arquetipo» (W-09) y «Compartir los dos» (W-09c) |
+  | `oro` | #ffd23f · #ff8a00 · #ff2d94 · #fff3d6 | «Compartir mi insignia» (W-09b) y «Compartir mi resumen» (W-10) |
+
 - La tarjeta 1:1 conserva la cifra, la frase, el territorio y la fuente; muestra las barras solo cuando son 3 o menos.
 - El contenido sale de `pages/shared/slideCards.ts` (función pura y probada) y se dibuja con `SlideCard`.
 

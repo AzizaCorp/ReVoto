@@ -4,6 +4,8 @@ import styles from './Button.module.css';
 
 export type ButtonVariant = 'primary' | 'brand' | 'secondary' | 'text';
 export type ButtonSize = 'small' | 'medium' | 'large';
+/** Color of the «legendary» attention effect of the share buttons (US-24). */
+export type ButtonChroma = 'fucsia' | 'aurora' | 'oro';
 
 export interface ButtonProps {
   children: ReactNode;
@@ -31,6 +33,11 @@ export interface ButtonProps {
    * `narrow` below 360 px (320 px screens). `true` means `mobile`.
    */
   collapsible?: boolean | 'mobile' | 'narrow';
+  /**
+   * Draws attention to the button: a spinning gradient border, a glow and a shine that play 0.5 s
+   * after the screen appears (it remounts on every screen). Static under reduced motion.
+   */
+  chroma?: ButtonChroma;
 }
 
 /** Button or link with four variants and three sizes (board C-01 «Button»). */
@@ -48,6 +55,7 @@ export function Button({
   fullWidth,
   label,
   collapsible,
+  chroma,
 }: ButtonProps) {
   const className = [
     styles.button,
@@ -55,7 +63,9 @@ export function Button({
     styles[size],
     fullWidth === 'mobile' ? styles.fullWidthMobile : fullWidth ? styles.fullWidth : '',
     collapsible === 'narrow' ? styles.narrow : collapsible ? styles.collapsible : '',
+    chroma && !disabled ? `${styles.chroma} ${styles[chroma]}` : '',
   ].join(' ');
+  const chromaAttr = chroma && !disabled ? { 'data-chroma': chroma } : {};
   const content = (
     <>
       {icon && (
@@ -78,7 +88,14 @@ export function Button({
   );
   if (href) {
     return (
-      <a className={className} href={href} download={download} aria-label={label} onClick={onClick}>
+      <a
+        className={className}
+        href={href}
+        download={download}
+        aria-label={label}
+        onClick={onClick}
+        {...chromaAttr}
+      >
         {content}
       </a>
     );
@@ -90,6 +107,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
+      {...chromaAttr}
     >
       {content}
     </button>

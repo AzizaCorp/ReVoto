@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Button } from '@/presentation/components';
+import { Button, type ButtonChroma } from '@/presentation/components';
 import { useNavigation, type ShareSubject } from '@/presentation/providers/Navigation';
 import { useShareBlocker } from './shareBlocker';
 
@@ -11,11 +11,14 @@ export function ShareAction({
   what,
   children,
   fullWidth = 'mobile',
+  chroma = 'fucsia',
 }: {
   what: ShareSubject;
   children: ReactNode;
   /** Full width on mobile, as the main action of W-09, W-09c and W-10; W-09b keeps it inline. */
   fullWidth?: 'mobile' | false;
+  /** Attention color (US-24): each identity screen has its own. */
+  chroma?: ButtonChroma;
 }) {
   const nav = useNavigation();
   const blocker = useShareBlocker(what);
@@ -25,6 +28,7 @@ export function ShareAction({
         variant="primary"
         icon="share"
         fullWidth={fullWidth}
+        chroma={chroma}
         onClick={() => nav.openSheet('W-12', { share: what })}
       >
         {children}

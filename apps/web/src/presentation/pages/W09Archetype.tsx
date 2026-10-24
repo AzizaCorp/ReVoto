@@ -49,7 +49,9 @@ export function W09Archetype() {
             </Text>
           )}
           {municipality ? (
-            <ShareAction what="archetype">Compartir mi arquetipo</ShareAction>
+            <ShareAction what="archetype" chroma="aurora">
+              Compartir mi arquetipo
+            </ShareAction>
           ) : (
             <Button variant="primary" icon="pin" fullWidth="mobile" onClick={nav.changeTerritory}>
               Elegir municipio
