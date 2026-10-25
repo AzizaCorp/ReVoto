@@ -10,6 +10,7 @@ import {
   SegmentedControl,
   SheetTemplate,
   SlideCard,
+  SwitchRow,
   Text,
 } from '@/presentation/components';
 import { place } from '@/presentation/format';
@@ -17,6 +18,7 @@ import { useNavigation, type ShareSubject } from '@/presentation/providers/Navig
 import { useProfile } from '@/presentation/providers/Profile';
 import { useStoryData } from '@/presentation/providers/Story';
 import { cardToPng, download, shareOrDownload, slug } from '@/presentation/share/exportCard';
+import { buildShareUrl } from '@/presentation/share/sharedLink';
 import { useShareBlocker } from '../shared/shareBlocker';
 import { isSlideScreen, slideCard, type SlideScreen } from '../shared/slideCards';
 import { archetypeStat, compareWithGeneration } from '../shared/storyFigures';
@@ -69,6 +71,8 @@ export function W12Share() {
   const [format, setFormat] = useState<'story' | 'square'>('story');
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState(false);
+  // RN-08: the answers only travel in the link when the person turns this on.
+  const [withAnswers, setWithAnswers] = useState(false);
   const cardBox = useRef<HTMLDivElement>(null);
 
   const t = nav.selected;
@@ -77,6 +81,7 @@ export function W12Share() {
   const cmp = compareWithGeneration(story, votes, answers.age);
   const cardFormat = format === 'square' ? 'post' : 'story';
   const you = `${votes} de 3`;
+  const answered = Object.values(answers).some((a) => a !== null);
 
   const slide = what === 'slide' && slideScreen ? slideCard(slideScreen, story, t) : null;
   const blocker = useShareBlocker(what);
@@ -129,10 +134,21 @@ export function W12Share() {
 
   const copyLink = async () => {
     const target = what === 'slide' ? screen : SCREEN[what];
-    const url = `${location.origin}${location.pathname}#/${target}`;
+    const url = buildShareUrl(
+      `${location.origin}${location.pathname}`,
+      target,
+      t,
+      withAnswers ? answers : undefined,
+    );
     try {
       await navigator.clipboard.writeText(url);
-      setStatus('Enlace copiado.');
+      setStatus(
+        withAnswers && answered
+          ? 'Enlace copiado, con tu territorio y tus respuestas.'
+          : t.level === 'national'
+            ? 'Enlace copiado.'
+            : 'Enlace copiado, con tu territorio.',
+      );
     } catch {
       setStatus(`Copia este enlace: ${url}`);
     }
@@ -254,9 +270,17 @@ export function W12Share() {
         </div>
       )}
       <Text variant="meta">
-        Imagen PNG de 1080 px. Nunca incluye datos personales: tus respuestas no salen de tu
-        teléfono.
+        Imagen PNG de 1080 px. La imagen nunca incluye tus respuestas ni datos personales.
       </Text>
+      {answered && (
+        <SwitchRow
+          icon="user"
+          title="Incluir mis respuestas en el enlace"
+          description="Quien lo abra verá esta pantalla con tu edad y si votaste en 2018, 2021 y 2024. Apagado, el enlace solo lleva la pantalla y tu territorio."
+          checked={withAnswers}
+          onChange={setWithAnswers}
+        />
+      )}
       <p aria-live="polite" role="status">
         <Text variant="meta">{status}</Text>
       </p>

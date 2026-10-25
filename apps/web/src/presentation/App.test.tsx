@@ -147,3 +147,26 @@ describe('App · sequence engine', () => {
     expect(container.textContent).not.toMatch(/\[(umbral|dd\/mm\/aaaa|AAAAMMDD-hash|—\.—)\]/);
   });
 });
+
+describe('App · shared links (US-24)', () => {
+  afterEach(() => {
+    window.location.hash = '';
+  });
+
+  it('opens the screen with the territory and the answers of the link, then cleans the URL', async () => {
+    window.location.hash = '#/W-04?t=9-6&r=1010';
+    render(<App />);
+    await waitFor(() => expect(title()).toHaveTextContent('Iztacalco, Ciudad de México'));
+    expect(window.location.hash).toBe('#/W-04');
+    window.location.hash = '#/W-02b';
+    await waitFor(() => expect(title()).toHaveTextContent('Cuéntanos de ti'));
+    expect(screen.getByRole('button', { name: '25–34', pressed: true })).toBeInTheDocument();
+  });
+
+  it('a link to an unknown territory opens the screen with the national figures', async () => {
+    window.location.hash = '#/W-04?t=40';
+    render(<App />);
+    await waitFor(() => expect(window.location.hash).toBe('#/W-04'));
+    expect(title()).not.toHaveTextContent('Iztacalco');
+  });
+});

@@ -74,7 +74,8 @@ export interface Navigation {
 const Context = createContext<Navigation | null>(null);
 
 function viewFromHash(hash: string): ViewId | null {
-  const text = hash.replace(/^#\/?/, '');
+  // The query (`?t=…&r=…`) belongs to shared links (US-24), not to the view.
+  const text = hash.replace(/^#\/?/, '').split('?')[0] ?? '';
   const aux = AUXILIARY.find((a) => a === text.toUpperCase());
   return aux ?? screenFromText(text);
 }
@@ -125,7 +126,11 @@ export function NavigationProvider({
   // URL ↔ state
   useEffect(() => {
     const target = `#/${current}`;
-    if (window.location.hash !== target) window.location.hash = target;
+    if (window.location.hash === target) return;
+    // A shared link (`#/W-04?t=…`) is cleaned without a new history entry once it has been read.
+    if (window.location.hash.split('?')[0] === target)
+      window.history.replaceState(null, '', target);
+    else window.location.hash = target;
   }, [current]);
   useEffect(() => {
     const onHashChange = () => {
