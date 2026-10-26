@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
-import { Button } from '@/presentation/components';
+import { Button, type ButtonChroma } from '@/presentation/components';
 import { useNavigation, type ShareSubject } from '@/presentation/providers/Navigation';
 import { useShareBlocker } from './shareBlocker';
+import styles from './ShareAction.module.css';
 
 /**
  * The «Compartir…» button of W-09, W-09b, W-09c and W-10. When the card would miss a figure
@@ -11,24 +12,32 @@ export function ShareAction({
   what,
   children,
   fullWidth = 'mobile',
+  chroma = 'fucsia',
 }: {
   what: ShareSubject;
   children: ReactNode;
   /** Full width on mobile, as the main action of W-09, W-09c and W-10; W-09b keeps it inline. */
   fullWidth?: 'mobile' | false;
+  /** Attention color (US-24): each identity screen has its own. */
+  chroma?: ButtonChroma;
 }) {
   const nav = useNavigation();
   const blocker = useShareBlocker(what);
   if (!blocker) {
+    // Wrapped: the entrance stagger of the screen (`.text > *`) animates the wrapper, never the
+    // button, so it cannot replace the chroma animation (US-24).
     return (
-      <Button
-        variant="primary"
-        icon="share"
-        fullWidth={fullWidth}
-        onClick={() => nav.openSheet('W-12', { share: what })}
-      >
-        {children}
-      </Button>
+      <div className={[styles.action, fullWidth ? '' : styles.inline].join(' ')}>
+        <Button
+          variant="primary"
+          icon="share"
+          fullWidth={fullWidth}
+          chroma={chroma}
+          onClick={() => nav.openSheet('W-12', { share: what })}
+        >
+          {children}
+        </Button>
+      </div>
     );
   }
   if (blocker.fix === 'territory') {

@@ -11,7 +11,7 @@
 | RN-05 | Un agregado solo se publica si su lista nominal alcanza el umbral del equipo; si no, se eleva al nivel superior. | `pipeline/sql/60_umbral.sql`, `suprimido` |
 | RN-06 | Registros con sexo fuera de catálogo se excluyen del desglose por sexo y se reportan. | `pipeline/sql/40_calidad.sql` |
 | RN-07 | Los arquetipos solo usan participación, variación histórica o composición etaria. Prohibido aludir a partidos, candidaturas o juzgar a los habitantes. | Contenido de W-09 |
-| RN-08 | Ninguna pieza compartible contiene datos que identifiquen a una persona. | W-12 Crear tarjeta |
+| RN-08 | Ninguna pieza compartible contiene datos que identifiquen a una persona. Las respuestas de «Sobre ti» solo viajan en el enlace de W-12 si la persona activa «Incluir mis respuestas en el enlace» (apagado por defecto). | W-12 Crear tarjeta |
 | RN-09 | Edades fuera de 18–110 se marcan como anómalas, se excluyen y se reportan. | `pipeline/sql/40_calidad.sql` |
 | RN-10 | Toda cifra va con su territorio, periodo y fuente. Ninguna cifra aparece sola. | `CifraConContexto`, `ArchivoBase` |
 

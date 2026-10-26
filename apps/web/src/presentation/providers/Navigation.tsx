@@ -13,7 +13,6 @@ import {
   next as nextOf,
   previous as previousOf,
   progress as progressOf,
-  screenFromText,
   screenName,
   type Progress,
   type ScreenId,
@@ -21,14 +20,18 @@ import {
   NATIONAL,
   type Territory,
 } from '@/domain';
+import { pathOf, viewFromLocation } from './routes';
 
 /** Views outside the sequence: lite version, open data, states catalog, methodology, dictionary. */
 export type AuxiliaryViewId = 'W-15' | 'W-16' | 'W-17' | 'W-18' | 'W-19';
 export type ViewId = ScreenId | AuxiliaryViewId;
 /** Bottom sheets that open on top of any screen. */
 export type SheetId = 'W-11' | 'W-12' | 'W-13' | 'W-20';
-/** What the share sheet (W-12) starts with: the archetype, the badge or both cards. */
-export type ShareSubject = 'archetype' | 'badge' | 'both';
+/**
+ * What the share sheet (W-12) starts with: the card of the screen that opened it (US-24), or the
+ * archetype, the badge or both identity cards.
+ */
+export type ShareSubject = 'slide' | 'archetype' | 'badge' | 'both';
 
 const AUXILIARY: readonly AuxiliaryViewId[] = ['W-15', 'W-16', 'W-17', 'W-18', 'W-19'];
 
@@ -51,7 +54,7 @@ export interface Navigation {
   /** `null` at the ends (HU-10: no wrap-around). */
   next: (() => void) | null;
   previous: (() => void) | null;
-  /** `share` preselects the card when opening W-12 (W-09 → archetype, W-09b → badge, W-09c → both). */
+  /** `share` preselects the card when opening W-12; by default, the card of the current screen. */
   openSheet: (sheet: SheetId, options?: { share?: ShareSubject }) => void;
   /** Card chosen by the button that opened W-12. */
   shareSubject: ShareSubject;
@@ -70,16 +73,10 @@ export interface Navigation {
 
 const Context = createContext<Navigation | null>(null);
 
-function viewFromHash(hash: string): ViewId | null {
-  const text = hash.replace(/^#\/?/, '');
-  const aux = AUXILIARY.find((a) => a === text.toUpperCase());
-  return aux ?? screenFromText(text);
-}
-
 const isScreen = (v: ViewId): v is ScreenId => !AUXILIARY.includes(v as AuxiliaryViewId);
 
 /**
- * Sequence engine (US-09). The URL reflects the screen (`#/W-03`) so the browser's back button
+ * Sequence engine (US-09). The URL reflects the screen (`/mexico-voto`) so the browser's back button
  * works and a screen can be opened directly. It never advances on its own (HU-10).
  */
 export function NavigationProvider({
@@ -90,12 +87,10 @@ export function NavigationProvider({
   sequence?: Sequence;
 }) {
   const sequence = useMemo(() => initialSequence ?? createSequence(), [initialSequence]);
-  const [current, setCurrent] = useState<ViewId>(
-    () => viewFromHash(window.location.hash) ?? 'W-01',
-  );
+  const [current, setCurrent] = useState<ViewId>(() => viewFromLocation(window.location) ?? 'W-01');
   const [lastScreen, setLastScreen] = useState<ScreenId>(isScreen(current) ? current : 'W-01');
   const [sheet, setSheet] = useState<SheetId | null>(null);
-  const [shareSubject, setShareSubject] = useState<ShareSubject>('archetype');
+  const [shareSubject, setShareSubject] = useState<ShareSubject>('slide');
   const [returnTo, setReturnTo] = useState<ScreenId | null>(null);
   const [answersReturnTo, setAnswersReturnTo] = useState<ScreenId | null>(null);
   const [selected, setSelected] = useState<Territory>(NATIONAL);
@@ -119,18 +114,32 @@ export function NavigationProvider({
     [sequence],
   );
 
-  // URL ↔ state
+  // URL ↔ state. The first address is rewritten in place (old `#/W-04` links, `/`, the fragment of
+  // a shared link once read); every later screen adds a history entry for the back button.
+  const firstUrl = useRef(true);
   useEffect(() => {
-    const target = `#/${current}`;
-    if (window.location.hash !== target) window.location.hash = target;
+    const target = pathOf(current);
+    const loc = window.location;
+    const exact = loc.pathname === target && !loc.search && !loc.hash;
+    if (!exact) {
+      if (firstUrl.current || loc.pathname === target)
+        window.history.replaceState(null, '', target);
+      else window.history.pushState(null, '', target);
+    }
+    firstUrl.current = false;
   }, [current]);
   useEffect(() => {
-    const onHashChange = () => {
-      const v = viewFromHash(window.location.hash);
+    const onLocation = () => {
+      const v = viewFromLocation(window.location);
       if (v) goTo(v);
     };
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    window.addEventListener('popstate', onLocation);
+    // Someone typing an old `#/W-04` address in a page that is already open.
+    window.addEventListener('hashchange', onLocation);
+    return () => {
+      window.removeEventListener('popstate', onLocation);
+      window.removeEventListener('hashchange', onLocation);
+    };
   }, [goTo]);
 
   const value = useMemo<Navigation>(() => {
@@ -155,7 +164,7 @@ export function NavigationProvider({
       next: nextId ? () => goTo(nextId) : null,
       previous: previousId ? () => goTo(previousId) : null,
       openSheet: (id, options) => {
-        setShareSubject(options?.share ?? 'archetype');
+        setShareSubject(options?.share ?? 'slide');
         setSheet(id);
       },
       shareSubject,

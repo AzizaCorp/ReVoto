@@ -618,6 +618,10 @@ El pipeline **no** corre en CI: necesitaría credenciales del bucket y descargar
   },
   "rewrites": [
     {
+      "source": "/((?!data/|assets/)[^.]*)",
+      "destination": { "service": "web", "path": "/index.html" }
+    },
+    {
       "source": "/(.*)",
       "destination": { "service": "web" }
     }
@@ -648,7 +652,7 @@ El pipeline **no** corre en CI: necesitaría credenciales del bucket y descargar
 }
 ```
 
-La carpeta de cada versión de datos nunca cambia de contenido, por eso se puede cachear un año. El manifiesto es lo único que se revalida, y así un cambio de datos se ve en la siguiente visita sin romper la caché. La política de seguridad de contenido y `upgrade-insecure-requests` cubren RNF-11 y el CA-03 de US-08; si se agrega analítica anónima (RNF-12), su dominio se suma a `connect-src`.
+La primera regla sirve `index.html` en toda ruta sin punto que no esté en `data/` ni `assets/`: así una dirección legible (`/tu-territorio`) se puede abrir o recargar directo; los archivos siguen llegando por la segunda. La carpeta de cada versión de datos nunca cambia de contenido, por eso se puede cachear un año. El manifiesto es lo único que se revalida, y así un cambio de datos se ve en la siguiente visita sin romper la caché. La política de seguridad de contenido y `upgrade-insecure-requests` cubren RNF-11 y el CA-03 de US-08; si se agrega analítica anónima (RNF-12), su dominio se suma a `connect-src`.
 
 ---
 
@@ -786,3 +790,4 @@ Este documento se revisa al cierre de cada sprint y cada vez que cambie una deci
 | 4 | Angel Mauricio Ramirez | v0.4: puente v2 → L4 (§4.7), contrato extendido con geometría, mapa y calidad (§5), puertos y capas reales de la app (§6.1), nuevos riesgos y decisiones; ADR-0004 a ADR-0006 | 18/10/2026 |
 | 5 | Angel Mauricio Ramirez | Fuente de los ejemplos L4 (§5) citada como INE · CCPC en lugar de DECEYEC | 23/10/2026 |
 | 6 | Angel Mauricio Ramirez | Descargas de datos abiertos generadas en el build (§5.1) y capa `infrastructure/open-data` y `dataSource.ts` (§6.1) | 23/10/2026 |
+| 7 | Angel Mauricio Ramirez | Direcciones legibles (`/elige-tu-territorio`): `vercel.json` sirve `index.html` en toda ruta sin archivo (§8.4) | 25/10/2026 |

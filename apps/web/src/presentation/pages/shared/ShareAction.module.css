@@ -1,0 +1,11 @@
+/* Holds the share button so the screen's entrance animation lands on this box, not on it. It
+   takes the place the button had in the column, so the layout does not change. */
+.action {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  min-width: 0;
+}
+.inline {
+  align-self: auto;
+}

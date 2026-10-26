@@ -1,0 +1,217 @@
+/*
+ * Story-screen cards (US-24). Same 360 px grid as the identity cards: --u is 1/360 of the width.
+ * Colors and fonts come from the screen theme (custom properties set by the component).
+ */
+.container {
+  container-type: inline-size;
+  width: 100%;
+  max-width: var(--rv-frame-width);
+  margin: 0 auto;
+}
+.card {
+  --u: calc(100cqw / 360);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: calc(6 * var(--u));
+  margin: 0;
+  overflow: hidden;
+  border-radius: calc(26 * var(--u));
+  background: var(--slide-bg);
+  color: var(--slide-ink);
+  font-family: var(--rv-font);
+  box-shadow: var(--rv-shadow-share);
+}
+.story {
+  aspect-ratio: 9 / 16;
+  padding: calc(22 * var(--u)) calc(24 * var(--u));
+}
+.post {
+  aspect-ratio: 1;
+  gap: calc(4 * var(--u));
+  padding: calc(20 * var(--u));
+}
+.blob,
+.ring {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.blob {
+  right: calc(-90 * var(--u));
+  top: calc(120 * var(--u));
+  width: calc(300 * var(--u));
+  height: calc(300 * var(--u));
+  background: var(--slide-accent);
+  opacity: 0.16;
+}
+.ring {
+  left: calc(-70 * var(--u));
+  bottom: calc(-70 * var(--u));
+  width: calc(220 * var(--u));
+  height: calc(220 * var(--u));
+  border: calc(22 * var(--u)) solid var(--slide-accent);
+  opacity: 0.14;
+}
+.post .blob {
+  top: calc(-110 * var(--u));
+  right: calc(-110 * var(--u));
+}
+.post .ring {
+  display: none;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: calc(8 * var(--u));
+  margin-bottom: calc(18 * var(--u));
+  --rv-logo-height: calc(15 * var(--u));
+}
+.post .row {
+  margin-bottom: calc(10 * var(--u));
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: calc(26 * var(--u));
+  padding: 0 calc(12 * var(--u));
+  border-radius: var(--rv-radius-pill);
+  background: var(--slide-chip);
+  color: var(--slide-chip-ink);
+  font-size: calc(10.5 * var(--u));
+  font-weight: var(--rv-weight-title);
+  letter-spacing: calc(0.8 * var(--u));
+  white-space: nowrap;
+}
+.kicker {
+  font-size: calc(12.5 * var(--u));
+  font-weight: var(--rv-weight-title);
+  letter-spacing: calc(1.4 * var(--u));
+  color: var(--slide-sub);
+}
+.figure {
+  font-family: var(--slide-font);
+  font-weight: var(--slide-weight);
+  font-size: calc(var(--slide-figure) * var(--u));
+  line-height: 0.95;
+  letter-spacing: calc(-1.5 * var(--u));
+  text-transform: var(--slide-case);
+  color: var(--slide-accent);
+  white-space: nowrap;
+}
+.unit {
+  font-size: 0.42em;
+  letter-spacing: 0;
+}
+.post .figure {
+  font-size: calc(var(--slide-figure) * 0.66 * var(--u));
+}
+.caption {
+  font-size: calc(15 * var(--u));
+  line-height: 1.3;
+  font-weight: var(--rv-weight-bold);
+}
+.title {
+  margin-top: calc(10 * var(--u));
+  font-family: var(--slide-font);
+  font-weight: var(--slide-weight);
+  font-size: calc(26 * var(--u));
+  line-height: 1.08;
+  text-transform: var(--slide-case);
+  text-wrap: balance;
+}
+.post .caption {
+  font-size: calc(12.5 * var(--u));
+}
+.post .title {
+  margin-top: calc(4 * var(--u));
+  font-size: calc(17 * var(--u));
+}
+.spacer {
+  flex: 1;
+}
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: calc(9 * var(--u));
+  margin: 0 0 calc(8 * var(--u));
+  padding: 0;
+  list-style: none;
+}
+.post .bars {
+  gap: calc(5 * var(--u));
+  margin-bottom: calc(4 * var(--u));
+}
+.bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: calc(3 * var(--u)) calc(10 * var(--u));
+  font-size: calc(12 * var(--u));
+  font-weight: var(--rv-weight-semibold);
+  opacity: 0.86;
+}
+.post .bar {
+  font-size: calc(10.5 * var(--u));
+}
+.bar.highlight {
+  opacity: 1;
+  font-weight: var(--rv-weight-title);
+}
+.barLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.barValue {
+  font-weight: var(--rv-weight-title);
+  white-space: nowrap;
+}
+.track {
+  grid-column: 1 / -1;
+  height: calc(9 * var(--u));
+  border-radius: var(--rv-radius-pill);
+  background: var(--slide-track);
+  overflow: hidden;
+}
+.post .track {
+  height: calc(6 * var(--u));
+}
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--slide-ink);
+  opacity: 0.55;
+}
+.highlight .fill {
+  background: var(--slide-accent);
+  opacity: 1;
+}
+/* RN-03: midterm bars are striped, so the type does not depend on color alone. */
+.midterm .fill {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 calc(3 * var(--u)),
+    rgba(0, 0, 0, 0.28) calc(3 * var(--u)) calc(6 * var(--u))
+  );
+}
+.place {
+  font-size: calc(12 * var(--u));
+  font-weight: var(--rv-weight-bold);
+}
+.footer {
+  font-size: calc(9.5 * var(--u));
+  line-height: 1.37;
+  font-weight: var(--rv-weight-medium);
+  color: var(--slide-sub);
+}
+.post .place {
+  font-size: calc(10.5 * var(--u));
+}
+.post .footer {
+  font-size: calc(8.5 * var(--u));
+}

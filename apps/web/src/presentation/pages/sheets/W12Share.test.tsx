@@ -1,13 +1,17 @@
 import { act, fireEvent, screen, within } from '@testing-library/react';
 import { useEffect } from 'react';
-import { municipality, type ArchetypeProfile, type Territory } from '@/domain';
+import { municipality, NATIONAL, type ArchetypeProfile, type Territory } from '@/domain';
 import { useNavigation } from '@/presentation/providers/Navigation';
 import { useProfile } from '@/presentation/providers/Profile';
+import type { ScreenId } from '@/domain';
 import { memoryDependencies, memoryTurnoutRepository } from '@/test/memoryRepositories';
 import { renderWithApp } from '@/test/renderWithApp';
+import { W04YourTerritory } from '../W04YourTerritory';
+import { W08YourPlace } from '../W08YourPlace';
 import { W09Archetype } from '../W09Archetype';
 import { W09bBadge } from '../W09bBadge';
 import { W09cMyMunicipalityAndMe } from '../W09cMyMunicipalityAndMe';
+import { W10Summary } from '../W10Summary';
 import type * as ExportCard from '@/presentation/share/exportCard';
 import { shareBlocker, W12Share } from './W12Share';
 
@@ -33,11 +37,20 @@ const A4: ArchetypeProfile = {
 };
 
 /** Chooses Iztacalco, answers «Sobre ti» and mounts the page with the share sheet on top. */
-function Harness({ Page }: { Page: () => React.JSX.Element }) {
+function Harness({
+  Page,
+  at,
+  territory = IZTACALCO,
+}: {
+  Page: () => React.JSX.Element;
+  at?: ScreenId;
+  territory?: Territory;
+}) {
   const nav = useNavigation();
   const { answer } = useProfile();
   useEffect(() => {
-    nav.chooseTerritory(IZTACALCO);
+    if (at) nav.goTo(at);
+    nav.chooseTerritory(territory);
     answer('age', '18–24');
     for (const k of ['voted2018', 'voted2021', 'voted2024'] as const) answer(k, 'Sí');
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,10 +69,18 @@ const deps = () => ({
     municipalityProfile: async () => ({ neighbours: ['9-2', '9-3'], archetype: A4 }),
   }),
 });
-const open = async (Page: () => React.JSX.Element, button: RegExp) => {
-  await renderWithApp(<Harness Page={Page} />, deps());
+const open = async (
+  Page: () => React.JSX.Element,
+  button: RegExp,
+  at?: ScreenId,
+  territory?: Territory,
+) => {
+  await renderWithApp(
+    <Harness Page={Page} {...(at ? { at } : {})} {...(territory ? { territory } : {})} />,
+    deps(),
+  );
   await act(async () => {});
-  fireEvent.click(screen.getByRole('button', { name: button }));
+  fireEvent.click(screen.getAllByRole('button', { name: button })[0]!);
   return screen.getByRole('dialog', { name: 'Comparte este dato' });
 };
 const chosen = (sheet: HTMLElement) =>
@@ -234,5 +255,86 @@ describe('shareBlocker', () => {
     expect(shareBlocker('badge', { ...ready, badge: false })?.fix).toBe('answer');
     expect(shareBlocker('both', { ...ready, generation: null })?.text).toMatch(/Dinos tu edad/);
     expect(shareBlocker('archetype', { ...ready, badge: false, generation: null })).toBeNull();
+  });
+});
+
+describe('W-12 · Share sheet · US-24', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  describe('US-24 · a card for every story screen', () => {
+    it('«Compartir» on W-04 opens on the card of that screen, with the real figures', async () => {
+      const sheet = await open(W04YourTerritory, /^Compartir$/, 'W-04');
+      expect(within(sheet).queryByRole('radiogroup', { name: 'Qué compartes' })).toBeNull();
+      expect(sheet).toHaveTextContent('Esta pantallaTu territorio');
+      const card = within(sheet).getByRole('figure');
+      expect(card).toHaveTextContent('69.4 %');
+      expect(card).toHaveTextContent('8.4 pts más que el país');
+      expect(card).toHaveTextContent('Iztacalco, Ciudad de México · 2024');
+    });
+
+    it('downloads the screen card as a 9:16 story and as a 1:1 post', async () => {
+      const sheet = await open(W04YourTerritory, /^Compartir$/, 'W-04');
+      const names: string[] = [];
+      for (const format of ['Historia 9:16', 'Publicación 1:1']) {
+        fireEvent.click(within(sheet).getByRole('radio', { name: format }));
+        fireEvent.click(within(sheet).getByRole('button', { name: 'Descargar imagen' }));
+        await act(async () => {});
+        names.push(exporter.download.mock.calls.at(-1)?.[1] as string);
+      }
+      expect(names).toEqual([
+        'revoto-tu-territorio-iztacalco-ciudad-de-mexico-9x16.png',
+        'revoto-tu-territorio-iztacalco-ciudad-de-mexico-1x1.png',
+      ]);
+    });
+
+    it('«Compartir mi resumen» on W-10 shares the summary card', async () => {
+      const sheet = await open(W10Summary, /Compartir mi resumen/, 'W-10');
+      expect(within(sheet).queryByRole('radiogroup', { name: 'Qué compartes' })).toBeNull();
+      expect(sheet).toHaveTextContent('Esta pantallaTu resumen');
+      expect(within(sheet).getByRole('figure')).toHaveTextContent(
+        'Lo esencial de mi recorrido en ReVoto',
+      );
+    });
+
+    it('W-08 without a municipality explains what is missing and offers to choose one', async () => {
+      const sheet = await open(W08YourPlace, /^Compartir$/, 'W-08', NATIONAL);
+      expect(within(sheet).queryByRole('figure')).toBeNull();
+      expect(sheet).toHaveTextContent('Elige un municipio para crear la tarjeta de su lugar');
+      expect(within(sheet).getByRole('button', { name: 'Elegir municipio' })).toBeEnabled();
+      expect(within(sheet).getByRole('button', { name: 'Descargar imagen' })).toBeDisabled();
+    });
+
+    it('the identity screens keep the choice between the archetype, the badge and both', async () => {
+      const sheet = await open(W09Archetype, /Compartir mi arquetipo/, 'W-09');
+      expect(chosen(sheet)).toHaveTextContent('Mi arquetipo');
+      expect(
+        within(sheet).getAllByRole('radio', { name: /Mi arquetipo|Mi insignia|Los dos/ }),
+      ).toHaveLength(3);
+      expect(sheet).not.toHaveTextContent('Esta pantalla');
+    });
+  });
+
+  describe('«Copiar enlace»', () => {
+    const writeText = vi.fn<(text: string) => Promise<void>>(async () => {});
+    beforeEach(() => {
+      Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+      writeText.mockClear();
+    });
+    const copied = async (sheet: HTMLElement) => {
+      fireEvent.click(within(sheet).getByRole('button', { name: 'Copiar enlace' }));
+      await act(async () => {});
+      return writeText.mock.calls.at(-1)?.[0];
+    };
+
+    it('carries the screen and the territory, and the answers only when the person turns it on', async () => {
+      const sheet = await open(W04YourTerritory, /^Compartir$/, 'W-04');
+      expect(await copied(sheet)).toMatch(/\/tu-territorio#t=9-6$/);
+      expect(within(sheet).getByRole('status')).toHaveTextContent('con tu territorio');
+      fireEvent.click(
+        within(sheet).getByRole('switch', { name: 'Incluir mis respuestas en el enlace' }),
+      );
+      expect(await copied(sheet)).toMatch(/\/tu-territorio#t=9-6&r=0000$/);
+      expect(within(sheet).getByRole('status')).toHaveTextContent('tus respuestas');
+    });
   });
 });
