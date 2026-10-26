@@ -28,3 +28,26 @@ describe('Button icons', () => {
     expect(screen.getByRole('button', { name: 'Fuente' })).toBeInTheDocument();
   });
 });
+
+describe('Button chroma (US-24)', () => {
+  it('marks the share buttons with their attention color', () => {
+    render(
+      <Button icon="share" chroma="aurora">
+        Compartir
+      </Button>,
+    );
+    expect(screen.getByRole('button', { name: 'Compartir' })).toHaveAttribute(
+      'data-chroma',
+      'aurora',
+    );
+  });
+
+  it('a disabled button never calls for attention', () => {
+    render(
+      <Button chroma="oro" disabled>
+        Compartir
+      </Button>,
+    );
+    expect(screen.getByRole('button', { name: 'Compartir' })).not.toHaveAttribute('data-chroma');
+  });
+});

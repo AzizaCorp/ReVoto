@@ -1,9 +1,12 @@
 import type { ReactNode } from 'react';
 import { Icon, type IconName } from '../Icon';
 import styles from './Button.module.css';
+import { useChromaBurst } from './chromaBursts';
 
 export type ButtonVariant = 'primary' | 'brand' | 'secondary' | 'text';
 export type ButtonSize = 'small' | 'medium' | 'large';
+/** Color of the «legendary» attention effect of the share buttons (US-24). */
+export type ButtonChroma = 'fucsia' | 'aurora' | 'oro';
 
 export interface ButtonProps {
   children: ReactNode;
@@ -31,6 +34,12 @@ export interface ButtonProps {
    * `narrow` below 360 px (320 px screens). `true` means `mobile`.
    */
   collapsible?: boolean | 'mobile' | 'narrow';
+  /**
+   * Draws attention to the button: a band of light spins around its border from the start, and a
+   * pop with a glow and a shine plays 2 s after the screen appears, then again after 3, 5, 8, 13…
+   * seconds (Fibonacci) while the screen stays. Static under reduced motion.
+   */
+  chroma?: ButtonChroma;
 }
 
 /** Button or link with four variants and three sizes (board C-01 «Button»). */
@@ -48,14 +57,20 @@ export function Button({
   fullWidth,
   label,
   collapsible,
+  chroma,
 }: ButtonProps) {
+  const bursting = useChromaBurst(Boolean(chroma) && !disabled);
   const className = [
     styles.button,
     styles[variant],
     styles[size],
     fullWidth === 'mobile' ? styles.fullWidthMobile : fullWidth ? styles.fullWidth : '',
     collapsible === 'narrow' ? styles.narrow : collapsible ? styles.collapsible : '',
+    chroma && !disabled ? `${styles.chroma} ${styles[chroma]}` : '',
+    bursting ? styles.burst : '',
   ].join(' ');
+  const chromaAttr =
+    chroma && !disabled ? { 'data-chroma': chroma, ...(bursting ? { 'data-burst': '' } : {}) } : {};
   const content = (
     <>
       {icon && (
@@ -78,7 +93,14 @@ export function Button({
   );
   if (href) {
     return (
-      <a className={className} href={href} download={download} aria-label={label} onClick={onClick}>
+      <a
+        className={className}
+        href={href}
+        download={download}
+        aria-label={label}
+        onClick={onClick}
+        {...chromaAttr}
+      >
         {content}
       </a>
     );
@@ -90,6 +112,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
+      {...chromaAttr}
     >
       {content}
     </button>

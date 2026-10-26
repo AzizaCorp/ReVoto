@@ -1,3 +1,4 @@
+import { pathOf } from '@/presentation/providers/routes';
 import { fireEvent, screen } from '@testing-library/react';
 import { type SheetId, type ViewId } from '@/presentation/providers/Navigation';
 import { memoryDependencies } from '@/test/memoryRepositories';
@@ -41,7 +42,7 @@ describe('Skeleton pages', () => {
       await withProviders(<Page />);
       fireEvent.click(screen.getAllByRole('button', { name: 'Ver como tabla' })[0]!);
       expect(screen.getByRole('table')).toBeInTheDocument();
-      expect(window.location.hash).toBe(`#/${id}`);
+      expect(window.location.pathname).toBe(pathOf(id));
       expect(screen.getByRole('button', { name: 'Ver como gráfica' })).toBeInTheDocument();
     },
   );

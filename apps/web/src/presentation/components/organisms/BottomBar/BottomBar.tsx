@@ -1,4 +1,4 @@
-import { Button, type IconName } from '../../atoms';
+import { Button, type ButtonChroma, type IconName } from '../../atoms';
 import styles from './BottomBar.module.css';
 
 export interface BottomAction {
@@ -12,6 +12,8 @@ export interface BottomBarProps {
   onSource?: () => void;
   /** Opens W-12 if the screen can be shared (RF-15). */
   onShare?: () => void;
+  /** Attention color of «Compartir» (US-24). */
+  shareChroma?: ButtonChroma;
   /** Replaces «Fuente» and «Compartir» (W-10: «Metodología»). */
   secondaryAction?: BottomAction;
   /** `null` on the first step: the button is not drawn (HU-10, no wrap-around). */
@@ -32,6 +34,7 @@ export interface BottomBarProps {
 export function BottomBar({
   onSource,
   onShare,
+  shareChroma = 'fucsia',
   secondaryAction,
   onPrevious,
   onNext,
@@ -61,7 +64,13 @@ export function BottomBar({
               </Button>
             )}
             {onShare && (
-              <Button icon="share" collapsible="narrow" label="Compartir" onClick={onShare}>
+              <Button
+                icon="share"
+                collapsible="narrow"
+                label="Compartir"
+                chroma={shareChroma}
+                onClick={onShare}
+              >
                 Compartir
               </Button>
             )}

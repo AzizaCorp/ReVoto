@@ -86,7 +86,9 @@ export function W09cMyMunicipalityAndMe() {
         </Button>
       </div>
       {badge ? (
-        <ShareAction what="both">Compartir los dos</ShareAction>
+        <ShareAction what="both" chroma="aurora">
+          Compartir los dos
+        </ShareAction>
       ) : (
         <Button variant="primary" icon="star" fullWidth="mobile" onClick={nav.editAnswers}>
           Responder «Sobre ti»

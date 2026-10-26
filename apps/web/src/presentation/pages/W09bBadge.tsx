@@ -74,7 +74,7 @@ export function W09bBadge() {
       <div className={layout.row}>
         {badge ? (
           <>
-            <ShareAction what="badge" fullWidth={false}>
+            <ShareAction what="badge" fullWidth={false} chroma="oro">
               Compartir mi insignia
             </ShareAction>
             <Button variant="text" onClick={nav.editAnswers}>

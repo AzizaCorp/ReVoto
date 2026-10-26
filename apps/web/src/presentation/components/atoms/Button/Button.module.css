@@ -137,3 +137,102 @@
     display: none;
   }
 }
+
+/* Chroma (US-24): only tokens. `.button.chroma` outranks the entrance rules of the templates
+   (`.text > *`), which would otherwise replace these animations. The fill of each variant stays inside a gradient border whose band
+   of light spins from the start. The pop, the glow and the shine play while .burst is on: the
+   button adds it 2 s after the screen appears and then on a Fibonacci rhythm (chromaBursts.ts).
+   global.css stops every animation under reduced motion and easy reading: the border stays. */
+@property --rv-chroma-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.button.chroma {
+  --chroma-fill: var(--rv-color-paper);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: var(--rv-chroma-border) solid transparent;
+  background:
+    linear-gradient(var(--chroma-fill), var(--chroma-fill)) padding-box,
+    conic-gradient(from var(--rv-chroma-angle), var(--chroma-colors)) border-box;
+  box-shadow: 0 0 var(--rv-space-1) var(--chroma-glow);
+  animation: rv-chroma-spin var(--rv-chroma-spin) linear infinite;
+}
+.button.chroma.burst {
+  animation:
+    rv-chroma-spin var(--rv-chroma-spin) linear infinite,
+    rv-chroma-pop var(--rv-duration-pop) var(--rv-easing-spring) 1,
+    rv-chroma-glow var(--rv-chroma-burst) ease-out 1;
+}
+.chroma.primary {
+  --chroma-fill: var(--rv-color-ink);
+}
+.chroma.brand {
+  --chroma-fill: var(--rv-color-brand);
+}
+.chroma.chroma:hover:not(:disabled) {
+  border-color: transparent;
+}
+.chroma::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(105deg, transparent 30%, var(--rv-chroma-shine) 50%, transparent 70%);
+  translate: -120% 0;
+  pointer-events: none;
+}
+.button.chroma.burst::after {
+  animation: rv-chroma-shine var(--rv-chroma-burst) var(--rv-easing) 1;
+}
+.fucsia {
+  --chroma-colors: var(--rv-chroma-fucsia);
+  --chroma-glow: var(--rv-chroma-fucsia-glow);
+}
+.aurora {
+  --chroma-colors: var(--rv-chroma-aurora);
+  --chroma-glow: var(--rv-chroma-aurora-glow);
+}
+.oro {
+  --chroma-colors: var(--rv-chroma-oro);
+  --chroma-glow: var(--rv-chroma-oro-glow);
+}
+@keyframes rv-chroma-spin {
+  to {
+    --rv-chroma-angle: 360deg;
+  }
+}
+@keyframes rv-chroma-pop {
+  0%,
+  100% {
+    scale: 1;
+  }
+  35% {
+    scale: var(--rv-chroma-pop-scale);
+  }
+  65% {
+    scale: 0.98;
+  }
+}
+@keyframes rv-chroma-glow {
+  0% {
+    box-shadow: 0 0 var(--rv-space-1) var(--chroma-glow);
+  }
+  25% {
+    box-shadow: 0 0 var(--rv-space-3) var(--rv-space-05) var(--chroma-glow);
+  }
+  100% {
+    box-shadow: 0 0 var(--rv-space-1) var(--chroma-glow);
+  }
+}
+@keyframes rv-chroma-shine {
+  0% {
+    translate: -120% 0;
+  }
+  60%,
+  100% {
+    translate: 120% 0;
+  }
+}

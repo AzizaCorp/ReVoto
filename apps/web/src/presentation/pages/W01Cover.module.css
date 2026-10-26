@@ -44,27 +44,39 @@
   height: calc(92% - 64px);
   object-fit: contain;
   opacity: 0.55;
+  animation: rv-cover-float calc(var(--rv-float-duration) * 1.5) ease-in-out infinite alternate;
+  --float-y: var(--rv-float-distance-small);
 }
 .ballot {
   inset: 0 0 64px;
   width: 100%;
   height: calc(100% - 64px);
   object-fit: contain;
-  animation: rv-cover-pop var(--rv-duration-pop) var(--rv-easing-spring) 300ms backwards;
+  animation:
+    rv-cover-pop var(--rv-duration-pop) var(--rv-easing-spring) 300ms backwards,
+    rv-cover-float var(--rv-float-duration) ease-in-out 900ms infinite alternate;
+  --float-y: calc(var(--rv-float-distance) * -1);
 }
 .star {
   left: 0;
   top: 6%;
   width: 36px;
   height: 36px;
-  animation: rv-cover-pop var(--rv-duration-pop) var(--rv-easing-spring) 520ms backwards;
+  animation:
+    rv-cover-pop var(--rv-duration-pop) var(--rv-easing-spring) 520ms backwards,
+    rv-cover-float-tilt calc(var(--rv-float-duration) * 0.75) ease-in-out 1100ms infinite alternate;
+  --float-y: calc(var(--rv-float-distance) * -1.3);
 }
 .sparkle {
   right: 0;
   bottom: calc(14% + 64px);
   width: 32px;
   height: 32px;
-  animation: rv-cover-pop var(--rv-duration-pop) var(--rv-easing-spring) 640ms backwards;
+  animation:
+    rv-cover-pop var(--rv-duration-pop) var(--rv-easing-spring) 640ms backwards,
+    rv-cover-float-tilt calc(var(--rv-float-duration) * 0.9) ease-in-out 1300ms infinite
+      alternate-reverse;
+  --float-y: var(--rv-float-distance);
 }
 .startMobile {
   position: relative;
@@ -86,7 +98,28 @@
     scale: 1;
   }
 }
+/* Float (only translate and rotate, a few pixels): the illustration breathes without moving the
+   layout or the size of the page. Each piece has its own rhythm so they never move together. */
+@keyframes rv-cover-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 var(--float-y);
+  }
+}
+@keyframes rv-cover-float-tilt {
+  from {
+    translate: 0 0;
+    rotate: calc(var(--rv-float-tilt) * -1);
+  }
+  to {
+    translate: 0 var(--float-y);
+    rotate: var(--rv-float-tilt);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
+  .blob,
   .ballot,
   .star,
   .sparkle {

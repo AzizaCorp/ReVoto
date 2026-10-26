@@ -5,6 +5,7 @@ import { PAGES, SHEETS } from '@/presentation/pages';
 import { NavigationProvider, useNavigation } from '@/presentation/providers/Navigation';
 import { ProfileProvider } from '@/presentation/providers/Profile';
 import { StoryProvider } from '@/presentation/providers/Story';
+import { SharedLinkRestorer } from '@/presentation/share/SharedLinkRestorer';
 
 /** Mounts the current page, the open sheet and the live region with the progress (HU-14). */
 function View() {
@@ -36,6 +37,7 @@ export function App() {
     <ProfileProvider>
       <NavigationProvider>
         <StoryProvider>
+          <SharedLinkRestorer />
           <View />
         </StoryProvider>
       </NavigationProvider>

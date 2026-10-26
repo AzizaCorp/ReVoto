@@ -1,4 +1,4 @@
-import { Button, IconButton, Logo } from '../../atoms';
+import { Button, IconButton, Logo, type ButtonChroma } from '../../atoms';
 import { ProgressBar, type ProgressDirection } from '../../molecules';
 import styles from './TopBar.module.css';
 
@@ -18,6 +18,8 @@ export interface TopBarProps {
   /** On desktop «Fuente» and «Compartir» move up to this bar (only from W-03 on). */
   onSource?: () => void;
   onShare?: () => void;
+  /** Attention color of «Compartir» (US-24). */
+  shareChroma?: ButtonChroma;
   /** Utility variant: back button («Volver al resumen», «Datos abiertos»). */
   onBack?: () => void;
   backLabel?: string;
@@ -32,6 +34,7 @@ export function TopBar({
   onSettings,
   onSource,
   onShare,
+  shareChroma = 'fucsia',
   onBack,
   backLabel = 'Volver',
   dark,
@@ -76,7 +79,7 @@ export function TopBar({
         )}
         {onShare && (
           <span className={styles.wide}>
-            <Button icon="share" onClick={onShare}>
+            <Button icon="share" chroma={shareChroma} onClick={onShare}>
               Compartir
             </Button>
           </span>

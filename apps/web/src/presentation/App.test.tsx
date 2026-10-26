@@ -36,7 +36,7 @@ describe('App · sequence engine', () => {
     expect(screen.queryByRole('button', { name: 'Pantalla siguiente' })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Descubrir mi territorio' }));
     expect(title()).toHaveTextContent('¿Dónde votas?');
-    expect(window.location.hash).toBe('#/W-02');
+    expect(window.location.pathname).toBe('/elige-tu-territorio');
     fireEvent.keyDown(window, { key: 'ArrowRight' });
     expect(title()).toHaveTextContent('Cuéntanos de ti');
     expect(screen.getByRole('button', { name: 'Pantalla anterior' })).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe('App · sequence engine', () => {
     expect(title()).toHaveTextContent('Cuéntanos de ti');
     fireEvent.click(screen.getByRole('button', { name: 'Guardar y volver' }));
     expect(title()).toHaveTextContent('Y tú, ¿cómo votas?');
-    expect(window.location.hash).toBe('#/W-09b');
+    expect(window.location.pathname).toBe('/tu-insignia');
   });
 
   it('moves on from «Sobre ti» when it was reached in order', () => {
@@ -145,5 +145,65 @@ describe('App · sequence engine', () => {
     );
     // No template placeholders left on the methodology.
     expect(container.textContent).not.toMatch(/\[(umbral|dd\/mm\/aaaa|AAAAMMDD-hash|—\.—)\]/);
+  });
+});
+
+describe('App · shared links (US-24)', () => {
+  afterEach(() => {
+    window.location.hash = '';
+  });
+
+  it('opens the screen with the territory and the answers of the link, then cleans the URL', async () => {
+    window.history.replaceState(null, '', '/tu-territorio#t=9-6&r=1010');
+    render(<App />);
+    await waitFor(() => expect(title()).toHaveTextContent('Iztacalco, Ciudad de México'));
+    expect(window.location.pathname).toBe('/tu-territorio');
+    expect(window.location.hash).toBe('');
+    window.location.hash = '#/W-02b';
+    await waitFor(() => expect(title()).toHaveTextContent('Cuéntanos de ti'));
+    expect(screen.getByRole('button', { name: '25–34', pressed: true })).toBeInTheDocument();
+  });
+
+  it('a link to an unknown territory opens the screen with the national figures', async () => {
+    window.history.replaceState(null, '', '/tu-territorio#t=40');
+    render(<App />);
+    await waitFor(() => expect(window.location.hash).toBe(''));
+    expect(title()).not.toHaveTextContent('Iztacalco');
+  });
+
+  it('old #/W-04 links still open their screen, with their territory, at the new address', async () => {
+    window.location.hash = '#/W-04?t=9-6';
+    render(<App />);
+    await waitFor(() => expect(title()).toHaveTextContent('Iztacalco, Ciudad de México'));
+    expect(window.location.pathname).toBe('/tu-territorio');
+    expect(window.location.hash).toBe('');
+  });
+});
+
+describe('App · readable addresses', () => {
+  it('names every screen in the address and the back button returns to the previous one', async () => {
+    render(<App />);
+    expect(window.location.pathname).toBe('/inicio');
+    fireEvent.click(screen.getByRole('button', { name: 'Descubrir mi territorio' }));
+    expect(window.location.pathname).toBe('/elige-tu-territorio');
+    fireEvent.keyDown(window, { key: 'ArrowRight' });
+    expect(window.location.pathname).toBe('/sobre-ti');
+    window.history.back();
+    await waitFor(() => expect(title()).toHaveTextContent('¿Dónde votas?'));
+    expect(window.location.pathname).toBe('/elige-tu-territorio');
+  });
+
+  it('opens a screen typed in the address bar', () => {
+    window.history.replaceState(null, '', '/datos-abiertos');
+    render(<App />);
+    expect(title()).toHaveTextContent('Datos abiertos');
+  });
+
+  it('a shared link pasted into an open tab of the same screen is applied too', async () => {
+    window.history.replaceState(null, '', '/tu-territorio');
+    render(<App />);
+    window.location.hash = '#t=9-6';
+    await waitFor(() => expect(title()).toHaveTextContent('Iztacalco, Ciudad de México'));
+    expect(window.location.hash).toBe('');
   });
 });
