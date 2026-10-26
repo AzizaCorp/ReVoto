@@ -28,7 +28,7 @@ Los nombres de archivos y componentes están en inglés; los textos que ve la pe
 | `sheets/W13Settings.tsx`      | W-13 Ajustes de lectura                          | `SheetTemplate`                  | Must      |
 | `W15Lite.tsx`                 | W-15 Versión ligera                              | `LiteScreen`                     | Must      |
 | `W16OpenData.tsx`             | W-16 Datos abiertos                              | `UtilityScreen`                  | Should    |
-| `W17States.tsx`               | W-17 Catálogo de estados (solo QA, `#/W-17`)     | `UtilityScreen`                  | —         |
+| `W17States.tsx`               | W-17 Catálogo de estados (solo QA, `/estados`)   | `UtilityScreen`                  | —         |
 | `W18Methodology.tsx`          | W-18 Metodología                                 | `UtilityScreen` (`sidebar`)      | Should    |
 | `W19Dictionary.tsx`           | W-19 Diccionario de datos                        | `UtilityScreen`                  | Should    |
 | `sheets/W20Quality.tsx`       | W-20 Reporte de calidad y validación             | `SheetTemplate`                  | Should    |
@@ -46,9 +46,11 @@ Los nombres de archivos y componentes están en inglés; los textos que ve la pe
 - `shared/dataSource.ts` concentra la fuente, las fechas de corte, el umbral, las reglas de
   calidad y la auditoría de la copia de datos; lo leen W-11, W-16, W-18, W-19 y W-20 (mismo
   texto que D06).
-- La URL refleja la vista (`#/W-03`), así funciona el botón «atrás» y se puede abrir una pantalla
-  directo. Flechas ← → y deslizar cambian de pantalla (`hooks/useNavigationShortcuts`, ver sus
-  reglas en `hooks/README.md`).
+- La URL refleja la vista con nombres legibles (`/mexico-voto`, `/elige-tu-territorio`; tabla en
+  `providers/routes.ts`), así funciona el botón «atrás» y se puede abrir una pantalla directo. Los
+  enlaces viejos `#/W-03` siguen abriendo su pantalla y se reescriben a la dirección nueva.
+  Flechas ← → y deslizar cambian de pantalla (`hooks/useNavigationShortcuts`, ver sus reglas en
+  `hooks/README.md`).
 - Las respuestas de W-02b viven en memoria (`providers/Profile.tsx`): no se guardan ni se envían.
 
 W-14 (lector de pantalla) no es una página: es un comportamiento que cumplen todas. Los estados de W-17 se muestran dentro de cada página con el organismo `StatusView`; `W17Estados` solo los reúne para revisarlos.

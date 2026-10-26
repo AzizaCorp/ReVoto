@@ -2,7 +2,7 @@ import { StatusView, Text, TopBar, UtilityScreen } from '@/presentation/componen
 import { useNavigation } from '@/presentation/providers/Navigation';
 
 /**
- * W-17 · States catalog (QA only: `#/W-17`). In the app the states are not a screen: each page
+ * W-17 · States catalog (QA only: `/estados`). In the app the states are not a screen: each page
  * shows them with `StatusView` depending on the use case result.
  */
 export function W17States() {

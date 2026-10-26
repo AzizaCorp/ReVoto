@@ -13,7 +13,6 @@ import {
   next as nextOf,
   previous as previousOf,
   progress as progressOf,
-  screenFromText,
   screenName,
   type Progress,
   type ScreenId,
@@ -21,6 +20,7 @@ import {
   NATIONAL,
   type Territory,
 } from '@/domain';
+import { pathOf, viewFromLocation } from './routes';
 
 /** Views outside the sequence: lite version, open data, states catalog, methodology, dictionary. */
 export type AuxiliaryViewId = 'W-15' | 'W-16' | 'W-17' | 'W-18' | 'W-19';
@@ -73,17 +73,10 @@ export interface Navigation {
 
 const Context = createContext<Navigation | null>(null);
 
-function viewFromHash(hash: string): ViewId | null {
-  // The query (`?t=…&r=…`) belongs to shared links (US-24), not to the view.
-  const text = hash.replace(/^#\/?/, '').split('?')[0] ?? '';
-  const aux = AUXILIARY.find((a) => a === text.toUpperCase());
-  return aux ?? screenFromText(text);
-}
-
 const isScreen = (v: ViewId): v is ScreenId => !AUXILIARY.includes(v as AuxiliaryViewId);
 
 /**
- * Sequence engine (US-09). The URL reflects the screen (`#/W-03`) so the browser's back button
+ * Sequence engine (US-09). The URL reflects the screen (`/mexico-voto`) so the browser's back button
  * works and a screen can be opened directly. It never advances on its own (HU-10).
  */
 export function NavigationProvider({
@@ -94,9 +87,7 @@ export function NavigationProvider({
   sequence?: Sequence;
 }) {
   const sequence = useMemo(() => initialSequence ?? createSequence(), [initialSequence]);
-  const [current, setCurrent] = useState<ViewId>(
-    () => viewFromHash(window.location.hash) ?? 'W-01',
-  );
+  const [current, setCurrent] = useState<ViewId>(() => viewFromLocation(window.location) ?? 'W-01');
   const [lastScreen, setLastScreen] = useState<ScreenId>(isScreen(current) ? current : 'W-01');
   const [sheet, setSheet] = useState<SheetId | null>(null);
   const [shareSubject, setShareSubject] = useState<ShareSubject>('slide');
@@ -123,22 +114,32 @@ export function NavigationProvider({
     [sequence],
   );
 
-  // URL ↔ state
+  // URL ↔ state. The first address is rewritten in place (old `#/W-04` links, `/`, the fragment of
+  // a shared link once read); every later screen adds a history entry for the back button.
+  const firstUrl = useRef(true);
   useEffect(() => {
-    const target = `#/${current}`;
-    if (window.location.hash === target) return;
-    // A shared link (`#/W-04?t=…`) is cleaned without a new history entry once it has been read.
-    if (window.location.hash.split('?')[0] === target)
-      window.history.replaceState(null, '', target);
-    else window.location.hash = target;
+    const target = pathOf(current);
+    const loc = window.location;
+    const exact = loc.pathname === target && !loc.search && !loc.hash;
+    if (!exact) {
+      if (firstUrl.current || loc.pathname === target)
+        window.history.replaceState(null, '', target);
+      else window.history.pushState(null, '', target);
+    }
+    firstUrl.current = false;
   }, [current]);
   useEffect(() => {
-    const onHashChange = () => {
-      const v = viewFromHash(window.location.hash);
+    const onLocation = () => {
+      const v = viewFromLocation(window.location);
       if (v) goTo(v);
     };
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    window.addEventListener('popstate', onLocation);
+    // Someone typing an old `#/W-04` address in a page that is already open.
+    window.addEventListener('hashchange', onLocation);
+    return () => {
+      window.removeEventListener('popstate', onLocation);
+      window.removeEventListener('hashchange', onLocation);
+    };
   }, [goTo]);
 
   const value = useMemo<Navigation>(() => {

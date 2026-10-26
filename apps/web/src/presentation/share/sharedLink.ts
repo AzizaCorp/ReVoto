@@ -1,9 +1,12 @@
 // US-24 · Links that open a screen as the person who shared it sees it: the screen, the territory
-// and, only when the person turns it on in W-12, the «Sobre ti» answers (RN-08). The data travels
-// in the query of the hash (`#/W-04?t=9-6&r=10_0`), so it never reaches a server log, and the app
-// removes it from the address bar once it has been read.
+// and, only when the person turns it on in W-12, the «Sobre ti» answers (RN-08). The screen is the
+// path and the data travels in the fragment (`/tu-territorio#t=9-6&r=1010`), which browsers never
+// send to the server; the app removes it from the address bar once it has been read. Old links
+// (`#/W-04?t=9-6&r=1010`) still work.
 import type { Territory } from '@/domain';
+import type { ViewId } from '@/presentation/providers/Navigation';
 import { QUESTIONS, type Answers, type QuestionKey } from '@/presentation/providers/Profile';
+import { pathOf, viewFromLocation } from '@/presentation/providers/routes';
 
 /** Territory of a link: a state (`9`) or a municipality (`9-6`); none means the country. */
 export interface LinkTerritory {
@@ -12,8 +15,8 @@ export interface LinkTerritory {
 }
 
 export interface SharedLink {
-  /** Screen or view of the hash, e.g. «W-04». */
-  readonly view: string;
+  /** View of the address, or null when it is not one. */
+  readonly view: ViewId | null;
   readonly territory: LinkTerritory | null;
   /** Answers of the person who shared, or null when the link does not carry them. */
   readonly answers: Partial<Answers> | null;
@@ -47,10 +50,10 @@ const territoryCode = (t: Territory): string | null =>
       ? String(t.stateCode)
       : null;
 
-/** Link to `view` with the territory and, if given, the answers. */
+/** Link to `view` with the territory and, if given, the answers. `origin`: «https://revoto.mx». */
 export function buildShareUrl(
-  base: string,
-  view: string,
+  origin: string,
+  view: ViewId,
   territory: Territory,
   answers?: Answers,
 ): string {
@@ -60,17 +63,21 @@ export function buildShareUrl(
   const r = answers ? encodeAnswers(answers) : null;
   if (r) params.set('r', r);
   const query = params.toString();
-  return `${base}#/${view}${query ? `?${query}` : ''}`;
+  return `${origin}${pathOf(view)}${query ? `#${query}` : ''}`;
 }
 
-/** Reads a hash such as `#/W-04?t=9-6&r=10_0`. Invalid parts are ignored, never guessed. */
-export function parseSharedHash(hash: string): SharedLink {
-  const [path = '', query = ''] = hash.replace(/^#\/?/, '').split('?');
+/**
+ * Reads an address such as `/tu-territorio#t=9-6&r=1010` (or the old `#/W-04?t=9-6&r=1010`).
+ * Invalid parts are ignored, never guessed.
+ */
+export function parseSharedLocation(loc: { pathname: string; hash: string }): SharedLink {
+  const legacy = loc.hash.startsWith('#/');
+  const query = legacy ? (loc.hash.split('?')[1] ?? '') : loc.hash.replace(/^#/, '');
   const params = new URLSearchParams(query);
   const t = /^(\d{1,2})(?:-(\d{1,3}))?$/.exec(params.get('t') ?? '');
   const r = params.get('r');
   return {
-    view: path,
+    view: viewFromLocation(loc),
     territory: t
       ? {
           stateCode: Number(t[1]),

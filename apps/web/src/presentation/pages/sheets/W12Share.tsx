@@ -134,12 +134,7 @@ export function W12Share() {
 
   const copyLink = async () => {
     const target = what === 'slide' ? screen : SCREEN[what];
-    const url = buildShareUrl(
-      `${location.origin}${location.pathname}`,
-      target,
-      t,
-      withAnswers ? answers : undefined,
-    );
+    const url = buildShareUrl(location.origin, target, t, withAnswers ? answers : undefined);
     try {
       await navigator.clipboard.writeText(url);
       setStatus(

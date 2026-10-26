@@ -4,11 +4,11 @@ import {
   decodeAnswers,
   encodeAnswers,
   findTerritory,
-  parseSharedHash,
+  parseSharedLocation,
 } from './sharedLink';
 
 const IZTACALCO = municipality(9, 6, 'Iztacalco', 'Ciudad de México') as Territory;
-const BASE = 'https://revoto.mx/';
+const ORIGIN = 'https://revoto.mx';
 const ANSWERS = { age: '25–34', voted2018: 'Sí', voted2021: 'No', voted2024: 'Sí' };
 
 describe('US-24 · shared links', () => {
@@ -23,25 +23,33 @@ describe('US-24 · shared links', () => {
     expect(decodeAnswers('99')).toBeNull();
   });
 
-  it('carries the territory always and the answers only when asked', () => {
-    expect(buildShareUrl(BASE, 'W-03', NATIONAL)).toBe('https://revoto.mx/#/W-03');
-    expect(buildShareUrl(BASE, 'W-04', IZTACALCO)).toBe('https://revoto.mx/#/W-04?t=9-6');
-    expect(buildShareUrl(BASE, 'W-09b', state(9, 'Ciudad de México'), ANSWERS)).toBe(
-      'https://revoto.mx/#/W-09b?t=9&r=1010',
+  it('carries the territory always and the answers only when asked, in the fragment', () => {
+    expect(buildShareUrl(ORIGIN, 'W-03', NATIONAL)).toBe('https://revoto.mx/mexico-voto');
+    expect(buildShareUrl(ORIGIN, 'W-04', IZTACALCO)).toBe('https://revoto.mx/tu-territorio#t=9-6');
+    expect(buildShareUrl(ORIGIN, 'W-09b', state(9, 'Ciudad de México'), ANSWERS)).toBe(
+      'https://revoto.mx/tu-insignia#t=9&r=1010',
     );
   });
 
   it('reads the view, the territory and the answers back, ignoring what is not valid', () => {
-    expect(parseSharedHash('#/W-04?t=9-6&r=1010')).toEqual({
+    expect(parseSharedLocation({ pathname: '/tu-territorio', hash: '#t=9-6&r=1010' })).toEqual({
       view: 'W-04',
       territory: { stateCode: 9, municipalityCode: 6 },
       answers: ANSWERS,
     });
-    expect(parseSharedHash('#/W-04')).toEqual({ view: 'W-04', territory: null, answers: null });
-    expect(parseSharedHash('#/W-04?t=<script>&r=abc')).toMatchObject({
+    expect(parseSharedLocation({ pathname: '/', hash: '#/W-04?t=9-6&r=1010' })).toEqual({
+      view: 'W-04',
+      territory: { stateCode: 9, municipalityCode: 6 },
+      answers: ANSWERS,
+    });
+    expect(parseSharedLocation({ pathname: '/tu-territorio', hash: '' })).toEqual({
+      view: 'W-04',
       territory: null,
       answers: null,
     });
+    expect(
+      parseSharedLocation({ pathname: '/tu-territorio', hash: '#t=<script>&r=abc' }),
+    ).toMatchObject({ territory: null, answers: null });
   });
 
   it('finds the territory by its codes, as the repository names it', () => {

@@ -328,12 +328,12 @@ describe('W-12 · Share sheet · US-24', () => {
 
     it('carries the screen and the territory, and the answers only when the person turns it on', async () => {
       const sheet = await open(W04YourTerritory, /^Compartir$/, 'W-04');
-      expect(await copied(sheet)).toMatch(/#\/W-04\?t=9-6$/);
+      expect(await copied(sheet)).toMatch(/\/tu-territorio#t=9-6$/);
       expect(within(sheet).getByRole('status')).toHaveTextContent('con tu territorio');
       fireEvent.click(
         within(sheet).getByRole('switch', { name: 'Incluir mis respuestas en el enlace' }),
       );
-      expect(await copied(sheet)).toMatch(/#\/W-04\?t=9-6&r=0000$/);
+      expect(await copied(sheet)).toMatch(/\/tu-territorio#t=9-6&r=0000$/);
       expect(within(sheet).getByRole('status')).toHaveTextContent('tus respuestas');
     });
   });

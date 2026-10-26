@@ -31,7 +31,7 @@ Fuera de la secuencia:
 - **Hojas inferiores:** W-11 Fuente, W-12 Compartir (la tarjeta de cada pantalla, el arquetipo o la insignia, en 9:16 o 1:1; US-24), W-13 Ajustes de lectura y W-20 Reporte de calidad y validación.
 - **Pantallas de consulta:** W-15 Versión ligera, W-16 Datos abiertos, W-17 Estados, W-18 Metodología y W-19 Diccionario de datos.
 
-Accesibilidad (RNF-07): cada gráfica tiene «Ver como tabla», hay lectura fácil, tamaño de texto (A- / A / A+), movimiento reducido y una versión ligera de solo texto y tablas. La navegación funciona con botones, teclado (← →) y deslizamiento horizontal.
+Accesibilidad (RNF-07): cada gráfica tiene «Ver como tabla», hay lectura fácil, tamaño de texto (A- / A / A+), movimiento reducido y una versión ligera de solo texto y tablas. La navegación funciona con botones, teclado (← →) y deslizamiento horizontal. Cada pantalla tiene una dirección legible (`/inicio`, `/elige-tu-territorio`, `/tu-territorio`…), que se puede compartir o abrir directo.
 
 ## Requisitos
 
