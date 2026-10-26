@@ -10,7 +10,7 @@ export const SLUGS: Record<ViewId, string> = {
   'W-02b': 'sobre-ti',
   'W-03': 'mexico-voto',
   'W-04': 'tu-territorio',
-  'W-05': 'quince-anos',
+  'W-05': 'elecciones-federales',
   'W-06': 'tu-generacion',
   'W-07': 'mujeres-y-hombres',
   'W-08': 'tu-lugar',

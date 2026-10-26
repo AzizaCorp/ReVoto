@@ -10,6 +10,7 @@ describe('readable addresses', () => {
     for (const view of Object.keys(SLUGS) as ViewId[]) expect(at(pathOf(view))).toBe(view);
     expect(pathOf('W-02')).toBe('/elige-tu-territorio');
     expect(pathOf('W-01')).toBe('/inicio');
+    expect(pathOf('W-05')).toBe('/elecciones-federales');
   });
 
   it('the root is the cover; trailing slashes and capitals do not matter', () => {
